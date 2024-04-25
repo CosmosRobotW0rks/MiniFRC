@@ -33,6 +33,7 @@ namespace MiniFRC_FMS.Modules
                         && x.IsAbstract
                         && x.IsSealed
                         && x.Namespace == "MiniFRC_FMS.Modules"
+                        && x.IsNested == false
                         && x.Name != nameof(ModulesMain)
                 )
                 .OrderBy(x =>
