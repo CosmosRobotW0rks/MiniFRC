@@ -8,8 +8,22 @@ namespace MiniFRC_FMS
 {
     internal static class Config
     {
-        public static string WebSVRootURL => "http://localhost:8080/";
+        public const string WebSVRootURL = "http://localhost:8080/";
 
-        public static string SecurityKey => "16777216";
+        public const string SecurityKey = "16777216";
+
+        public static class Field
+        {
+            public const string REDSpeakerHost = "";
+            public const int REDSpeakerPort = 0;
+
+            public const string BLUESpeakerHost = "";
+            public const int BLUESpeakerPort = 0;
+        }
+
+        public static class Points
+        {
+            public const int SpeakerScore = 5;
+        }
     }
 }
