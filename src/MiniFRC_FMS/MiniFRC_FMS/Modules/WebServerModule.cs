@@ -28,7 +28,7 @@ namespace MiniFRC_FMS.Modules
         {
             string? secKeyHeader = ctx.Request.Headers["SecurityKey"];
 
-            if (secKeyHeader != null || secKeyHeader != Config.SecurityKey)
+            if (secKeyHeader == null || secKeyHeader != Config.SecurityKey)
             {
                 ctx.Response.StatusCode = 401;
                 ctx.Response.Close();
