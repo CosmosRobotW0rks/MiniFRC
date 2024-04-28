@@ -32,7 +32,8 @@ namespace MiniFRC_FMS.Modules
                         x.IsClass
                         && x.IsAbstract
                         && x.IsSealed
-                        && x.Namespace == "MiniFRC_FMS.Modules"
+                        && x.Namespace.StartsWith("MiniFRC_FMS.Modules")
+                        && x.Name.ToLower().EndsWith("module")
                         && x.IsNested == false
                         && x.Name != nameof(ModulesMain)
                 )

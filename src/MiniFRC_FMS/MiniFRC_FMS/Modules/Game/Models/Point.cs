@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniFRC_FMS.Models
+namespace MiniFRC_FMS.Modules.Game.Models
 {
     internal enum PointSource
     {
@@ -20,9 +20,9 @@ namespace MiniFRC_FMS.Models
 
         public Point(PointSource pointSource, int points)
         {
-            this.PointSource = pointSource;
-            this.Points = points;
-            this.Timestamp = DateTime.Now;
+            PointSource = pointSource;
+            Points = points;
+            Timestamp = DateTime.Now;
         }
     }
 }

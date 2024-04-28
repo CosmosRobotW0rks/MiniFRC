@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HttpMethod = SimpleWebServer.HttpMethod;
 
-namespace MiniFRC_FMS.Modules
+namespace MiniFRC_FMS.Modules.Comms
 {
     [ModuleInitPriority(1)]
     internal static class WebServerModule
@@ -28,7 +28,7 @@ namespace MiniFRC_FMS.Modules
         {
             string? secKeyHeader = ctx.Request.Headers["SecurityKey"];
 
-            if (secKeyHeader == null || secKeyHeader != Config.SecurityKey)
+            if (secKeyHeader == null || secKeyHeader != Config.SecurityKey.ToString())
             {
                 ctx.Response.StatusCode = 401;
                 ctx.Response.Close();

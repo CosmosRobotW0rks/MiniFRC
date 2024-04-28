@@ -34,7 +34,7 @@ namespace MiniFRC_FMS.Utils
             try
             {
                 using HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, url);
-                msg.Headers.Add("SecurityKey", Config.SecurityKey);
+                msg.Headers.Add("SecurityKey", Config.SecurityKey.ToString());
 
                 using HttpClient client = new HttpClient();
                 

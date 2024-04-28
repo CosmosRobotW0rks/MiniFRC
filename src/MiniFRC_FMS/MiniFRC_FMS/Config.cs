@@ -9,8 +9,9 @@ namespace MiniFRC_FMS
     internal static class Config
     {
         public const string WebSVRootURL = "http://localhost:8080/";
+        public const string TCPServerEndpoint = "192.168.1.34:8081";
 
-        public const string SecurityKey = "16777216";
+        public const ulong SecurityKey = 16777216;
 
         public static class Field
         {

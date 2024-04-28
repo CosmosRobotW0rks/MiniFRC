@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniFRC_FMS.Models
+namespace MiniFRC_FMS.Modules.Game.Models
 {
     internal class Team
     {
