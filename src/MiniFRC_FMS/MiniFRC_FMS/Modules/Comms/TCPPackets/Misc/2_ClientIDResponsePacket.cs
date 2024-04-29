@@ -11,11 +11,11 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Misc
     {
         public byte ID => 2;
 
-        public bool Accepted { get; set; }
+        public byte Accepted { get; set; }
 
         public ClientIDResponsePacket(bool accepted)
         {
-            this.Accepted = accepted;
+            this.Accepted = accepted ? (byte)1 : (byte)0;
         }
     }
 }
