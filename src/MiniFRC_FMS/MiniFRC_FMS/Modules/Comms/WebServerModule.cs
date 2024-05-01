@@ -11,11 +11,11 @@ using HttpMethod = SimpleWebServer.HttpMethod;
 namespace MiniFRC_FMS.Modules.Comms
 {
     [ModuleInitPriority(1)]
-    internal static class WebServerModule
+    internal class WebServerModule : BaseModule
     {
-        private static WebServer? webServer;
+        private WebServer? webServer;
 
-        public static bool Initialize()
+        protected override bool Init()
         {
             webServer = new WebServer(Config.WebSVRootURL);
 
@@ -24,7 +24,7 @@ namespace MiniFRC_FMS.Modules.Comms
             return true;
         }
 
-        private static bool SecurityCheckPreExecute(HttpListenerContext ctx)
+        private bool SecurityCheckPreExecute(HttpListenerContext ctx)
         {
             string? secKeyHeader = ctx.Request.Headers["SecurityKey"];
 
@@ -38,7 +38,7 @@ namespace MiniFRC_FMS.Modules.Comms
             return true;
         }
 
-        public static void AddRoute(string path, WebServer.ControllerMethod controllerMethod, HttpMethod httpmethod)
+        public void AddRoute(string path, WebServer.ControllerMethod controllerMethod, HttpMethod httpmethod)
         {
             webServer?.AddRoute(path, controllerMethod, SecurityCheckPreExecute, httpmethod);
         }

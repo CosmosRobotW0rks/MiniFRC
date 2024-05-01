@@ -7,33 +7,33 @@ using PacketCommunication.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MiniFRC_FMS.Modules.Game
 {
-    internal static class FieldModule
+    internal class FieldModule : BaseModule
     {
-        private static Speaker? REDSpeaker = null;
-        private static Speaker? BLUESpeaker = null;
+        private Speaker? REDSpeaker = null;
+        private Speaker? BLUESpeaker = null;
 
-        public static event EventHandler<TeamColor> OnSpeakerScore;
+        public event EventHandler<TeamColor> OnSpeakerScore;
 
 
-        public static bool Initialize()
+        protected override bool Init()
         {
-            TCPServerModule.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
-
+            GetModule<TCPServerModule>()?.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
             return true;
         }
 
-        static void HandlePingExpire(object? sender, BaseFieldItem fieldItem)
+        void HandlePingExpire(object? sender, BaseFieldItem fieldItem)
         {
             Logger.Log(LogLevel.WARNING, $"Potential disconnection from \"{fieldItem.Nickname}\"");
         }
 
-        static async void HandleClientIdentification(Client client, ClientIDPacket packet)
+        async void HandleClientIdentification(Client client, ClientIDPacket packet)
         {
             if (packet.SecurityKey != Config.SecurityKey)
             {
@@ -44,6 +44,7 @@ namespace MiniFRC_FMS.Modules.Game
 
             switch (packet.DeviceType)
             {
+
                 case Models.DeviceType.Speaker:
                     if (packet.TeamColor == TeamColor.RED)
                     {

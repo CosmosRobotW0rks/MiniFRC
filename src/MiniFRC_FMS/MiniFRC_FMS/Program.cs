@@ -9,14 +9,14 @@ namespace MiniFRC_FMS
 
     internal class Program
     {
+
         static async Task Main(string[] args)
         {
             Logger.Log(LogLevel.INFO, "Starting MiniFRC FMS");
 
-            ModulesMain.InitModules();
+            ModulesMain.Init();
 
-
-            FieldModule.OnSpeakerScore += FieldModule_OnSpeakerScore;
+            ModulesMain.Instance.GetModule<FieldModule>().OnSpeakerScore += FieldModule_OnSpeakerScore;
 
             await Task.Delay(-1);
         }

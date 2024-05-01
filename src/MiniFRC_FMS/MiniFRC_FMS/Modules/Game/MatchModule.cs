@@ -7,27 +7,27 @@ using System.Threading.Tasks;
 
 namespace MiniFRC_FMS.Modules.Game
 {
-    internal static class MatchModule
+    internal class MatchModule : BaseModule
     {
-        public static Match Match { get; private set; }
+        public Match Match { get; private set; }
 
-        public static event EventHandler<Match> OnMatchLoad;
-        public static event EventHandler<Match> OnMatchStart;
-        public static event EventHandler<Match> OnMatchEnd;
-        public static event EventHandler<Match> OnMatchTick;
+        public event EventHandler<Match> OnMatchLoad;
+        public event EventHandler<Match> OnMatchStart;
+        public event EventHandler<Match> OnMatchEnd;
+        public event EventHandler<Match> OnMatchTick;
 
 
-        public static bool Initialize()
+        protected override bool Init()
         {
             return true;
         }
 
-        public static void LoadMatch(Match match)
+        public void LoadMatch(Match match)
         {
             Match = match;
         }
 
-        public static void PauseMatch()
+        public void PauseMatch()
         {
 
         }

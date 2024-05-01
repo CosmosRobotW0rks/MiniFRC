@@ -29,7 +29,8 @@ namespace MiniFRC_FMS.Modules.Game.FieldItems
             this.Nickname = nickname;
             LastPing = DateTime.Now;
 
-            TCPServerModule.AttachPacketCallback<PingPacket>((_, _) =>
+            // TODO: FIX THIS
+           ModulesMain.Instance.GetModule<TCPServerModule>().AttachPacketCallback<PingPacket>((_, _) =>
             {
                 LastPing = DateTime.Now;
             }, TCPClient);

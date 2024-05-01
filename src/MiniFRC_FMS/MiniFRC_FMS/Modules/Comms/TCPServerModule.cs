@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 namespace MiniFRC_FMS.Modules.Comms
 {
     [ModuleInitPriority(2)]
-    internal static class TCPServerModule
+    internal class TCPServerModule : BaseModule
     {
-        private static PacketServer server;
+        private PacketServer server;
 
-        public static bool Initialize()
+        protected override bool Init()
         {
             server = new PacketServer(IPEndPoint.Parse(Config.TCPServerEndpoint), GetPackets(out int packetCount));
 
@@ -27,17 +27,17 @@ namespace MiniFRC_FMS.Modules.Comms
             return true;
         }
 
-        public static void AttachPacketCallback<T>(Action<Client, T> callback, Client? cli = null) where T : IBasePacket
+        public void AttachPacketCallback<T>(Action<Client, T> callback, Client? cli = null) where T : IBasePacket
         {
             server.AttachPacketCallback(callback, cli);
         }
 
-        private static void Server_ServerErrored(object? sender, Exception e)
+        private void Server_ServerErrored(object? sender, Exception e)
         {
             Logger.Log("TCP Server Error: " + e.Message, LogLevel.ERROR);
         }
 
-        private static PacketCollection GetPackets(out int length)
+        private PacketCollection GetPackets(out int length)
         {
             Assembly asm = Assembly.GetExecutingAssembly();
 
