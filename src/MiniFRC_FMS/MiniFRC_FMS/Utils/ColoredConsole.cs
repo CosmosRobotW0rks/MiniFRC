@@ -8,7 +8,7 @@ namespace MiniFRC_FMS.Utils
 {
     internal class ColoredConsole
     {
-        public static void Write(string text)
+        public static async void Write(string text)
         {
             string[] segments = text.Split('`');
 
@@ -27,7 +27,7 @@ namespace MiniFRC_FMS.Utils
                 }
                 else
                 {
-                    Console.Write(segment);
+                    await Console.Out.WriteAsync(segment);
                 }
             }
 

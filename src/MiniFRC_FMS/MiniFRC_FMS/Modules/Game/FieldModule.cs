@@ -28,6 +28,10 @@ namespace MiniFRC_FMS.Modules.Game
             return true;
         }
 
+        static void HandlePingExpire(object? sender, BaseFieldItem fieldItem)
+        {
+            Logger.Log(LogLevel.WARNING, $"Potential disconnection from \"{fieldItem.Nickname}\"");
+        }
 
         static async void HandleClientIdentification(Client client, ClientIDPacket packet)
         {
@@ -43,13 +47,14 @@ namespace MiniFRC_FMS.Modules.Game
                 case Models.DeviceType.Speaker:
                     if (packet.TeamColor == TeamColor.RED)
                     {
-                        REDSpeaker = new Speaker(client);
+                        REDSpeaker = new Speaker(client, "REDSpeaker");
                         REDSpeaker.ScoreCB = () => OnSpeakerScore?.Invoke(null, TeamColor.RED);
+                        REDSpeaker.OnPingExpire += HandlePingExpire;
                         Logger.Log("FIELD: RED Speaker Connected");
                     }
                     else if (packet.TeamColor == TeamColor.BLUE)
                     {
-                        BLUESpeaker = new Speaker(client);
+                        BLUESpeaker = new Speaker(client, "BLUE Speaker");
                         BLUESpeaker.ScoreCB = () => OnSpeakerScore?.Invoke(null, TeamColor.BLUE);
                         Logger.Log("FIELD: BLUE Speaker Connected");
                     }

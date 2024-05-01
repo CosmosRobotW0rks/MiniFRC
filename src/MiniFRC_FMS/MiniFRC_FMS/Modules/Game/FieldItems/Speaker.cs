@@ -14,7 +14,7 @@ namespace MiniFRC_FMS.Modules.Game.FieldItems
         public Action ScoreCB { get; set; }
 
 
-        public Speaker(Client client) : base(client)
+        public Speaker(Client client, string nickname) : base(client, nickname)
         {
             client.AttachPacketCallback<SpeakerScorePacket>((packet) =>
             {

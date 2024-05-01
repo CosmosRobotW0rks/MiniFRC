@@ -27,9 +27,9 @@ namespace MiniFRC_FMS.Modules.Comms
             return true;
         }
 
-        public static void AttachPacketCallback<T>(Action<Client, T> callback) where T : IBasePacket
+        public static void AttachPacketCallback<T>(Action<Client, T> callback, Client? cli = null) where T : IBasePacket
         {
-            server.AttachPacketCallback(callback);
+            server.AttachPacketCallback(callback, cli);
         }
 
         private static void Server_ServerErrored(object? sender, Exception e)

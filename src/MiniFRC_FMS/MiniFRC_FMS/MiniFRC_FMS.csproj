@@ -8,14 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PacketCommunication" Version="1.2.2" />
+    <PackageReference Include="PacketCommunication" Version="1.2.3" />
     <PackageReference Include="SimpleWebServer" Version="1.3.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PacketCommunication">
-      <HintPath>..\..\..\..\PacketCommunication\src\.NET\PacketCommunication\PacketCommunication\bin\Release\net8.0\PacketCommunication.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
