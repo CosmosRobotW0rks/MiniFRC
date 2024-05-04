@@ -19,7 +19,8 @@ namespace PacketClient
     ulong temp = 0;
 
     void DataReceived(void *idk, AsyncClient *__client, void *data, size_t len);
-    bool Connect(char *host, uint16_t port)
+
+    bool Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS)
     {
         if (client == nullptr)
         {
@@ -29,13 +30,13 @@ namespace PacketClient
         }
         
         if (client->connected()) client->stop();
-
-        client->connect(host, port);
-        while (client->connecting())
+        client->connect(IP, port);
+        while (!client->connected() || timeoutMS <= 0)
         {
             delay(100);
+            timeoutMS -= 100;
         }
-        delay(1000);
+
         return client->connected();
     }
 

@@ -7,7 +7,7 @@ namespace PacketClient
 
     typedef void (*PacketCallback)(uint8_t *packetBuf, size_t len);
 
-    bool Connect(char *host, uint16_t port);
+    bool Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS);
     void Disconnect();
 
     bool SendPacket(uint8_t packetID, uint8_t *packet, uint len);
