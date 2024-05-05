@@ -39,14 +39,17 @@ namespace MiniFRC_FMS.Modules.Game.FieldItems
         }
 
 
+        DateTime LastDisconnectionWarning = new DateTime(1, 1, 1);
+
         private async Task PingCheck()
         {
             while (true)
             {
-                if ((DateTime.Now - LastPing).TotalMilliseconds > Config.PingExpireTimeMS)
+                if (LastPing > LastDisconnectionWarning && (DateTime.Now - LastPing).TotalMilliseconds > Config.PingExpireTimeMS)
                 {
+                    LastDisconnectionWarning = DateTime.Now;
+
                     OnPingExpire?.Invoke(this, this);
-                    return;
                 }
 
                 await Task.Delay(200);
