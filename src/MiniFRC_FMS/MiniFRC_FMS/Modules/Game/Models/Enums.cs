@@ -15,6 +15,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
     internal enum DeviceType : byte
     {
-        Speaker = 0
+        NONE = 0,
+        Speaker = 1
     }
 }
