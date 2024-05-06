@@ -1,0 +1,34 @@
+﻿using PacketCommunication;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MiniFRC_FMS.Modules.Comms.TCPPackets.FMSController
+{
+    internal struct FMSControllerLoadMatchPacket : IBasePacket
+    {
+        public byte ID => 7;
+
+        public byte ID_RED1 { get; set; }
+        public byte ID_RED2 { get; set; }
+        public byte ID_BLUE1 { get; set; }
+        public byte ID_BLUE2 { get; set; }
+
+        public byte MatchlNo { get; set; }
+        public UInt16 MatchDuration { get; set; }
+
+        public byte Rematch { get; set; }
+        
+        public MatchType matchType { get; set; }
+
+
+        public enum MatchType : byte
+        {
+            Qualification = 0,
+            Semifinal = 1,
+            Final = 2
+        }
+    }
+}

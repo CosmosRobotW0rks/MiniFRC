@@ -17,12 +17,18 @@ namespace MiniFRC_FMS.Modules.Comms
     {
         private PacketServer server;
 
+        public event EventHandler<Client>? ClientConnected;
+        public event EventHandler<Client>? ClientDisconnected;
+
         protected override bool Init()
         {
             server = new PacketServer(IPEndPoint.Parse(Config.TCPServerEndpoint), GetPackets(out int packetCount));
 
             server.StartListening();
             server.ServerErrored += Server_ServerErrored;
+            server.ClientConnected += (s, e) => ClientConnected?.Invoke(s, e);
+            server.ClientDisconnected += (s, e) => ClientDisconnected?.Invoke(s, e);
+
             Logger.Log($"Loaded {packetCount} TCP packets", LogLevel.DEBUG);
             return true;
         }
