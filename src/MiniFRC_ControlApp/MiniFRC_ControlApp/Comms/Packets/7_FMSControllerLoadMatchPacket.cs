@@ -16,10 +16,11 @@ namespace MiniFRC_ControlApp.Comms.Packets
         public byte ID_BLUE1 { get; set; }
         public byte ID_BLUE2 { get; set; }
 
-        public byte MatchlNo { get; set; }
+        public byte MatchID { get; set; }
         public UInt16 MatchDuration { get; set; }
 
         public byte Rematch { get; set; }
+        public byte Practice { get; set; }
         
         public MatchType matchType { get; set; }
 

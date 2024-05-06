@@ -32,37 +32,38 @@
             textBoxSecuityKey = new TextBox();
             label2 = new Label();
             buttonConnect = new Button();
-            groupBox1 = new GroupBox();
+            groupBoxLogin = new GroupBox();
             groupBox2 = new GroupBox();
-            radioButton2 = new RadioButton();
-            radioButton3 = new RadioButton();
+            checkBoxMatchPractice = new CheckBox();
+            radioButtonMatchSFinal = new RadioButton();
+            radioButtonMatchFinal = new RadioButton();
             label6 = new Label();
-            numericUpDown5 = new NumericUpDown();
-            radioButton1 = new RadioButton();
-            numericUpDown6 = new NumericUpDown();
+            numericUpDownMatchBlueAllienceTeam2 = new NumericUpDown();
+            radioButtonMatchQual = new RadioButton();
+            numericUpDownMatchBlueAllienceTeam1 = new NumericUpDown();
             label7 = new Label();
             label5 = new Label();
-            checkBox1 = new CheckBox();
-            numericUpDown4 = new NumericUpDown();
-            button4 = new Button();
+            checkBoxMatchRematch = new CheckBox();
+            numericUpDownMatchRedAllienceTeam2 = new NumericUpDown();
+            buttonMatchAbort = new Button();
             label10 = new Label();
-            numericUpDown3 = new NumericUpDown();
-            numericUpDown2 = new NumericUpDown();
+            numericUpDownMatchRedAllienceTeam1 = new NumericUpDown();
+            numericUpDownMatchDuration = new NumericUpDown();
             label4 = new Label();
-            numericUpDown1 = new NumericUpDown();
+            numericUpDownMatchID = new NumericUpDown();
             label9 = new Label();
-            button3 = new Button();
-            button2 = new Button();
+            buttonMatchLoad = new Button();
+            buttonMatchStart = new Button();
             label8 = new Label();
             label3 = new Label();
-            groupBox1.SuspendLayout();
+            groupBoxLogin.SuspendLayout();
             groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown5).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown6).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchRedAllienceTeam2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchRedAllienceTeam1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchDuration).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchID).BeginInit();
             SuspendLayout();
             // 
             // textBoxEndpoint
@@ -110,70 +111,81 @@
             buttonConnect.UseVisualStyleBackColor = true;
             buttonConnect.Click += buttonConnect_Click;
             // 
-            // groupBox1
+            // groupBoxLogin
             // 
-            groupBox1.Controls.Add(textBoxEndpoint);
-            groupBox1.Controls.Add(buttonConnect);
-            groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(textBoxSecuityKey);
-            groupBox1.Location = new Point(12, 12);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(271, 115);
-            groupBox1.TabIndex = 5;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Login";
+            groupBoxLogin.Controls.Add(textBoxEndpoint);
+            groupBoxLogin.Controls.Add(buttonConnect);
+            groupBoxLogin.Controls.Add(label1);
+            groupBoxLogin.Controls.Add(label2);
+            groupBoxLogin.Controls.Add(textBoxSecuityKey);
+            groupBoxLogin.Location = new Point(12, 12);
+            groupBoxLogin.Name = "groupBoxLogin";
+            groupBoxLogin.Size = new Size(271, 115);
+            groupBoxLogin.TabIndex = 5;
+            groupBoxLogin.TabStop = false;
+            groupBoxLogin.Text = "Login";
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(radioButton2);
-            groupBox2.Controls.Add(radioButton3);
+            groupBox2.Controls.Add(checkBoxMatchPractice);
+            groupBox2.Controls.Add(radioButtonMatchSFinal);
+            groupBox2.Controls.Add(radioButtonMatchFinal);
             groupBox2.Controls.Add(label6);
-            groupBox2.Controls.Add(numericUpDown5);
-            groupBox2.Controls.Add(radioButton1);
-            groupBox2.Controls.Add(numericUpDown6);
+            groupBox2.Controls.Add(numericUpDownMatchBlueAllienceTeam2);
+            groupBox2.Controls.Add(radioButtonMatchQual);
+            groupBox2.Controls.Add(numericUpDownMatchBlueAllienceTeam1);
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(label5);
-            groupBox2.Controls.Add(checkBox1);
-            groupBox2.Controls.Add(numericUpDown4);
-            groupBox2.Controls.Add(button4);
+            groupBox2.Controls.Add(checkBoxMatchRematch);
+            groupBox2.Controls.Add(numericUpDownMatchRedAllienceTeam2);
+            groupBox2.Controls.Add(buttonMatchAbort);
             groupBox2.Controls.Add(label10);
-            groupBox2.Controls.Add(numericUpDown3);
-            groupBox2.Controls.Add(numericUpDown2);
+            groupBox2.Controls.Add(numericUpDownMatchRedAllienceTeam1);
+            groupBox2.Controls.Add(numericUpDownMatchDuration);
             groupBox2.Controls.Add(label4);
-            groupBox2.Controls.Add(numericUpDown1);
+            groupBox2.Controls.Add(numericUpDownMatchID);
             groupBox2.Controls.Add(label9);
-            groupBox2.Controls.Add(button3);
-            groupBox2.Controls.Add(button2);
+            groupBox2.Controls.Add(buttonMatchLoad);
+            groupBox2.Controls.Add(buttonMatchStart);
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(label3);
+            groupBox2.Enabled = false;
             groupBox2.Location = new Point(12, 145);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(397, 278);
+            groupBox2.Size = new Size(397, 304);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Match Operations";
             // 
-            // radioButton2
+            // checkBoxMatchPractice
             // 
-            radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(203, 156);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(62, 19);
-            radioButton2.TabIndex = 26;
-            radioButton2.Text = "S. Final";
-            radioButton2.UseVisualStyleBackColor = true;
+            checkBoxMatchPractice.Location = new Point(75, 181);
+            checkBoxMatchPractice.Name = "checkBoxMatchPractice";
+            checkBoxMatchPractice.Size = new Size(120, 19);
+            checkBoxMatchPractice.TabIndex = 27;
+            checkBoxMatchPractice.Text = "Practice";
+            checkBoxMatchPractice.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // radioButtonMatchSFinal
             // 
-            radioButton3.AutoSize = true;
-            radioButton3.Location = new Point(274, 156);
-            radioButton3.Name = "radioButton3";
-            radioButton3.Size = new Size(50, 19);
-            radioButton3.TabIndex = 9;
-            radioButton3.TabStop = true;
-            radioButton3.Text = "Final";
-            radioButton3.UseVisualStyleBackColor = true;
+            radioButtonMatchSFinal.AutoSize = true;
+            radioButtonMatchSFinal.Location = new Point(203, 156);
+            radioButtonMatchSFinal.Name = "radioButtonMatchSFinal";
+            radioButtonMatchSFinal.Size = new Size(62, 19);
+            radioButtonMatchSFinal.TabIndex = 26;
+            radioButtonMatchSFinal.Text = "S. Final";
+            radioButtonMatchSFinal.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonMatchFinal
+            // 
+            radioButtonMatchFinal.AutoSize = true;
+            radioButtonMatchFinal.Location = new Point(274, 156);
+            radioButtonMatchFinal.Name = "radioButtonMatchFinal";
+            radioButtonMatchFinal.Size = new Size(50, 19);
+            radioButtonMatchFinal.TabIndex = 9;
+            radioButtonMatchFinal.TabStop = true;
+            radioButtonMatchFinal.Text = "Final";
+            radioButtonMatchFinal.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -184,39 +196,41 @@
             label6.Text = "Blue 2";
             label6.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // numericUpDown5
+            // numericUpDownMatchBlueAllienceTeam2
             // 
-            numericUpDown5.BackColor = Color.Blue;
-            numericUpDown5.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            numericUpDown5.ForeColor = Color.White;
-            numericUpDown5.Location = new Point(203, 75);
-            numericUpDown5.Name = "numericUpDown5";
-            numericUpDown5.Size = new Size(121, 29);
-            numericUpDown5.TabIndex = 24;
-            numericUpDown5.TextAlign = HorizontalAlignment.Center;
+            numericUpDownMatchBlueAllienceTeam2.BackColor = Color.Blue;
+            numericUpDownMatchBlueAllienceTeam2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            numericUpDownMatchBlueAllienceTeam2.ForeColor = Color.White;
+            numericUpDownMatchBlueAllienceTeam2.Location = new Point(203, 75);
+            numericUpDownMatchBlueAllienceTeam2.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownMatchBlueAllienceTeam2.Name = "numericUpDownMatchBlueAllienceTeam2";
+            numericUpDownMatchBlueAllienceTeam2.Size = new Size(121, 29);
+            numericUpDownMatchBlueAllienceTeam2.TabIndex = 24;
+            numericUpDownMatchBlueAllienceTeam2.TextAlign = HorizontalAlignment.Center;
             // 
-            // radioButton1
+            // radioButtonMatchQual
             // 
-            radioButton1.AutoSize = true;
-            radioButton1.Checked = true;
-            radioButton1.Location = new Point(145, 156);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(50, 19);
-            radioButton1.TabIndex = 7;
-            radioButton1.TabStop = true;
-            radioButton1.Text = "Qual";
-            radioButton1.UseVisualStyleBackColor = true;
+            radioButtonMatchQual.AutoSize = true;
+            radioButtonMatchQual.Checked = true;
+            radioButtonMatchQual.Location = new Point(239, 181);
+            radioButtonMatchQual.Name = "radioButtonMatchQual";
+            radioButtonMatchQual.Size = new Size(50, 19);
+            radioButtonMatchQual.TabIndex = 7;
+            radioButtonMatchQual.TabStop = true;
+            radioButtonMatchQual.Text = "Qual";
+            radioButtonMatchQual.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown6
+            // numericUpDownMatchBlueAllienceTeam1
             // 
-            numericUpDown6.BackColor = Color.Blue;
-            numericUpDown6.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            numericUpDown6.ForeColor = Color.White;
-            numericUpDown6.Location = new Point(203, 40);
-            numericUpDown6.Name = "numericUpDown6";
-            numericUpDown6.Size = new Size(121, 29);
-            numericUpDown6.TabIndex = 23;
-            numericUpDown6.TextAlign = HorizontalAlignment.Center;
+            numericUpDownMatchBlueAllienceTeam1.BackColor = Color.Blue;
+            numericUpDownMatchBlueAllienceTeam1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            numericUpDownMatchBlueAllienceTeam1.ForeColor = Color.White;
+            numericUpDownMatchBlueAllienceTeam1.Location = new Point(203, 40);
+            numericUpDownMatchBlueAllienceTeam1.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownMatchBlueAllienceTeam1.Name = "numericUpDownMatchBlueAllienceTeam1";
+            numericUpDownMatchBlueAllienceTeam1.Size = new Size(121, 29);
+            numericUpDownMatchBlueAllienceTeam1.TabIndex = 23;
+            numericUpDownMatchBlueAllienceTeam1.TextAlign = HorizontalAlignment.Center;
             // 
             // label7
             // 
@@ -236,35 +250,35 @@
             label5.Text = "Red 2";
             label5.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // checkBox1
+            // checkBoxMatchRematch
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(74, 156);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(73, 19);
-            checkBox1.TabIndex = 19;
-            checkBox1.Text = "Rematch";
-            checkBox1.UseVisualStyleBackColor = true;
+            checkBoxMatchRematch.Location = new Point(75, 156);
+            checkBoxMatchRematch.Name = "checkBoxMatchRematch";
+            checkBoxMatchRematch.Size = new Size(120, 19);
+            checkBoxMatchRematch.TabIndex = 19;
+            checkBoxMatchRematch.Text = "Rematch";
+            checkBoxMatchRematch.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown4
+            // numericUpDownMatchRedAllienceTeam2
             // 
-            numericUpDown4.BackColor = Color.Red;
-            numericUpDown4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            numericUpDown4.ForeColor = Color.White;
-            numericUpDown4.Location = new Point(74, 75);
-            numericUpDown4.Name = "numericUpDown4";
-            numericUpDown4.Size = new Size(121, 29);
-            numericUpDown4.TabIndex = 20;
-            numericUpDown4.TextAlign = HorizontalAlignment.Center;
+            numericUpDownMatchRedAllienceTeam2.BackColor = Color.Red;
+            numericUpDownMatchRedAllienceTeam2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            numericUpDownMatchRedAllienceTeam2.ForeColor = Color.White;
+            numericUpDownMatchRedAllienceTeam2.Location = new Point(74, 75);
+            numericUpDownMatchRedAllienceTeam2.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownMatchRedAllienceTeam2.Name = "numericUpDownMatchRedAllienceTeam2";
+            numericUpDownMatchRedAllienceTeam2.Size = new Size(121, 29);
+            numericUpDownMatchRedAllienceTeam2.TabIndex = 20;
+            numericUpDownMatchRedAllienceTeam2.TextAlign = HorizontalAlignment.Center;
             // 
-            // button4
+            // buttonMatchAbort
             // 
-            button4.Location = new Point(74, 238);
-            button4.Name = "button4";
-            button4.Size = new Size(248, 23);
-            button4.TabIndex = 18;
-            button4.Text = "Abort";
-            button4.UseVisualStyleBackColor = true;
+            buttonMatchAbort.Location = new Point(74, 264);
+            buttonMatchAbort.Name = "buttonMatchAbort";
+            buttonMatchAbort.Size = new Size(248, 23);
+            buttonMatchAbort.TabIndex = 18;
+            buttonMatchAbort.Text = "Abort";
+            buttonMatchAbort.UseVisualStyleBackColor = true;
             // 
             // label10
             // 
@@ -275,24 +289,25 @@
             label10.Text = "Match Duration (S)";
             label10.TextAlign = ContentAlignment.BottomCenter;
             // 
-            // numericUpDown3
+            // numericUpDownMatchRedAllienceTeam1
             // 
-            numericUpDown3.BackColor = Color.Red;
-            numericUpDown3.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            numericUpDown3.ForeColor = Color.White;
-            numericUpDown3.Location = new Point(74, 40);
-            numericUpDown3.Name = "numericUpDown3";
-            numericUpDown3.Size = new Size(121, 29);
-            numericUpDown3.TabIndex = 7;
-            numericUpDown3.TextAlign = HorizontalAlignment.Center;
+            numericUpDownMatchRedAllienceTeam1.BackColor = Color.Red;
+            numericUpDownMatchRedAllienceTeam1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            numericUpDownMatchRedAllienceTeam1.ForeColor = Color.White;
+            numericUpDownMatchRedAllienceTeam1.Location = new Point(74, 40);
+            numericUpDownMatchRedAllienceTeam1.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownMatchRedAllienceTeam1.Name = "numericUpDownMatchRedAllienceTeam1";
+            numericUpDownMatchRedAllienceTeam1.Size = new Size(121, 29);
+            numericUpDownMatchRedAllienceTeam1.TabIndex = 7;
+            numericUpDownMatchRedAllienceTeam1.TextAlign = HorizontalAlignment.Center;
             // 
-            // numericUpDown2
+            // numericUpDownMatchDuration
             // 
-            numericUpDown2.Location = new Point(202, 127);
-            numericUpDown2.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            numericUpDown2.Name = "numericUpDown2";
-            numericUpDown2.Size = new Size(120, 23);
-            numericUpDown2.TabIndex = 16;
+            numericUpDownMatchDuration.Location = new Point(202, 127);
+            numericUpDownMatchDuration.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            numericUpDownMatchDuration.Name = "numericUpDownMatchDuration";
+            numericUpDownMatchDuration.Size = new Size(120, 23);
+            numericUpDownMatchDuration.TabIndex = 16;
             // 
             // label4
             // 
@@ -303,13 +318,13 @@
             label4.Text = "Red 1";
             label4.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // numericUpDown1
+            // numericUpDownMatchID
             // 
-            numericUpDown1.Location = new Point(74, 127);
-            numericUpDown1.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(122, 23);
-            numericUpDown1.TabIndex = 15;
+            numericUpDownMatchID.Location = new Point(74, 127);
+            numericUpDownMatchID.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownMatchID.Name = "numericUpDownMatchID";
+            numericUpDownMatchID.Size = new Size(122, 23);
+            numericUpDownMatchID.TabIndex = 15;
             // 
             // label9
             // 
@@ -317,26 +332,27 @@
             label9.Name = "label9";
             label9.Size = new Size(121, 19);
             label9.TabIndex = 12;
-            label9.Text = "Match No";
+            label9.Text = "Match ID";
             label9.TextAlign = ContentAlignment.BottomCenter;
             // 
-            // button3
+            // buttonMatchLoad
             // 
-            button3.Location = new Point(74, 180);
-            button3.Name = "button3";
-            button3.Size = new Size(248, 23);
-            button3.TabIndex = 11;
-            button3.Text = "Load";
-            button3.UseVisualStyleBackColor = true;
+            buttonMatchLoad.Location = new Point(74, 206);
+            buttonMatchLoad.Name = "buttonMatchLoad";
+            buttonMatchLoad.Size = new Size(248, 23);
+            buttonMatchLoad.TabIndex = 11;
+            buttonMatchLoad.Text = "Load";
+            buttonMatchLoad.UseVisualStyleBackColor = true;
+            buttonMatchLoad.Click += buttonMatchLoad_Click;
             // 
-            // button2
+            // buttonMatchStart
             // 
-            button2.Location = new Point(74, 209);
-            button2.Name = "button2";
-            button2.Size = new Size(248, 23);
-            button2.TabIndex = 10;
-            button2.Text = "Start";
-            button2.UseVisualStyleBackColor = true;
+            buttonMatchStart.Location = new Point(74, 235);
+            buttonMatchStart.Name = "buttonMatchStart";
+            buttonMatchStart.Size = new Size(248, 23);
+            buttonMatchStart.TabIndex = 10;
+            buttonMatchStart.Text = "Start";
+            buttonMatchStart.UseVisualStyleBackColor = true;
             // 
             // label8
             // 
@@ -360,22 +376,22 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(756, 450);
+            ClientSize = new Size(756, 516);
             Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
+            Controls.Add(groupBoxLogin);
             Name = "FormMain";
             Text = "Form1";
             Load += FormMain_Load;
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            groupBoxLogin.ResumeLayout(false);
+            groupBoxLogin.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown5).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown6).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown4).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchRedAllienceTeam2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchRedAllienceTeam1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchDuration).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMatchID).EndInit();
             ResumeLayout(false);
         }
 
@@ -386,28 +402,29 @@
         private TextBox textBoxSecuityKey;
         private Label label2;
         private Button buttonConnect;
-        private GroupBox groupBox1;
+        private GroupBox groupBoxLogin;
         private GroupBox groupBox2;
         private Label label3;
         private Label label4;
         private Label label8;
-        private Button button2;
-        private Button button3;
+        private Button buttonMatchStart;
+        private Button buttonMatchLoad;
         private Label label9;
-        private NumericUpDown numericUpDown1;
-        private NumericUpDown numericUpDown2;
+        private NumericUpDown numericUpDownMatchID;
+        private NumericUpDown numericUpDownMatchDuration;
         private Label label10;
-        private Button button4;
-        private CheckBox checkBox1;
-        private NumericUpDown numericUpDown3;
-        private NumericUpDown numericUpDown4;
+        private Button buttonMatchAbort;
+        private CheckBox checkBoxMatchRematch;
+        private NumericUpDown numericUpDownMatchRedAllienceTeam1;
+        private NumericUpDown numericUpDownMatchRedAllienceTeam2;
         private Label label5;
         private Label label6;
-        private NumericUpDown numericUpDown5;
-        private NumericUpDown numericUpDown6;
+        private NumericUpDown numericUpDownMatchBlueAllienceTeam2;
+        private NumericUpDown numericUpDownMatchBlueAllienceTeam1;
         private Label label7;
-        private RadioButton radioButton1;
-        private RadioButton radioButton3;
-        private RadioButton radioButton2;
+        private RadioButton radioButtonMatchQual;
+        private RadioButton radioButtonMatchFinal;
+        private RadioButton radioButtonMatchSFinal;
+        private CheckBox checkBoxMatchPractice;
     }
 }

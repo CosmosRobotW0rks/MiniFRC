@@ -13,7 +13,7 @@ namespace MiniFRC_ControlApp.Comms
 {
     internal static class ServerCommunication
     {
-        private static PacketClient client;
+        public static PacketClient client;
 
         public static void Connect(IPEndPoint ep)
         {
@@ -21,12 +21,17 @@ namespace MiniFRC_ControlApp.Comms
             client.Connect();
         }
 
+        public static void Disconnect() // No disconnect for the packetclient?? lol? TODO: Add it ASAP
+        {
+
+        }
+
         public static async Task<bool> Authenticate(ulong securityKey)
         {
-            FMSControllerAuthResponsePacket? resp = await client.SendPacketAndWaitForResponseAsync<FMSControllerAuthPacket, FMSControllerAuthResponsePacket>(new FMSControllerAuthPacket() { SecurityKey = securityKey }, TimeSpan.FromSeconds(5));
-            if(resp == null || !(resp.Value.Authenticated == 1)) return false;
-
-            return true;
+            var resp = await client.SendPacketAndWaitForResponseAsync<FMSControllerAuthPacket, FMSControllerAuthResponsePacket>(new FMSControllerAuthPacket() { SecurityKey = securityKey }, TimeSpan.FromSeconds(5));
+            if(resp.TimedOut) return false;
+            if (resp.Packet.Authenticated == 1) return true;
+            return false;
         }
 
         private static void Client_PacketReceived(object? sender, IBasePacket e)
