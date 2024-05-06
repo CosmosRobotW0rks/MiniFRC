@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include "FieldItems/FieldItemID.h"
 
 
 
@@ -10,9 +11,10 @@ struct Config
     uint64_t SecurityKey;
     
     uint8_t FMSIP[4];
+    uint16_t FMSPORT;
 
-    uint8_t TeamColor;
-    uint8_t DeviceType;
+    TeamColor teamColor;
+    DeviceType deviceType;
 };
 
 

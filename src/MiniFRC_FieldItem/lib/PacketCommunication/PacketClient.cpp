@@ -45,7 +45,7 @@ namespace PacketClient
         client->stop();
     }
 
-    bool SendPacket(uint8_t packetID, uint8_t *packet, uint len)
+    bool SendPacket(uint8_t packetID, void *packet, uint len)
     {
         uint packetLen = len + 1;
 

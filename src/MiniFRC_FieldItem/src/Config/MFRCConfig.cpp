@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "DataSaving.h"
 #include "Config/MFRCConfig.h"
+#include "FieldItems/FieldItemID.h"
 
 
 
@@ -50,7 +51,6 @@ namespace MFRCConfig
             config = new Config(cfg);    
         }
         
-        Serial.printf("Config: %s, %s, %llu, %d.%d.%d.%d, %d, %d\n", config->SSID, config->PW, config->SecurityKey, config->FMSIP[0], config->FMSIP[1], config->FMSIP[2], config->FMSIP[3], config->TeamColor, config->DeviceType);
         return config;
 
     }
