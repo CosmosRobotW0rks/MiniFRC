@@ -11,13 +11,18 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.FMSController
     {
         public byte ID => 8;
 
-        MatchLoadStatus matchLoadStatus { get; set; }
+        public MatchLoadStatus matchLoadStatus { get; set; }
 
         public enum MatchLoadStatus : byte
         {
             Success = 0,
             SomethingElseWentWrong,
             IncorrectTeamIDs
+        }
+
+        public FMSControllerLoadMatchResponsePacket(MatchLoadStatus status)
+        {
+            matchLoadStatus = status;
         }
     }
 }

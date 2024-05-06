@@ -8,30 +8,35 @@ namespace MiniFRC_FMS.Utils
 {
     internal class ColoredConsole
     {
-        public static async void Write(string text)
+        private static object lockObj = new object();
+
+        public static void Write(string text)
         {
-            string[] segments = text.Split('`');
-
-            ConsoleColor currentColor = Console.ForegroundColor;
-
-            for (int i = 0; i < segments.Length; i++)
+            lock (lockObj)
             {
-                string segment = segments[i];
+                string[] segments = text.Split('`');
 
-                if (string.IsNullOrWhiteSpace(segment))
-                    continue;
+                ConsoleColor currentColor = Console.ForegroundColor;
 
-                if (Enum.TryParse(segment, out ConsoleColor color) && i % 2 != 0)
+                for (int i = 0; i < segments.Length; i++)
                 {
-                    Console.ForegroundColor = color;
+                    string segment = segments[i];
+
+                    if (string.IsNullOrWhiteSpace(segment))
+                        continue;
+
+                    if (Enum.TryParse(segment, out ConsoleColor color) && i % 2 != 0)
+                    {
+                        Console.ForegroundColor = color;
+                    }
+                    else
+                    {
+                        Console.Write(segment);
+                    }
                 }
-                else
-                {
-                    await Console.Out.WriteAsync(segment);
-                }
+
+                Console.ForegroundColor = currentColor;
             }
-
-            Console.ForegroundColor = currentColor;
         }
 
         public static void WriteLine(string text)

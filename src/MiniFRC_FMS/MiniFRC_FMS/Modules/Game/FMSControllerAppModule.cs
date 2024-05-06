@@ -19,8 +19,6 @@ namespace MiniFRC_FMS.Modules.Game
         protected override bool Init()
         {
             TCPServerModule = GetModule<TCPServerModule>();
-            TCPServerModule.ClientDisconnected += TCPServerModule_ClientDisconnected;
-            TCPServerModule.ClientConnected += TCPServerModule_ClientConnected;
 
 
             TCPServerModule?.AttachPacketCallback<FMSControllerAuthPacket>(HandleFMSControllerAuth);
@@ -31,25 +29,21 @@ namespace MiniFRC_FMS.Modules.Game
             return true;
         }
 
-        private void TCPServerModule_ClientConnected(object? sender, Client e)
-        {
-            Logger.Log("Cli cıonnct");
-        }
-
-        private void TCPServerModule_ClientDisconnected(object? sender, Client e)
-        {
-            if (FMSControllerAppClients.Contains(e))
-            {
-                FMSControllerAppClients.Remove(e);
-                Logger.Log("FMS Controller App Disconnected");
-            }
-        }
-
         async void HandleMatchLoad(Client client, FMSControllerLoadMatchPacket packet)
         {
             if (!FMSControllerAppClients.Contains(client)) return;
 
-            Logger.Log("Received Match Load Packet");
+            Logger.Log(
+                $"Received Match Load Packet\n" +
+                $"IDs: {packet.ID_RED1} / {packet.ID_RED2} / {packet.ID_BLUE1} / {packet.ID_BLUE2}\n" +
+                $"MatchID: {packet.MatchID}\n" +
+                $"Match Duration: {packet.MatchDuration}\n" +
+                $"MatchType: {packet.matchType.ToString()}\n" +
+                $"IsPractice: {packet.Practice == 1}\n" +
+                $"IsRematch: {packet.Rematch == 1}"
+                );
+
+            await client.SendPacketAsync(new FMSControllerLoadMatchResponsePacket(FMSControllerLoadMatchResponsePacket.MatchLoadStatus.Success));
 
         }
 
