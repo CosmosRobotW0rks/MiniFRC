@@ -96,14 +96,14 @@ namespace MiniFRC_ControlApp
                     };
 
                     var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerLoadMatchPacket, FMSControllerLoadMatchResponsePacket>(packet, TimeSpan.FromSeconds(5));
-                    if(resp.TimedOut)
+                    if (resp.TimedOut)
                     {
                         MessageBox.Show("Server response timed out");
                         return;
                     }
                     var status = resp.Packet.matchLoadStatus;
 
-                    switch(status)
+                    switch (status)
                     {
                         case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.Success:
                             MessageBox.Show("Match loaded successfully");
@@ -118,7 +118,77 @@ namespace MiniFRC_ControlApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, "Error occured while loading match\nex: " + ex.Message);
+                    MessageBox.Show(this, "An error occured while loading match\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonMatchStart_Click(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    var packet = new FMSControllerStartStopMatchPacket() { State = 1 };
+
+                    var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerStartStopMatchPacket, FMSControllerStartStopMatchResponsePacket>(packet, TimeSpan.FromSeconds(5));
+                    if (resp.TimedOut)
+                    {
+                        MessageBox.Show("Server response timed out");
+                        return;
+                    }
+
+                    bool status = resp.Packet.Success == 1;
+
+                    if (!status)
+                    {
+                        MessageBox.Show("Failed to start the match");
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "An error occured while starting match\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonMatchAbort_Click(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    var packet = new FMSControllerStartStopMatchPacket() { State = 0 };
+
+                    var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerStartStopMatchPacket, FMSControllerStartStopMatchResponsePacket>(packet, TimeSpan.FromSeconds(5));
+                    if (resp.TimedOut)
+                    {
+                        MessageBox.Show("Server response timed out");
+                        return;
+                    }
+
+                    bool status = resp.Packet.Success == 1;
+
+                    if (!status)
+                    {
+                        MessageBox.Show("Failed to abort the match");
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "An error occured while aborting match\nex: " + ex.Message);
                 }
                 finally
                 {

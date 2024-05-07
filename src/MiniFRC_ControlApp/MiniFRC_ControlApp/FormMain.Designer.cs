@@ -279,6 +279,7 @@
             buttonMatchAbort.TabIndex = 18;
             buttonMatchAbort.Text = "Abort";
             buttonMatchAbort.UseVisualStyleBackColor = true;
+            buttonMatchAbort.Click += buttonMatchAbort_Click;
             // 
             // label10
             // 
@@ -353,6 +354,7 @@
             buttonMatchStart.TabIndex = 10;
             buttonMatchStart.Text = "Start";
             buttonMatchStart.UseVisualStyleBackColor = true;
+            buttonMatchStart.Click += buttonMatchStart_Click;
             // 
             // label8
             // 
