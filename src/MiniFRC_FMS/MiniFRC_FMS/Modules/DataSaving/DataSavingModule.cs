@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace MiniFRC_FMS.Modules.DataSaving
 {
+    [ModuleInitPriority(0)]
     internal class DataSavingModule : BaseModule
     {
         public DataSavingItem<Team> Teams;

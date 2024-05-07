@@ -100,4 +100,28 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         public FMSControllerStartStopMatchResponsePacket() { }
     }
 
+    internal struct FMSControllerMatchStateUpdatedPacket : IBasePacket
+    {
+        public byte ID => 11;
+
+        public byte Success { get; set; }
+
+        public enum MatchState : byte
+        {
+            Standby = 0,
+            Loaded,
+            Countdown,
+            Playing
+        }
+    }
+
+    // AuDis = Audience Display
+
+    internal struct FMSControllerAuDisPageUpdatedPacket : IBasePacket
+    {
+        public byte ID => 11;
+
+        // TODO: Add Page Data
+    }
+
 }

@@ -4,18 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MiniFRC_FMS.Modules.Comms.TCPPackets.FMSControllerLoadMatchPacket;
+using MatchType = MiniFRC_FMS.Modules.Comms.TCPPackets.FMSControllerLoadMatchPacket.MatchType;
 
 namespace MiniFRC_FMS.Modules.Game.Models
 {
 
-    enum MatchState
-    {
-
-    }
-
     internal class Match
     {
-        public FMSControllerLoadMatchPacket.MatchType Type { get; private set; }
+        public MatchType Type { get; private set; }
 
         public int MatchID { get; private set; }
 
@@ -27,7 +24,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public byte TeamBLUE2 { get; private set; }
         public byte[] BLUEAllience { get { return [TeamBLUE1, TeamBLUE2]; } }
 
-        public Match(int matchID, FMSControllerLoadMatchPacket.MatchType type, byte teamRED1,byte teamRED2, byte teamBLUE1, byte teamBLUE2)
+        public Match(int matchID, MatchType type, byte teamRED1,byte teamRED2, byte teamBLUE1, byte teamBLUE2)
         {
             MatchID = matchID;
             Type = type;
