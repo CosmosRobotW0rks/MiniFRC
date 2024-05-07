@@ -5,7 +5,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using MiniFRC_ControlApp.Comms.Packets;
 using PacketCommunication;
 using PacketCommunication.Client;
 
@@ -47,7 +46,7 @@ namespace MiniFRC_ControlApp.Comms
                 .Where(
                     x =>
                         x.IsValueType
-                        && x.Namespace.StartsWith("MiniFRC_ControlApp.Comms.Packets")
+                        && x.Namespace.StartsWith("MiniFRC_ControlApp.Comms")
                         && x.IsAssignableTo(typeof(IBasePacket))
                 ).ToArray();
 

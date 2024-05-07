@@ -1,5 +1,4 @@
 using MiniFRC_ControlApp.Comms;
-using MiniFRC_ControlApp.Comms.Packets;
 using System.Net;
 
 namespace MiniFRC_ControlApp

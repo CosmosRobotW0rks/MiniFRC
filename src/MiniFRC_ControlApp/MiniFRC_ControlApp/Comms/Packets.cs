@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniFRC_FMS.Modules.Comms.TCPPackets
+namespace MiniFRC_ControlApp.Comms
 {
     internal struct FMSControllerAuthPacket : IBasePacket
     {
@@ -99,5 +98,4 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         }
         public FMSControllerStartStopMatchResponsePacket() { }
     }
-
 }
