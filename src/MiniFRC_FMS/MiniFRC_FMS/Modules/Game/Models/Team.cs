@@ -8,13 +8,15 @@ namespace MiniFRC_FMS.Modules.Game.Models
 {
     internal class Team
     {
-        public int ID { get; private set; }
+        public byte ID { get; private set; }
         public string Name { get; private set; }
 
-        public Team(int id, string name)
+        public Team(byte id, string name)
         {
             ID = id;
             Name = name;
         }
+
+        public Team() { }
     }
 }
