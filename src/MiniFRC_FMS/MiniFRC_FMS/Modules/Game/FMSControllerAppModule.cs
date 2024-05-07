@@ -1,5 +1,5 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
-using MiniFRC_FMS.Modules.Comms.TCPPackets.FMSController;
+using MiniFRC_FMS.Modules.Comms.TCPPackets;
 using MiniFRC_FMS.Utils;
 using PacketCommunication.Server;
 using System;

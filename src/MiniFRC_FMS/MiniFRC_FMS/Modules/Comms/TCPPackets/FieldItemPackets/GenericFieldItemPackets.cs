@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Misc
+namespace MiniFRC_FMS.Modules.Comms.TCPPackets.FieldItemPackets
 {
     internal struct ClientIDPacket : IBasePacket
     {
@@ -17,5 +17,17 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Misc
         public DeviceType DeviceType { get; set; }
 
         public ulong SecurityKey { get; set; }
+    }
+
+    internal struct ClientIDResponsePacket : IBasePacket
+    {
+        public byte ID => 2;
+
+        public byte Accepted { get; set; }
+
+        public ClientIDResponsePacket(bool accepted)
+        {
+            this.Accepted = accepted ? (byte)1 : (byte)0;
+        }
     }
 }

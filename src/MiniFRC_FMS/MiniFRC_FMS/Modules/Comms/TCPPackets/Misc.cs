@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Misc
+namespace MiniFRC_FMS.Modules.Comms.TCPPackets
 {
     internal struct PingPacket : IBasePacket
     {
