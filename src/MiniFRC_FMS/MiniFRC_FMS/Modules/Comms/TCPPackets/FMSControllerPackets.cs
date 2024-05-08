@@ -63,8 +63,10 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         public enum MatchLoadStatus : byte
         {
             Success = 0,
+            IncorrectTeamIDs,
+            MatchExists,
+            NotStandby,
             SomethingElseWentWrong,
-            IncorrectTeamIDs
         }
 
         public FMSControllerLoadMatchResponsePacket(MatchLoadStatus status)
@@ -104,7 +106,21 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
     {
         public byte ID => 11;
 
-        public byte Success { get; set; }
+        public MatchState matchState { get; set; }
+
+        public byte ID_RED1 { get; set; }
+        public byte ID_RED2 { get; set; }
+        public byte ID_BLUE1 { get; set; }
+        public byte ID_BLUE2 { get; set; }
+
+        public byte MatchID { get; set; }
+        public UInt16 MatchDuration { get; set; }
+        public UInt16 RemainingTime { get; set; }
+
+        public byte Rematch { get; set; }
+        public byte Practice { get; set; }
+
+        public FMSControllerLoadMatchPacket.MatchType matchType { get; set; }
 
         public enum MatchState : byte
         {

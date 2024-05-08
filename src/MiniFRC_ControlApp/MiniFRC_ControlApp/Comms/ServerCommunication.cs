@@ -14,6 +14,8 @@ namespace MiniFRC_ControlApp.Comms
     {
         public static PacketClient client;
 
+        public static void AttachPacketCB<T>(Action<T> cb) where T : IBasePacket => client.AttachPacketCallback(cb);
+
         public static void Connect(IPEndPoint ep)
         {
             client = new PacketClient(ep, GetPackets(out int length));

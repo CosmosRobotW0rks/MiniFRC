@@ -50,6 +50,7 @@ namespace MiniFRC_FMS.Modules.DataSaving
             items.Clear();
             SaveItems();
         }
+        public bool Contains(T item) => items.Contains(item);
 
         public IReadOnlyList<T> GetAll()
         {

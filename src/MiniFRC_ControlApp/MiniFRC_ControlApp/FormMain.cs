@@ -57,7 +57,7 @@ namespace MiniFRC_ControlApp
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-
+            ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(x => { }); // TODO: FILL
         }
 
         private void buttonMatchLoad_Click(object sender, EventArgs e)
@@ -107,11 +107,17 @@ namespace MiniFRC_ControlApp
                         case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.Success:
                             MessageBox.Show("Match loaded successfully");
                             break;
-                        case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.SomethingElseWentWrong:
-                            MessageBox.Show("Something went wrong while loading match");
-                            break;
                         case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.IncorrectTeamIDs:
                             MessageBox.Show("Incorrect Team ID/s");
+                            break;
+                        case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.MatchExists:
+                            MessageBox.Show("A match with the given ID already exists");
+                            break;
+                        case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.NotStandby:
+                            MessageBox.Show("Match status has to be standby to load a new match");
+                            break;
+                        case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.SomethingElseWentWrong:
+                            MessageBox.Show("Something went wrong while loading match");
                             break;
                     }
                 }
