@@ -9,7 +9,7 @@ namespace MiniFRC_FMS
     internal static class Config
     {
         public const string WebSVRootURL = "http://localhost:8080/";
-        public const string TCPServerEndpoint = "192.168.1.34:8081";
+        public const string TCPServerEndpoint = "10.134.100.230:8081";
         public const int PingExpireTimeMS = 5000;
 
         public const ulong SecurityKey = 16777216;

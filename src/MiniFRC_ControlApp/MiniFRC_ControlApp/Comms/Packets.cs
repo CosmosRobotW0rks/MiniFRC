@@ -115,6 +115,7 @@ namespace MiniFRC_ControlApp.Comms
         public byte MatchID { get; set; }
         public UInt16 MatchDuration { get; set; }
         public UInt16 RemainingTime { get; set; }
+        public byte Countdown { get; set; }
 
         public byte Rematch { get; set; }
         public byte Practice { get; set; }
@@ -134,7 +135,7 @@ namespace MiniFRC_ControlApp.Comms
 
     internal struct FMSControllerAuDisPageUpdatedPacket : IBasePacket
     {
-        public byte ID => 11;
+        public byte ID => 12;
 
         // TODO: Add Page Data
     }

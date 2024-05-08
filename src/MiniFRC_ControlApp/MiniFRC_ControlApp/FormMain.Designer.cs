@@ -34,6 +34,9 @@
             buttonConnect = new Button();
             groupBoxLogin = new GroupBox();
             groupBox2 = new GroupBox();
+            labelMatchInfo = new Label();
+            labelMatchTime = new Label();
+            labelMatchState = new Label();
             checkBoxMatchPractice = new CheckBox();
             radioButtonMatchSFinal = new RadioButton();
             radioButtonMatchFinal = new RadioButton();
@@ -127,6 +130,9 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(labelMatchInfo);
+            groupBox2.Controls.Add(labelMatchTime);
+            groupBox2.Controls.Add(labelMatchState);
             groupBox2.Controls.Add(checkBoxMatchPractice);
             groupBox2.Controls.Add(radioButtonMatchSFinal);
             groupBox2.Controls.Add(radioButtonMatchFinal);
@@ -150,12 +156,42 @@
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(label3);
             groupBox2.Enabled = false;
-            groupBox2.Location = new Point(12, 145);
+            groupBox2.Location = new Point(289, 21);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(397, 304);
+            groupBox2.Size = new Size(397, 548);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Match Operations";
+            // 
+            // labelMatchInfo
+            // 
+            labelMatchInfo.Font = new Font("Segoe UI Semibold", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelMatchInfo.Location = new Point(9, 357);
+            labelMatchInfo.Name = "labelMatchInfo";
+            labelMatchInfo.Size = new Size(382, 183);
+            labelMatchInfo.TabIndex = 30;
+            labelMatchInfo.Text = "1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7";
+            // 
+            // labelMatchTime
+            // 
+            labelMatchTime.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelMatchTime.Location = new Point(9, 319);
+            labelMatchTime.Name = "labelMatchTime";
+            labelMatchTime.Size = new Size(382, 29);
+            labelMatchTime.TabIndex = 29;
+            labelMatchTime.Text = "CD / R.T";
+            labelMatchTime.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labelMatchState
+            // 
+            labelMatchState.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelMatchState.Location = new Point(9, 290);
+            labelMatchState.Name = "labelMatchState";
+            labelMatchState.Size = new Size(382, 29);
+            labelMatchState.TabIndex = 28;
+            labelMatchState.Text = "Match State: ?";
+            labelMatchState.TextAlign = ContentAlignment.MiddleCenter;
+            labelMatchState.Click += label11_Click;
             // 
             // checkBoxMatchPractice
             // 
@@ -378,7 +414,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(756, 516);
+            ClientSize = new Size(756, 637);
             Controls.Add(groupBox2);
             Controls.Add(groupBoxLogin);
             Name = "FormMain";
@@ -428,5 +464,8 @@
         private RadioButton radioButtonMatchFinal;
         private RadioButton radioButtonMatchSFinal;
         private CheckBox checkBoxMatchPractice;
+        private Label labelMatchState;
+        private Label labelMatchTime;
+        private Label labelMatchInfo;
     }
 }

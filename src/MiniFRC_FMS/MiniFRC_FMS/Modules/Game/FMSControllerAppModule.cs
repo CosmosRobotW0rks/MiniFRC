@@ -6,6 +6,7 @@ using MiniFRC_FMS.Utils;
 using PacketCommunication.Server;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,8 +33,17 @@ namespace MiniFRC_FMS.Modules.Game
 
             TCPServerModule?.AttachPacketCallback<FMSControllerLoadMatchPacket>(HandleMatchLoad);
             TCPServerModule?.AttachPacketCallback<FMSControllerStartStopMatchPacket>(HandleMatchStartStop);
-
+            TCPServerModule.ClientDisconnected += TCPServerModule_ClientDisconnected;
             return true;
+        }
+
+        private void TCPServerModule_ClientDisconnected(object? sender, Client e)
+        {
+            if (FMSControllerAppClients.Contains(e))
+            {
+                FMSControllerAppClients.Remove(e);
+                Logger.Log("FMS Controller App Disconnected");
+            }
         }
 
         async void HandleMatchLoad(Client client, FMSControllerLoadMatchPacket packet)
@@ -44,7 +54,8 @@ namespace MiniFRC_FMS.Modules.Game
             var dataSaving = GetModule<DataSavingModule>();
             var matchModule = GetModule<MatchModule>();
 
-            if (dataSaving.Teams.GetWhere(x => x.ID == packet.ID_RED1 || x.ID == packet.ID_RED2 || x.ID == packet.ID_BLUE1 || x.ID == packet.ID_BLUE2).Count != 4)
+            int c = (dataSaving.Teams.GetWhere(x => x.ID == packet.ID_RED1 || x.ID == packet.ID_RED2 || x.ID == packet.ID_BLUE1 || x.ID == packet.ID_BLUE2)).Count;
+            if(c  != 4)
             {
                 await client.SendPacketAsync(new FMSControllerLoadMatchResponsePacket(FMSControllerLoadMatchResponsePacket.MatchLoadStatus.IncorrectTeamIDs));
                 return;
@@ -88,11 +99,14 @@ namespace MiniFRC_FMS.Modules.Game
             FMSControllerAppClients.Add(client);
 
             Logger.Log("FMS Controller App Connected");
+            var matchModule = GetModule<MatchModule>();
+
+            AnnounceMatchState(matchModule.Match, matchModule.State);
         }
 
-        public void AnnounceMatchState(Match match, FMSControllerMatchStateUpdatedPacket.MatchState state)
+        public void AnnounceMatchState(Match match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
         {
-            Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(new FMSControllerMatchStateUpdatedPacket() 
+            var packet = new FMSControllerMatchStateUpdatedPacket()
             {
                 matchState = state,
                 ID_RED1 = match?.TeamRED1 ?? 0,
@@ -102,11 +116,18 @@ namespace MiniFRC_FMS.Modules.Game
                 MatchID = match?.MatchID ?? 0,
                 MatchDuration = match?.MatchDuration ?? 0,
                 RemainingTime = match?.RemainingTime ?? 0,
+                Countdown = match?.RemainingCountdown ?? 0,
                 matchType = match?.Type ?? 0,
                 Practice = (match?.IsPractice ?? false) ? (byte)1 : (byte)0,
                 Rematch = (match?.IsRematch ?? false) ? (byte)1 : (byte)0
-                
-            })).ToArray());
+
+            };
+
+            if (singleClient == null)
+            {
+                Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+            }
+            else singleClient.SendPacketAsync(packet).Wait();
         }
     }
 }

@@ -29,10 +29,10 @@ namespace MiniFRC_ControlApp
                 {
                     bool res = await ServerCommunication.Authenticate(ulong.Parse(textBoxSecuityKey.Text));
 
-                    MessageBox.Show(this, res ? "Authenticated Successfully" : "Failed to authenticate");
 
                     if (res)
                     {
+                        AttachPacketCallbacks();
                         foreach (Control ctr in this.Controls)
                         {
                             if (ctr is GroupBox) ctr.Enabled = true;
@@ -43,7 +43,7 @@ namespace MiniFRC_ControlApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, "Error occured while authenticating\nex: " + ex.Message);
+                    MessageBox.Show("Error occured while authenticating\nex: " + ex.Message);
                 }
                 finally
                 {
@@ -55,10 +55,43 @@ namespace MiniFRC_ControlApp
 
         }
 
+        void AttachPacketCallbacks()
+        {
+            ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(HandleMatchUpdate);
+        }
+
+        void HandleMatchUpdate(FMSControllerMatchStateUpdatedPacket p)
+        {
+            labelMatchState.Text = $"Match State: {p.matchState}";
+
+            switch(p.matchState)
+            {
+                case FMSControllerMatchStateUpdatedPacket.MatchState.Countdown:
+                    labelMatchTime.Text = $"CD: {p.Countdown}";
+                    break;
+                case FMSControllerMatchStateUpdatedPacket.MatchState.Playing:
+                    labelMatchTime.Text = $"R.T: {p.RemainingTime}";
+                    break;
+                default:
+                    labelMatchTime.Text = "CD / R.T";
+                    break;
+            }
+
+            labelMatchInfo.Text =
+                $"Match Type: {p.matchType}\n" +
+                $"TR1: {p.ID_RED1}\n" +
+                $"TR2: {p.ID_RED2}\n" +
+                $"TB1: {p.ID_BLUE1}\n" +
+                $"TB2: {p.ID_BLUE2}\n" +
+                $"Rematch: {p.Rematch == 1}\n" +
+                $"Practice: {p.Practice == 1}\n";
+
+        }
         private void FormMain_Load(object sender, EventArgs e)
         {
-            ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(x => { }); // TODO: FILL
+
         }
+
 
         private void buttonMatchLoad_Click(object sender, EventArgs e)
         {
@@ -120,10 +153,11 @@ namespace MiniFRC_ControlApp
                             MessageBox.Show("Something went wrong while loading match");
                             break;
                     }
+
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, "An error occured while loading match\nex: " + ex.Message);
+                    MessageBox.Show("An error occured while loading match\nex: " + ex.Message);
                 }
                 finally
                 {
@@ -158,7 +192,7 @@ namespace MiniFRC_ControlApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, "An error occured while starting match\nex: " + ex.Message);
+                    MessageBox.Show("An error occured while starting match\nex: " + ex.Message);
                 }
                 finally
                 {
@@ -193,13 +227,18 @@ namespace MiniFRC_ControlApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, "An error occured while aborting match\nex: " + ex.Message);
+                    MessageBox.Show("An error occured while aborting match\nex: " + ex.Message);
                 }
                 finally
                 {
                     this.Enabled = true;
                 }
             });
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -35,10 +35,6 @@ namespace MiniFRC_ControlApp.Comms
             return false;
         }
 
-        private static void Client_PacketReceived(object? sender, IBasePacket e)
-        {
-
-        }
 
         private static PacketCollection GetPackets(out int length)
         {
