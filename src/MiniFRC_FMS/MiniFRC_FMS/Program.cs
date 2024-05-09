@@ -16,14 +16,10 @@ namespace MiniFRC_FMS
 
             ModulesMain.Init();
 
-            ModulesMain.Instance.GetModule<FieldModule>().OnSpeakerScore += FieldModule_OnSpeakerScore;
+            //ModulesMain.Instance.GetModule<FieldModule>().OnSpeakerScore += FieldModule_OnSpeakerScore;
 
             await Task.Delay(-1);
         }
 
-        private static void FieldModule_OnSpeakerScore(object? sender, TeamColor e)
-        {
-            Logger.Log(LogLevel.INFO, $"Speaker Scored for {e}");
-        }
     }
 }

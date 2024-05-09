@@ -59,6 +59,8 @@
             buttonMatchStart = new Button();
             label8 = new Label();
             label3 = new Label();
+            labelRedPoints = new Label();
+            labelBluePoints = new Label();
             groupBoxLogin.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam2).BeginInit();
@@ -130,6 +132,8 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(labelBluePoints);
+            groupBox2.Controls.Add(labelRedPoints);
             groupBox2.Controls.Add(labelMatchInfo);
             groupBox2.Controls.Add(labelMatchTime);
             groupBox2.Controls.Add(labelMatchState);
@@ -158,7 +162,7 @@
             groupBox2.Enabled = false;
             groupBox2.Location = new Point(289, 21);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(397, 548);
+            groupBox2.Size = new Size(397, 604);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Match Operations";
@@ -166,7 +170,7 @@
             // labelMatchInfo
             // 
             labelMatchInfo.Font = new Font("Segoe UI Semibold", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            labelMatchInfo.Location = new Point(9, 357);
+            labelMatchInfo.Location = new Point(6, 418);
             labelMatchInfo.Name = "labelMatchInfo";
             labelMatchInfo.Size = new Size(382, 183);
             labelMatchInfo.TabIndex = 30;
@@ -191,7 +195,6 @@
             labelMatchState.TabIndex = 28;
             labelMatchState.Text = "Match State: ?";
             labelMatchState.TextAlign = ContentAlignment.MiddleCenter;
-            labelMatchState.Click += label11_Click;
             // 
             // checkBoxMatchPractice
             // 
@@ -410,6 +413,28 @@
             label3.Text = "Red Allience";
             label3.TextAlign = ContentAlignment.BottomCenter;
             // 
+            // labelRedPoints
+            // 
+            labelRedPoints.Font = new Font("Segoe UI", 30F, FontStyle.Bold);
+            labelRedPoints.ForeColor = Color.Red;
+            labelRedPoints.Location = new Point(75, 348);
+            labelRedPoints.Name = "labelRedPoints";
+            labelRedPoints.Size = new Size(120, 52);
+            labelRedPoints.TabIndex = 7;
+            labelRedPoints.Text = "0";
+            labelRedPoints.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labelBluePoints
+            // 
+            labelBluePoints.Font = new Font("Segoe UI", 30F, FontStyle.Bold);
+            labelBluePoints.ForeColor = Color.Blue;
+            labelBluePoints.Location = new Point(202, 348);
+            labelBluePoints.Name = "labelBluePoints";
+            labelBluePoints.Size = new Size(120, 52);
+            labelBluePoints.TabIndex = 31;
+            labelBluePoints.Text = "0";
+            labelBluePoints.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -467,5 +492,7 @@
         private Label labelMatchState;
         private Label labelMatchTime;
         private Label labelMatchInfo;
+        private Label labelRedPoints;
+        private Label labelBluePoints;
     }
 }

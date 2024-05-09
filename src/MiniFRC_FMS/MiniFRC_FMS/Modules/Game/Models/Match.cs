@@ -69,6 +69,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public event EventHandler? OnStart;
         public event EventHandler? OnAbort;
         public event EventHandler? OnEnd;
+        public event EventHandler<int> OnPointUpdate;
 
         private bool IsAborted { get; set; } = false;
 

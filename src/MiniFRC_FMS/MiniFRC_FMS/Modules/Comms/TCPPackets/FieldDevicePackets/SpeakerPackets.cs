@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniFRC_FMS.Modules.Comms.TCPPackets.FieldItemPackets
+namespace MiniFRC_FMS.Modules.Comms.TCPPackets.FieldDevicePackets
 {
 
     internal struct SpeakerScorePacket : IBasePacket

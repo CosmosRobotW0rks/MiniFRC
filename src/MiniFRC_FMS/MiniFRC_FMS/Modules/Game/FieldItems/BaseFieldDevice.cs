@@ -14,19 +14,31 @@ using HttpMethod = SimpleWebServer.HttpMethod;
 
 namespace MiniFRC_FMS.Modules.Game.FieldItems
 {
-    internal abstract class BaseFieldItem
+    internal abstract class BaseFieldDevice
     {
         public Client TCPClient { get; private set; }
         public DateTime LastPing { get; private set; }
+
         public string Nickname { get; private set; }
 
-        public event EventHandler<BaseFieldItem> OnPingExpire;
+        public DeviceType deviceType { get; private set; }
 
-        public BaseFieldItem(Client client, string nickname)
+        public TeamColor teamColor { get; private set; }
+
+        public PointSource pointSource { get; private set; }
+
+        public event EventHandler<BaseFieldDevice> OnPingExpire;
+
+        public BaseFieldDevice(Client client, string nickname, DeviceType _deviceType,  PointSource _pointSource, TeamColor _teamColor)
         {
             this.TCPClient = client;
-            this.Nickname = nickname;
             LastPing = DateTime.Now;
+            Nickname = nickname;
+            this.deviceType = _deviceType;
+            this.teamColor = _teamColor;
+            this.pointSource = _pointSource;
+
+            Init();
 
             // TODO: FIX THIS
            ModulesMain.Instance.GetModule<TCPServerModule>().AttachPacketCallback<PingPacket>((_, _) =>
@@ -35,6 +47,20 @@ namespace MiniFRC_FMS.Modules.Game.FieldItems
             }, TCPClient);
 
             Task.Run(PingCheck);
+        }
+
+        public BaseFieldDevice()
+        {
+
+        }
+
+        public abstract void Init();
+
+        protected void Score(int points)
+        {
+            Point p = new Point(pointSource, points);
+
+            ModulesMain.Instance.GetModule<MatchModule>().AddPoints(teamColor, p);
         }
 
 

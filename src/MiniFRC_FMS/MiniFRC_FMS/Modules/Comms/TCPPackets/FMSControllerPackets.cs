@@ -122,6 +122,9 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         public byte Rematch { get; set; }
         public byte Practice { get; set; }
 
+        public int REDPoints { get; set; }
+        public int BLUEPoints { get; set; }
+
         public FMSControllerLoadMatchPacket.MatchType matchType { get; set; }
 
         public enum MatchState : byte

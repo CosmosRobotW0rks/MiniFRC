@@ -101,6 +101,7 @@ namespace MiniFRC_ControlApp.Comms
         public FMSControllerStartStopMatchResponsePacket() { }
     }
 
+
     internal struct FMSControllerMatchStateUpdatedPacket : IBasePacket
     {
         public byte ID => 11;
@@ -117,8 +118,12 @@ namespace MiniFRC_ControlApp.Comms
         public UInt16 RemainingTime { get; set; }
         public byte Countdown { get; set; }
 
+
         public byte Rematch { get; set; }
         public byte Practice { get; set; }
+
+        public int REDPoints { get; set; }
+        public int BLUEPoints { get; set; }
 
         public FMSControllerLoadMatchPacket.MatchType matchType { get; set; }
 

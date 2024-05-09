@@ -64,7 +64,7 @@ namespace MiniFRC_ControlApp
         {
             labelMatchState.Text = $"Match State: {p.matchState}";
 
-            switch(p.matchState)
+            switch (p.matchState)
             {
                 case FMSControllerMatchStateUpdatedPacket.MatchState.Countdown:
                     labelMatchTime.Text = $"CD: {p.Countdown}";
@@ -85,6 +85,9 @@ namespace MiniFRC_ControlApp
                 $"TB2: {p.ID_BLUE2}\n" +
                 $"Rematch: {p.Rematch == 1}\n" +
                 $"Practice: {p.Practice == 1}\n";
+
+            labelRedPoints.Text = p.REDPoints.ToString();
+            labelBluePoints.Text = p.BLUEPoints.ToString();
 
         }
         private void FormMain_Load(object sender, EventArgs e)
@@ -236,9 +239,5 @@ namespace MiniFRC_ControlApp
             });
         }
 
-        private void label11_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

@@ -120,7 +120,10 @@ namespace MiniFRC_FMS.Modules.Game
                 Countdown = match?.RemainingCountdown ?? 0,
                 matchType = match?.Type ?? 0,
                 Practice = (match?.IsPractice ?? false) ? (byte)1 : (byte)0,
-                Rematch = (match?.IsRematch ?? false) ? (byte)1 : (byte)0
+                Rematch = (match?.IsRematch ?? false) ? (byte)1 : (byte)0,
+
+                REDPoints = match?.REDPoints ?? 0,
+                BLUEPoints = match?.BLUEPoints ?? 0
 
             };
 
