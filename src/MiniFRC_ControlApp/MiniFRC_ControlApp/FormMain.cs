@@ -69,7 +69,7 @@ namespace MiniFRC_ControlApp
                 case FMSControllerMatchStateUpdatedPacket.MatchState.Countdown:
                     labelMatchTime.Text = $"CD: {p.Countdown}";
                     break;
-                case FMSControllerMatchStateUpdatedPacket.MatchState.Playing:
+                case FMSControllerMatchStateUpdatedPacket.MatchState.Running:
                     labelMatchTime.Text = $"R.T: {p.RemainingTime}";
                     break;
                 default:
@@ -146,8 +146,8 @@ namespace MiniFRC_ControlApp
                         case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.MatchExists:
                             MessageBox.Show("A match with the given ID already exists");
                             break;
-                        case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.NotStandby:
-                            MessageBox.Show("Match status has to be standby to load a new match");
+                        case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.IncorrectMatchState:
+                            MessageBox.Show("Match status has to be standby or loaded to load a new match");
                             break;
                         case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.SomethingElseWentWrong:
                             MessageBox.Show("Something went wrong while loading match");

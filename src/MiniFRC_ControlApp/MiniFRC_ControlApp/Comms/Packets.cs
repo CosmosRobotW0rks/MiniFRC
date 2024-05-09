@@ -64,7 +64,7 @@ namespace MiniFRC_ControlApp.Comms
             Success = 0,
             IncorrectTeamIDs,
             MatchExists,
-            NotStandby,
+            IncorrectMatchState,
             SomethingElseWentWrong,
         }
 
@@ -127,7 +127,7 @@ namespace MiniFRC_ControlApp.Comms
             Standby = 0,
             Loaded,
             Countdown,
-            Playing
+            Running
         }
     }
 

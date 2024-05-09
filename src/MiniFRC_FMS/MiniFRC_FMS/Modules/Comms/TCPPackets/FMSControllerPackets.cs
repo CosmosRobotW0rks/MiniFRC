@@ -65,7 +65,7 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
             Success = 0,
             IncorrectTeamIDs,
             MatchExists,
-            NotStandby,
+            IncorrectMatchState,
             SomethingElseWentWrong,
         }
 
@@ -129,7 +129,7 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
             Standby = 0,
             Loaded,
             Countdown,
-            Playing
+            Running
         }
     }
 

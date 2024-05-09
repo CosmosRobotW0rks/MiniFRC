@@ -67,9 +67,9 @@ namespace MiniFRC_FMS.Modules.Game
                 return;
             }
 
-            if(matchModule.State != FMSControllerMatchStateUpdatedPacket.MatchState.Standby)
+            if(matchModule.State != FMSControllerMatchStateUpdatedPacket.MatchState.Standby && matchModule.State != FMSControllerMatchStateUpdatedPacket.MatchState.Loaded)
             {
-                await client.SendPacketAsync(new FMSControllerLoadMatchResponsePacket(FMSControllerLoadMatchResponsePacket.MatchLoadStatus.NotStandby));
+                await client.SendPacketAsync(new FMSControllerLoadMatchResponsePacket(FMSControllerLoadMatchResponsePacket.MatchLoadStatus.IncorrectMatchState));
                 return;
             }
 
@@ -101,10 +101,11 @@ namespace MiniFRC_FMS.Modules.Game
             Logger.Log("FMS Controller App Connected");
             var matchModule = GetModule<MatchModule>();
 
-            AnnounceMatchState(matchModule.Match, matchModule.State);
+            await Task.Delay(100);
+            AnnounceMatchState(matchModule.match, matchModule.State, client);
         }
 
-        public void AnnounceMatchState(Match match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
+        public void AnnounceMatchState(Match? match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
         {
             var packet = new FMSControllerMatchStateUpdatedPacket()
             {
