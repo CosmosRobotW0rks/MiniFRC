@@ -2,148 +2,131 @@
 #include "AsyncTCP.h"
 #include "PacketClient.h"
 
-namespace PacketClient
+bool PacketClient::Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS)
 {
-    AsyncClient *client = nullptr;
-
-    uint8_t packetIDs[254];
-    uint16_t packetSizes[254];
-    PacketCallback packetCallbacks[254];
-    uint8_t packetCount = 0;
-
-    uint8_t *packetBuffer = nullptr;
-    int packetBufferLen = 0;
-    uint8_t packetID = 255;
-    uint16_t packetSize = 0;
-
-    ulong temp = 0;
-
-    void DataReceived(void *idk, AsyncClient *__client, void *data, size_t len);
-
-    bool Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS)
+    if (client == nullptr)
     {
-        if (client == nullptr)
-        {
-            client = new AsyncClient();
-            client->onData(DataReceived, nullptr);
-            packetBuffer = (uint8_t *)malloc(1024);
-        }
-        
-        if (client->connected()) client->stop();
-        client->connect(IP, port);
-        while (!client->connected() || timeoutMS <= 0)
-        {
-            delay(100);
-            timeoutMS -= 100;
-        }
+        client = new AsyncClient();
 
-        return client->connected();
+        client->onData(std::bind(&PacketClient::DataReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+
+        packetBuffer = (uint8_t *)malloc(1024);
     }
 
-    void Disconnect()
-    {
+    if (client->connected())
         client->stop();
+    client->connect(IP, port);
+    while (!client->connected() || timeoutMS <= 0)
+    {
+        delay(100);
+        timeoutMS -= 100;
     }
 
-    bool SendPacket(uint8_t packetID, void *packet, uint len)
+    return client->connected();
+}
+
+void PacketClient::Disconnect()
+{
+    client->stop();
+}
+
+bool PacketClient::SendPacket(uint8_t packetID, void *packet, uint len)
+{
+    uint packetLen = len + 1;
+
+    uint8_t temp[packetLen];
+
+    temp[0] = packetID;
+    memcpy(&temp[1], packet, len);
+
+    return client->write((char *)temp, packetLen) == packetLen;
+}
+
+bool PacketClient::RegisterPacket(uint8_t packetId, uint16_t packetSize, PacketCallback callback)
+{
+    if (packetId == 255)
+        return false; // Special ID
+    if (packetCount == 254)
+        return false; // To avoid overflow
+
+    packetIDs[packetCount] = packetId;
+    packetSizes[packetCount] = packetSize;
+    packetCallbacks[packetCount] = callback;
+    packetCount++;
+
+    return true;
+}
+
+inline uint8_t PacketClient::GetPacketIndexByID(uint8_t id)
+{
+    for (uint8_t i = 0; i < packetCount; i++)
     {
-        uint packetLen = len + 1;
-
-        uint8_t temp[packetLen];
-
-        temp[0] = packetID;
-        memcpy(&temp[1], packet, len);
-
-        return client->write((char *)temp, packetLen) == packetLen;
+        if (packetIDs[i] == id)
+            return i;
     }
 
-    bool RegisterPacket(uint8_t packetId, uint16_t packetSize, PacketCallback callback)
+    return 255;
+}
+
+inline void PacketClient::HandlePacket(uint8_t packetid, uint8_t *packetBuf, size_t len)
+{
+    uint8_t packetIndex = GetPacketIndexByID(packetid);
+    if (packetIndex == 255)
+        return; // PACKET NOT FOUND
+
+    ulong time = millis() - temp;
+    Serial.printf("Time took: %d\n", time);
+
+    packetCallbacks[packetIndex](packetBuf, len);
+}
+
+void PacketClient::DataReceived(void *idk, AsyncClient *__client, void *data, size_t len)
+{
+    temp = millis();
+    Serial.printf("Received Data Len: %d\n", len);
+
+    if (len == 0)
+        return;
+
+    uint8_t *tcpbuffer = (uint8_t *)data;
+
+    uint16_t handledByteLen = 0;
+
+    while (handledByteLen < len)
     {
-        if (packetId == 255)
-            return false; // Special ID
-        if (packetCount == 254)
-            return false; // To avoid overflow
-
-        packetIDs[packetCount] = packetId;
-        packetSizes[packetCount] = packetSize;
-        packetCallbacks[packetCount] = callback;
-        packetCount++;
-
-        return true;
-    }
-
-    inline uint8_t GetPacketIndexByID(uint8_t id)
-    {
-        for (uint8_t i = 0; i < packetCount; i++)
+        if (packetID == 255)
         {
-            if (packetIDs[i] == id)
-                return i;
-        }
+            packetID = tcpbuffer[handledByteLen];
+            uint8_t packetIndex = GetPacketIndexByID(packetID);
 
-        return 255;
-    }
-
-    inline void HandlePacket(uint8_t packetid, uint8_t *packetBuf, size_t len)
-    {
-        uint8_t packetIndex = GetPacketIndexByID(packetid);
-        if (packetIndex == 255)
-            return; // PACKET NOT FOUND
-
-        ulong time = millis() - temp;
-        Serial.printf("Time took: %d\n", time);
-
-        packetCallbacks[packetIndex](packetBuf, len);
-    }
-
-    void DataReceived(void *idk, AsyncClient *__client, void *data, size_t len)
-    {
-        temp = millis();
-        Serial.printf("Received Data Len: %d\n", len);
-
-        if (len == 0)
-            return;
-
-        uint8_t *tcpbuffer = (uint8_t *)data;
-
-        uint16_t handledByteLen = 0;
-
-        while (handledByteLen < len)
-        {
-            if (packetID == 255)
+            if (packetIndex == 255)
             {
-                packetID = tcpbuffer[handledByteLen];
-                uint8_t packetIndex = GetPacketIndexByID(packetID);
-
-                if (packetIndex == 255)
-                {
-                    packetID = 255;
-                    return;
-                }
-
-                packetSize = packetSizes[packetIndex] + 1;
-                packetBufferLen = 0;
-
-                Serial.printf("PacketID: %d / PacketIndex: %d / PacketSize: %d\n", packetID, packetIndex, packetSize);
-            }
-
-            uint16_t remainingPacketBytes = packetSize - packetBufferLen;
-            uint16_t remainingTcpBytes = len - handledByteLen;
-
-            uint16_t bytesToCopy = remainingTcpBytes < remainingPacketBytes ? remainingTcpBytes : remainingPacketBytes;
-            memcpy(&packetBuffer[packetBufferLen], &tcpbuffer[handledByteLen], bytesToCopy);
-
-            handledByteLen += bytesToCopy;
-            packetBufferLen += bytesToCopy;
-
-            if (packetBufferLen == packetSize)
-            {
-                HandlePacket(packetID, &packetBuffer[1], packetSize - 1);
-
                 packetID = 255;
-                packetSize = 0;
-                packetBufferLen = 0;
+                return;
             }
+
+            packetSize = packetSizes[packetIndex] + 1;
+            packetBufferLen = 0;
+
+            Serial.printf("PacketID: %d / PacketIndex: %d / PacketSize: %d\n", packetID, packetIndex, packetSize);
+        }
+
+        uint16_t remainingPacketBytes = packetSize - packetBufferLen;
+        uint16_t remainingTcpBytes = len - handledByteLen;
+
+        uint16_t bytesToCopy = remainingTcpBytes < remainingPacketBytes ? remainingTcpBytes : remainingPacketBytes;
+        memcpy(&packetBuffer[packetBufferLen], &tcpbuffer[handledByteLen], bytesToCopy);
+
+        handledByteLen += bytesToCopy;
+        packetBufferLen += bytesToCopy;
+
+        if (packetBufferLen == packetSize)
+        {
+            HandlePacket(packetID, &packetBuffer[1], packetSize - 1);
+
+            packetID = 255;
+            packetSize = 0;
+            packetBufferLen = 0;
         }
     }
-
 }
