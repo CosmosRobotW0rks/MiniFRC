@@ -22,7 +22,7 @@ namespace MiniFRC_FMS.Modules.Game
         public Speaker? REDSpeaker { get; private set; } = null;
 
 
-        [FieldDevice(nameof(REDSpeaker), DeviceType.Speaker, PointSource.Speaker, TeamColor.RED)]
+        [FieldDevice(nameof(REDSpeaker), DeviceType.Speaker, PointSource.Speaker, TeamColor.BLUE)]
         public Speaker? BLUESpeaker { get; private set; } = null;
 
 
