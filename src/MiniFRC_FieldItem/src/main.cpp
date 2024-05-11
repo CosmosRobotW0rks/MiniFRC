@@ -4,7 +4,7 @@
 #include "Debugger.h"
 
 // FIELD ITEM INCLUDES
-#include "FieldItems/FieldItemID.h"
+#include "FieldItems/BaseFieldItem.h"
 #include "FieldItems/Packets.h"
 
 #include "FieldItems/Devices/Speaker/Speaker.h"
@@ -23,6 +23,16 @@ void StartPingTask();
 
 PacketClient* Device1 = nullptr;
 PacketClient* Device2 = nullptr;
+
+
+DeviceType deviceTypes[10];
+BaseFieldItem* fieldItems[10];
+
+void SetupFieldItems()
+{
+};
+
+
 
 
 void setup()
@@ -108,7 +118,6 @@ wl_status_t WaitForConnectionResult(int timeoutMS)
 void ConnectToFMSSingle(PacketClient* cli)
 {
   DebugInfo("Connecting to FMS");
-  cli = new PacketClient();
 
   bool cliconnected = cli->Connect(IPAddress(config->FMSIP), config->FMSPORT, 20000);
 
@@ -136,13 +145,20 @@ void ConnectToFMS()
   }
 
   if(config->deviceType1 != 0)
-  ConnectToFMSSingle(Device1);
+  {
+    Device1 = new PacketClient();
+    ConnectToFMSSingle(Device1);
+  }
 
   
   if(config->deviceType2 != 0)
-  ConnectToFMSSingle(Device2);
+  {
+    Device2 = new PacketClient();
+    ConnectToFMSSingle(Device2);
+  }
 }
 
+int8_t authRes = -1;
 
 void AuthSingleClient(PacketClient* client, TeamColor color, DeviceType device)
 {
@@ -198,7 +214,6 @@ void AuthSingleClient(PacketClient* client, TeamColor color, DeviceType device)
   }
 }
 
-int8_t authRes = -1;
 void AuthClient()
 {
   if(Device1 != nullptr)
@@ -208,26 +223,7 @@ void AuthClient()
   AuthSingleClient(Device2, config->teamColor2, config->deviceType2);
 }
 
-
 void LoadFieldItemByConfig()
 {
-  switch (config->deviceType)
-  {
-  case DeviceType::Speaker:
-    fieldItemInit = FieldItem_Speaker::Initialize;
-    fieldItemPeriodic = FieldItem_Speaker::Periodic;
-    break;
-
-  default:
-    DebugError("Invalid device type, restarting..");
-    ESP.restart();
-    break;
-  }
-
-  if (fieldItemInit == nullptr || fieldItemPeriodic == nullptr)
-  {
-    DebugError("Failed to load field item, restarting..");
-    ESP.restart();
-    return;
-  }
+  
 }

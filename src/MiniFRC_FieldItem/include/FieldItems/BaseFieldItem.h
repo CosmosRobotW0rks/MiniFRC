@@ -26,15 +26,16 @@ class BaseFieldItem
 private:
      
 public:
-    BaseFieldItem(TeamColor teamColor, DeviceType deviceType);
-    ~BaseFieldItem();
+    TeamColor teamColor;
+    DeviceType deviceType;
+    BaseFieldItem(){}
+    ~BaseFieldItem(){}
+
+    void SetDeviceInfo(TeamColor teamColor, DeviceType deviceType)
+    {
+    this->teamColor = teamColor;
+    this->deviceType = deviceType;
+    }
+
+    virtual bool Initialize() = 0;
 };
-
-BaseFieldItem::BaseFieldItem(/* args */)
-{
-    
-}
-
-BaseFieldItem::~BaseFieldItem()
-{
-}

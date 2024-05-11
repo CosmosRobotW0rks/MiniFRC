@@ -2,27 +2,14 @@
 #include <Arduino.h>
 #include "PacketClient.h"
 #include "Debugger.h"
+#include "FieldItems/BaseFieldItem.h"
 
-namespace FieldItem_Speaker
+class FieldItem_Speaker : public BaseFieldItem
 {
-    void NoteDetectorTask(void *pvParameters);
-
+    public:
     bool Initialize()
     {
-        xTaskCreate(NoteDetectorTask, "NoteDetectorTask", 4096, nullptr, 1, nullptr);
-    }
-
-    inline void Periodic()
-    {
         
+        return true;
     }
-
-    
-    void NoteDetectorTask(void *pvParameters)
-    {
-        while (true)
-        {
-            delay(10);
-        }
-    }
-}
+};

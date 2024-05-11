@@ -24,8 +24,8 @@ private:
     inline uint8_t GetPacketIndexByID(uint8_t id);
     inline void HandlePacket(uint8_t packetid, uint8_t *packetBuf, size_t len);
 public:
-    PacketClient(/* args */);
-    ~PacketClient();
+    PacketClient(){}
+    ~PacketClient(){}
 
     void DataReceived(void *idk, AsyncClient *__client, void *data, size_t len);
     bool Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS);
