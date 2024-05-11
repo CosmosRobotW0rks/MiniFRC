@@ -1,6 +1,5 @@
 #pragma once
-#include "FieldItemID.h"
-
+#include "BaseFieldItem.h"
 
 // ----- MISC -----
 struct Packet_Ping_0

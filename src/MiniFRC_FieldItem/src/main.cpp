@@ -20,12 +20,17 @@ void ConnectToFMS();
 void AuthClient();
 void StartPingTask();
 
+
+PacketClient* Device1 = nullptr;
+PacketClient* Device2 = nullptr;
+
+
 void setup()
 {
   Serial.begin(115200);
 
   InitConfig();
-  DebugInfoF("Config loaded\nSSID: %s\nPassword: %s\nSecurity Key: %d\nFMS IP: %d.%d.%d.%d\nTeam Color: %d\nDevice Type: %d\n\n", config->SSID, config->PW, config->SecurityKey, config->FMSIP[0], config->FMSIP[1], config->FMSIP[2], config->FMSIP[3], config->teamColor, config->deviceType);
+  DebugInfoF("Config loaded\nSSID: %s\nPassword: %s\nSecurity Key: %d\nFMS IP: %d.%d.%d.%d\nTeam Color1: %d\nDevice Type1: %d\nTeam Color2: %d\nDevice Type2: %d\n\n", config->SSID, config->PW, config->SecurityKey, config->FMSIP[0], config->FMSIP[1], config->FMSIP[2], config->FMSIP[3], config->teamColor1, config->deviceType1,config->teamColor2, config->deviceType2);
 
   LoadFieldItemByConfig();
   DebugInfo("Loaded the field item");
@@ -76,7 +81,10 @@ void StartPingTask()
 
     while (true)
     {
-      bool pingsuc = PacketClient::SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
+      bool device1Suc = Device1 == nullptr ? true : Device1->SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
+      bool device2Suc = Device2 == nullptr ? true : Device2->SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
+
+      bool pingsuc = device1Suc && device2Suc;
       if(!pingsuc) DebugWarning("Failed to send ping packet");
       delay(2000);
     }
@@ -84,11 +92,40 @@ void StartPingTask()
   "PingTask", 4096, nullptr, 1, nullptr);
 }
 
+
+wl_status_t WaitForConnectionResult(int timeoutMS)
+{
+  ulong start = millis();
+
+  while(WiFi.status() != WL_CONNECTED && millis() - start < timeoutMS)
+  {
+    delay(100);
+  }
+
+  return WiFi.status();
+}
+
+void ConnectToFMSSingle(PacketClient* cli)
+{
+  DebugInfo("Connecting to FMS");
+  cli = new PacketClient();
+
+  bool cliconnected = cli->Connect(IPAddress(config->FMSIP), config->FMSPORT, 20000);
+
+  if(cliconnected)
+    DebugInfo("Connected to FMS");
+  else
+  {
+    DebugError("Failed to connect to FMS, restarting..");
+    ESP.restart();
+  }
+}
+
 void ConnectToFMS()
 {
   WiFi.begin(config->SSID, config->PW);
   DebugInfo("Connecting to WiFi");
-  wl_status_t status = (wl_status_t)WiFi.waitForConnectResult(20000);
+  wl_status_t status = WaitForConnectionResult(20000);
   if(status == WL_CONNECTED)
     DebugInfo("Connected to WiFi");
   else
@@ -98,23 +135,18 @@ void ConnectToFMS()
     return;
   }
 
-  DebugInfo("Connecting to FMS");
-  bool cliconnected = PacketClient::Connect(IPAddress(config->FMSIP), config->FMSPORT, 20000);
-  if(cliconnected)
-    DebugInfo("Connected to FMS");
-  else
-  {
-    DebugError("Failed to connect to FMS, restarting..");
-    ESP.restart();
-  }
-   
+  if(config->deviceType1 != 0)
+  ConnectToFMSSingle(Device1);
+
+  
+  if(config->deviceType2 != 0)
+  ConnectToFMSSingle(Device2);
 }
 
-int8_t authRes = -1;
-void AuthClient()
-{
 
-  PacketClient::RegisterPacket(2, sizeof(Packet_ClientIDResponse_2), (PacketClient::PacketCallback)[](uint8_t *data, size_t len)
+void AuthSingleClient(PacketClient* client, TeamColor color, DeviceType device)
+{
+  client->RegisterPacket(2, sizeof(Packet_ClientIDResponse_2), (PacketCallback)[](uint8_t *data, size_t len)
   {
     Packet_ClientIDResponse_2* packet = (Packet_ClientIDResponse_2*)data;
 
@@ -129,12 +161,12 @@ void AuthClient()
   });
 
   Packet_ClientID_1 authPacket;
-  authPacket.teamColor = config->teamColor;
-  authPacket.deviceType = config->deviceType;
+  authPacket.teamColor = color;
+  authPacket.deviceType = device;
   authPacket.SecurityKey = config->SecurityKey;
 
 
-  bool authPacketSent = PacketClient::SendPacket(1, &authPacket, sizeof(Packet_ClientID_1));
+  bool authPacketSent = client->SendPacket(1, &authPacket, sizeof(Packet_ClientID_1));
   if (!authPacketSent)
   {
     DebugError("Failed to send auth packet, restarting..");
@@ -164,6 +196,16 @@ void AuthClient()
   {
     DebugInfo("Authenticated with FMS");
   }
+}
+
+int8_t authRes = -1;
+void AuthClient()
+{
+  if(Device1 != nullptr)
+  AuthSingleClient(Device1, config->teamColor1, config->deviceType1);
+
+  if(Device2 != nullptr)
+  AuthSingleClient(Device2, config->teamColor2, config->deviceType2);
 }
 
 

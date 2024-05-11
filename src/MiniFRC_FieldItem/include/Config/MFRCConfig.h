@@ -13,14 +13,16 @@ struct Config
     uint8_t FMSIP[4];
     uint16_t FMSPORT;
 
-    TeamColor teamColor;
-    DeviceType deviceType;
+    TeamColor teamColor1;
+    DeviceType deviceType1;
+
+    TeamColor teamColor2;
+    DeviceType deviceType2;
 };
 
 
 namespace MFRCConfig
 {
-
 
     bool Initialize();
 

@@ -1,4 +1,4 @@
-#include <LittleFS.h>
+#include "LittleFS.h"
 #include "Debugger.h"
 
 #define FORMAT_LITTLEFS_IF_FAILED true
@@ -22,7 +22,7 @@ namespace DataSaving
     {
         if(FileExists(path)) return false;
 
-        LittleFS.open(path, "w", true).close();
+        LittleFS.open(path, "w").close();
 
         return true;
     }
