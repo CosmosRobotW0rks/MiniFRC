@@ -22,9 +22,6 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
         public UInt16 MatchDuration { get; private set; }
 
-        public UInt16 RemainingTime { get; private set; }
-        public byte RemainingCountdown { get; private set; }
-
         public byte MatchID { get; private set; }
 
         public byte TeamRED1 { get; private set; }
@@ -56,9 +53,6 @@ namespace MiniFRC_FMS.Modules.Game.Models
             TeamRED2 = teamRED2;
             TeamBLUE1 = teamBLUE1;
             TeamBLUE2 = teamBLUE2;
-
-            RemainingTime = matchDuration;
-            RemainingCountdown = 3;
         }
 
         public Match() { }
@@ -69,18 +63,25 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public event EventHandler? OnStart;
         public event EventHandler? OnAbort;
         public event EventHandler? OnEnd;
-        public event EventHandler<int> OnPointUpdate;
+        public event EventHandler? OnPointUpdate;
 
         private bool IsAborted { get; set; } = false;
 
+        public byte RemainingCountdown { get; private set; }
+    
+        public UInt16 RemainingTime { get; private set; }
         private async Task MatchTask()
         {
-            State = MatchState.Countdown;
-            while (State == MatchState.Countdown && RemainingCountdown > 0 && !IsAborted)
-            {
-                if (!IsAborted) OnCountdownUpdate?.Invoke(this, RemainingCountdown);
+            RemainingCountdown = 3 + 1;
+            RemainingTime = (ushort)(MatchDuration + 1);
 
+
+
+            State = MatchState.Countdown;
+            while (State == MatchState.Countdown && RemainingCountdown > 1 && !IsAborted)
+            {
                 RemainingCountdown--;
+                if (!IsAborted) OnCountdownUpdate?.Invoke(this, RemainingCountdown);
 
                 await Task.Delay(1000);
             }
@@ -88,11 +89,11 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
             State = MatchState.Running;
 
-            while (State == MatchState.Running && RemainingTime > 0 && !IsAborted)
+            while (State == MatchState.Running && RemainingTime > 1 && !IsAborted)
             {
+                RemainingTime--;
                 if (!IsAborted) OnTimeUpdate?.Invoke(this, RemainingTime);
 
-                RemainingTime--;
 
                 await Task.Delay(1000);
             }
@@ -106,8 +107,6 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public void Start()
         {
             if (State != MatchState.Loaded) return;
-            RemainingTime = MatchDuration;
-            RemainingCountdown = 3;
             Task.Run(MatchTask);
         }
 
@@ -133,6 +132,8 @@ namespace MiniFRC_FMS.Modules.Game.Models
                     BLUEPointsList.Add(point);
                     break;
             }
+
+            OnPointUpdate?.Invoke(this, null);
         }
     }
 }

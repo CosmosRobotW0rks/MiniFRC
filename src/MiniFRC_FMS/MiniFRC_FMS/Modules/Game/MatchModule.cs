@@ -43,9 +43,11 @@ namespace MiniFRC_FMS.Modules.Game
             match.OnStart += Match_OnStart;
             match.OnEnd += Match_OnEnd;
             match.OnAbort += Match_OnAbort;
+            match.OnPointUpdate += Match_OnPointUpdate;
 
             Logger.Log(LogLevel.INFO, $"Match loaded (ID: {_match.MatchID})");
         }
+
 
         public void StartMatch()
         {
@@ -89,6 +91,11 @@ namespace MiniFRC_FMS.Modules.Game
         }
 
         private void Match_OnCountdownUpdate(object? sender, byte e)
+        {
+            fmsControllerModule.AnnounceMatchState(match, State);
+        }
+
+        private void Match_OnPointUpdate(object? sender, EventArgs e)
         {
             fmsControllerModule.AnnounceMatchState(match, State);
         }

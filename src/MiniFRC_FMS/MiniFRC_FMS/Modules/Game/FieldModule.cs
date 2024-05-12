@@ -1,6 +1,6 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
 using MiniFRC_FMS.Modules.Comms.TCPPackets.FieldDevicePackets;
-using MiniFRC_FMS.Modules.Game.FieldItems;
+using MiniFRC_FMS.Modules.Game.FieldDevices;
 using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
 using PacketCommunication.Server;
@@ -18,11 +18,11 @@ namespace MiniFRC_FMS.Modules.Game
 
     internal class FieldModule : BaseModule
     {
-        [FieldDevice(nameof(REDSpeaker), DeviceType.Speaker, PointSource.Speaker, TeamColor.RED)]
+        [FieldDevice(DeviceType.Speaker, PointSource.Speaker, TeamColor.RED)]
         public Speaker? REDSpeaker { get; private set; } = null;
 
 
-        [FieldDevice(nameof(REDSpeaker), DeviceType.Speaker, PointSource.Speaker, TeamColor.BLUE)]
+        [FieldDevice(DeviceType.Speaker, PointSource.Speaker, TeamColor.BLUE)]
         public Speaker? BLUESpeaker { get; private set; } = null;
 
 
@@ -30,14 +30,54 @@ namespace MiniFRC_FMS.Modules.Game
         protected override bool Init()
         {
             GetModule<TCPServerModule>()?.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
+
+            Task.Run(UpdateFMSControlersWithFieldDataAsync);
             return true;
+        }
+
+        private async Task UpdateFMSControlersWithFieldDataAsync()
+        {
+            FMSControllerAppModule fmsControllerModule = GetModule<FMSControllerAppModule>();
+            while (true)
+            {
+                try
+                {
+
+                    fmsControllerModule.AnnounceDeviceStates(GetDevicesInfo());
+                    await Task.Delay(1000);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(LogLevel.ERROR, $"An error occured while updating FMS Controllers with field device data (Ex: {ex.Message})");
+                }
+            }
+        }
+
+
+        public Dictionary<(DeviceType, TeamColor), DateTime> GetDevicesInfo()
+        {
+            Dictionary<(DeviceType, TeamColor), DateTime> dict = new();
+
+            PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null && x.PropertyType.IsSubclassOf(typeof(BaseFieldDevice))).ToArray();
+
+            foreach (PropertyInfo info in props)
+            {
+                var attr = info.GetCustomAttribute<FieldDeviceAttribute>();
+                BaseFieldDevice? device = (BaseFieldDevice?)info.GetValue(this);
+
+                DateTime lastPing = device?.LastPing ?? DateTime.MinValue;
+
+                dict.Add((attr.deviceType, attr.teamColor), lastPing);
+            }
+
+            return dict;
         }
 
         void HandlePingExpire(object? sender, BaseFieldDevice fieldDevice)
         {
-            Logger.Log(LogLevel.WARNING, $"Potential disconnection from \"{fieldDevice.Nickname}\"");
+            Logger.Log(LogLevel.WARNING, $"Potential disconnection from \"{fieldDevice.Name}\"");
         }
-        
+
         async void HandleClientIdentification(Client client, ClientIDPacket packet)
         {
             try
@@ -50,70 +90,48 @@ namespace MiniFRC_FMS.Modules.Game
 
                 await client.SendPacketAsync(new ClientIDResponsePacket(true));
 
-                PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null).ToArray();
+                PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null & x.PropertyType.IsSubclassOf(typeof(BaseFieldDevice))).ToArray();
                 foreach (PropertyInfo info in props)
                 {
                     var attr = info.GetCustomAttribute<FieldDeviceAttribute>();
                     if (attr.deviceType != packet.DeviceType || attr.teamColor != packet.TeamColor) continue;
 
-                    object? obj = Activator.CreateInstance(info.PropertyType, client, attr.Nickname);
+                    object? obj = Activator.CreateInstance(info.PropertyType);
                     if (obj == null)
                     {
-                        Logger.Log(LogLevel.WARNING, "Failed to create instance of field item");
+                        Logger.Log(LogLevel.WARNING, "Failed to create instance of field device");
                         return;
                     }
                     BaseFieldDevice fieldDevice = (BaseFieldDevice)obj;
+                    fieldDevice.Initialize(client, attr.deviceType, attr.pointSource, attr.teamColor);
+                    fieldDevice.OnPingExpire += HandlePingExpire;
 
                     info.SetValue(this, obj);
-                    Logger.Log($"Field Item Connected ({fieldDevice.Nickname})");
+                    Logger.Log($"Field Device Connected ({fieldDevice.Name}) [{fieldDevice.TCPClient.GetHashCode()}]");
 
                     return;
                 }
+
 
                 Logger.Log(LogLevel.WARNING, $"Couldn't find the property for the device {packet.DeviceType} (Team: {packet.TeamColor})");
             }
             catch (Exception ex)
             {
-                Logger.Log(LogLevel.ERROR, $"An error occured while creating field item (Ex: {ex.Message})");
+                Logger.Log(LogLevel.ERROR, $"An error occured while creating field device (Ex: {ex.Message})");
             }
-            
-            /*
-            switch (packet.DeviceType)
-            {
-
-                case Models.DeviceType.Speaker:
-                    if (packet.TeamColor == TeamColor.RED)
-                    {
-                        REDSpeaker = new Speaker(client, "REDSpeaker");
-                        REDSpeaker.ScoreCB = () => OnSpeakerScore?.Invoke(null, TeamColor.RED);
-                        REDSpeaker.OnPingExpire += HandlePingExpire;
-                        Logger.Log("FIELD: RED Speaker Connected");
-                    }
-                    else if (packet.TeamColor == TeamColor.BLUE)
-                    {
-                        BLUESpeaker = new Speaker(client, "BLUE Speaker");
-                        BLUESpeaker.ScoreCB = () => OnSpeakerScore?.Invoke(null, TeamColor.BLUE);
-                        Logger.Log("FIELD: BLUE Speaker Connected");
-                    }
-                break;
-            }
-
-            */
         }
     }
 
 
     internal class FieldDeviceAttribute : Attribute
     {
-        public string Nickname { get; private set; }
         public DeviceType deviceType { get; private set; }
         public TeamColor teamColor { get; private set; }
 
         public PointSource pointSource { get; private set; }
 
-        public FieldDeviceAttribute(string nickname, DeviceType _deviceType, PointSource _pointSource, TeamColor _team)
+        public FieldDeviceAttribute(DeviceType _deviceType, PointSource _pointSource, TeamColor _team)
         {
-            Nickname = nickname;
             deviceType = _deviceType;
             teamColor = _team;
             pointSource = _pointSource;
