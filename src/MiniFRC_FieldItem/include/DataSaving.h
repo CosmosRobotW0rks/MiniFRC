@@ -39,13 +39,6 @@ namespace DataSaving
     {
         DebugInfo("Write Data: ");
 
-        for(int i = 0; i<len; i++)
-        {
-            Serial.print((int)data[i]);
-            Serial.print(' ');
-        }
-        Serial.print('\n');
-
         if(!FileExists(path))
         {
             if(!createFileIfDoesntExist || !CreateFile(path)) return -1;
@@ -83,13 +76,6 @@ namespace DataSaving
 
         
         DebugInfo("Read Data: ");
-
-        for(int i = 0; i<len; i++)
-        {
-            Serial.print((int)data[i]);
-            Serial.print(' ');
-        }
-        Serial.print('\n');
 
         return res;
     }

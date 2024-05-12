@@ -4,6 +4,9 @@
 
 bool PacketClient::Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS)
 {
+    Serial.println(IP.toString());
+    Serial.println(port);
+
     if (client == nullptr)
     {
         client = new AsyncClient();
@@ -15,11 +18,18 @@ bool PacketClient::Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS)
 
     if (client->connected())
         client->stop();
+    
     client->connect(IP, port);
-    while (!client->connected() || timeoutMS <= 0)
+    Serial.println("Sent cli connect");
+
+    uint64_t start = millis();
+
+    delay(100);
+
+
+    while (!client->connected() || millis() - start < timeoutMS)
     {
         delay(100);
-        timeoutMS -= 100;
     }
 
     return client->connected();

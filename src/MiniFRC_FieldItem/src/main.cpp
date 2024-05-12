@@ -53,8 +53,13 @@ void setup()
   Serial.begin(115200);
 
   InitConfig();
-  DebugInfoF("Config loaded\nSSID: %s\nPassword: %s\nSecurity Key: %d\nFMS IP: %d.%d.%d.%d\nTeam Color1: %d\nDevice Type1: %d\nTeam Color2: %d\nDevice Type2: %d\n\n", config->NETSSID, config->NETPW, config->SecurityKey, config->FMSIP[0], config->FMSIP[1], config->FMSIP[2], config->FMSIP[3], config->teamColor1, config->deviceType1,config->teamColor2, config->deviceType2);
+  
 
+  DebugInfoF("MAIN CONFIG IP: %d.%d.%d.%d\n", config->FMSIP[0], config->FMSIP[1], config->FMSIP[2], config->FMSIP[3]);
+  DebugInfoF("MAIN CONFIG PORT: %d\n", config->FMSPORT);
+  DebugInfoF("MAIN CONFIG TEAM COLORS: %d, %d\n", config->teamColor1, config->teamColor2);
+  DebugInfoF("MAIN CONFIG DEVICE IDS: %d, %d\n\n", config->deviceType1, config->deviceType2);
+  
   LoadFieldDevicesByConfig();
 
   ConnectToFMS();
@@ -67,7 +72,8 @@ void setup()
 
 void loop()
 {
-  
+  if(Device1Exists) Device1->Periodic();
+  if(Device2Exists) Device2->Periodic();
 }
 
 
@@ -89,6 +95,8 @@ void InitConfig()
   }
 }
 
+
+int pingFailCount = 0;
 void StartPingTask()
 {
   DebugInfo("STARTING DA PING TASK");
@@ -102,8 +110,19 @@ void StartPingTask()
       bool device2Suc = !Device2Exists ? true : Device2Client->SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
 
       bool pingsuc = device1Suc && device2Suc;
-      if(!pingsuc) DebugWarning("Failed to send ping packet");
-      delay(2000);
+      if(!pingsuc)
+      {
+        pingFailCount++;
+        DebugWarningF("Failed to send ping packet (%d)", pingFailCount);
+
+        if(pingFailCount == 10)
+        {
+          DebugError("Failed to send ping packet 10 times, restarting..");
+          ESP.restart();
+        }
+      }
+      else pingFailCount = 0;
+      delay(1000);
     }
   },
   "PingTask", 4096, nullptr, 1, nullptr);
@@ -128,7 +147,7 @@ void ConnectToFMSSingle(PacketClient* cli)
 {
   DebugInfo("Connecting to FMS");
 
-  bool cliconnected = cli->Connect(IPAddress(config->FMSIP), config->FMSPORT, 20000);
+  bool cliconnected = cli->Connect(IPAddress(config->FMSIP), config->FMSPORT, 5000);
 
   if(cliconnected)
     DebugInfo("Connected to FMS");

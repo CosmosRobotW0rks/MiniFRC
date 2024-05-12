@@ -34,4 +34,5 @@ public:
     ~BaseFieldDevice(){}
 
     virtual bool Initialize() = 0;
+    virtual void Periodic() = 0;
 };
