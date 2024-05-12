@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MiniFRC_ControlApp.Comms
 {
+
+    #region AUTH
     internal struct FMSControllerAuthPacket : IBasePacket
     {
         public byte ID => 5;
@@ -26,7 +29,9 @@ namespace MiniFRC_ControlApp.Comms
         }
         public FMSControllerAuthResponsePacket() { }
     }
+    #endregion
 
+    #region MATCH CONTROL
     internal struct FMSControllerLoadMatchPacket : IBasePacket
     {
         public byte ID => 7;
@@ -101,7 +106,6 @@ namespace MiniFRC_ControlApp.Comms
         public FMSControllerStartStopMatchResponsePacket() { }
     }
 
-
     internal struct FMSControllerMatchStateUpdatedPacket : IBasePacket
     {
         public byte ID => 11;
@@ -135,7 +139,9 @@ namespace MiniFRC_ControlApp.Comms
             Running
         }
     }
+    #endregion
 
+    #region AUDIENCE DISPLAY
     // AuDis = Audience Display
 
     internal struct FMSControllerAuDisPageUpdatedPacket : IBasePacket
@@ -144,5 +150,52 @@ namespace MiniFRC_ControlApp.Comms
 
         // TODO: Add Page Data
     }
+    #endregion
 
+    #region DEVICE INFO    
+    internal struct FMSControllerDeviceLastseenUpdatedPacket : IBasePacket
+    {
+        public byte ID => 13;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+        public byte[] deviceIDs = new byte[100];
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+        public long[] deviceLastSeens = new long[100];
+
+        public byte devicesLength = 0;
+
+        public FMSControllerDeviceLastseenUpdatedPacket(Dictionary<(DeviceType, TeamColor), DateTime> _deviceIds)
+        {
+            deviceIDs = new byte[100];
+            deviceLastSeens = new long[100];
+
+
+            for (int i = 0; i < _deviceIds.Count; i++)
+            {
+                var deviceId = _deviceIds.ElementAt(i).Key;
+                deviceIDs[i] = (byte)((byte)deviceId.Item1 | ((byte)deviceId.Item2 << 6));
+                deviceLastSeens[i] = _deviceIds.ElementAt(i).Value.Ticks;
+            }
+
+            devicesLength = (byte)_deviceIds.Count;
+        }
+        public FMSControllerDeviceLastseenUpdatedPacket() { }
+
+        public Dictionary<(DeviceType, TeamColor), DateTime> GetDevices()
+        {
+            Dictionary<(DeviceType, TeamColor), DateTime> devices = new Dictionary<(DeviceType, TeamColor), DateTime>();
+
+            for (int i = 0; i < devicesLength; i++)
+            {
+                DeviceType deviceType = (DeviceType)(deviceIDs[i] & 0b00111111);
+                TeamColor teamColor = (TeamColor)((deviceIDs[i] & 0b11000000) >> 6);
+
+                devices.Add((deviceType, teamColor), new DateTime(deviceLastSeens[i]));
+            }
+
+            return devices;
+        }
+    }
+    #endregion
 }

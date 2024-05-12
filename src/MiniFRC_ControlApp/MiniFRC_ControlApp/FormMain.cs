@@ -10,6 +10,34 @@ namespace MiniFRC_ControlApp
             InitializeComponent();
         }
 
+        void DisplayDeviceLastSeen(FMSControllerDeviceLastseenUpdatedPacket packet)
+        {
+            var devices = packet.GetDevices();
+            Font boxFont = richTextBoxDevicesLastSeen.Font;
+
+            DateTime now = DateTime.Now;
+
+            richTextBoxDevicesLastSeen.Clear();
+            foreach (var kvp in devices)
+            {
+                int diffSecs = (int)(kvp.Value - now).TotalSeconds;
+
+                richTextBoxDevicesLastSeen.AppendText($"{kvp.Key.Item2} {kvp.Key.Item1}: ", Color.Black, new Font(boxFont, FontStyle.Bold));
+
+                string text = $"[{kvp.Value.ToLongTimeString()}]{(kvp.Value == DateTime.MinValue ? "" : $"({diffSecs})")}\n";
+                TimeSpan diff = now - kvp.Value;
+                if (diff < TimeSpan.FromSeconds(5)) richTextBoxDevicesLastSeen.AppendText(text, Color.Green, new Font(boxFont, FontStyle.Italic | FontStyle.Bold));
+                else if (diff < TimeSpan.FromSeconds(10)) richTextBoxDevicesLastSeen.AppendText(text, Color.DarkOrange, new Font(boxFont, FontStyle.Italic | FontStyle.Bold | FontStyle.Underline));
+                else richTextBoxDevicesLastSeen.AppendText(text, Color.Red, new Font(boxFont, FontStyle.Italic | FontStyle.Bold | FontStyle.Strikeout));
+            }
+        }
+
+        void AttachPacketCallbacks()
+        {
+            ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(HandleMatchUpdate);
+            ServerCommunication.AttachPacketCB<FMSControllerDeviceLastseenUpdatedPacket>(DisplayDeviceLastSeen);
+        }
+
         private void buttonConnect_Click(object sender, EventArgs e)
         {
             try
@@ -55,10 +83,7 @@ namespace MiniFRC_ControlApp
 
         }
 
-        void AttachPacketCallbacks()
-        {
-            ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(HandleMatchUpdate);
-        }
+
 
         void HandleMatchUpdate(FMSControllerMatchStateUpdatedPacket p)
         {
@@ -77,7 +102,7 @@ namespace MiniFRC_ControlApp
                     break;
             }
 
-            labelMatchInfo.Text =
+            labelMatchInfo.Text = p.ID_RED1 == 0 && p.ID_RED2 == 0 && p.ID_BLUE1 == 0 && p.ID_BLUE2 == 0 ? "" :
                 $"Match Type: {p.matchType}\n" +
                 $"TR1: {p.ID_RED1}\n" +
                 $"TR2: {p.ID_RED2}\n" +
@@ -90,6 +115,8 @@ namespace MiniFRC_ControlApp
             labelBluePoints.Text = p.BLUEPoints.ToString();
 
         }
+
+
         private void FormMain_Load(object sender, EventArgs e)
         {
 
@@ -141,7 +168,7 @@ namespace MiniFRC_ControlApp
                     switch (status)
                     {
                         case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.Success:
-                            MessageBox.Show("Match loaded successfully");
+                            //MessageBox.Show("Match loaded successfully");
                             break;
                         case FMSControllerLoadMatchResponsePacket.MatchLoadStatus.IncorrectTeamIDs:
                             MessageBox.Show("Incorrect Team ID/s");
@@ -227,6 +254,7 @@ namespace MiniFRC_ControlApp
                         MessageBox.Show("Failed to abort the match");
                         return;
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -239,5 +267,13 @@ namespace MiniFRC_ControlApp
             });
         }
 
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Environment.Exit(0);
+        }
     }
+
+
+
+
 }
