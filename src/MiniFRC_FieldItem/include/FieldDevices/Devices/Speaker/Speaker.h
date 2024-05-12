@@ -2,9 +2,9 @@
 #include <Arduino.h>
 #include "PacketClient.h"
 #include "Debugger.h"
-#include "FieldItems/BaseFieldItem.h"
+#include "FieldDevices/BaseFieldDevice.h"
 
-class FieldItem_Speaker : public BaseFieldItem
+class FieldDevice_Speaker : public BaseFieldDevice
 {
     public:
     bool Initialize()

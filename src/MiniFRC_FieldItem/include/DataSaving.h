@@ -1,4 +1,5 @@
-#include "LittleFS.h"
+#include "FS.h"
+#include <LittleFS.h>
 #include "Debugger.h"
 
 #define FORMAT_LITTLEFS_IF_FAILED true
@@ -27,8 +28,24 @@ namespace DataSaving
         return true;
     }
 
+    bool DeleteFile(const char* path)
+    {
+        if(!FileExists(path)) return false;
+
+        return LittleFS.remove(path);
+    }
+
     size_t WriteData(const char* path, const uint8_t* data, const size_t len, bool createFileIfDoesntExist = true)
     {
+        DebugInfo("Write Data: ");
+
+        for(int i = 0; i<len; i++)
+        {
+            Serial.print((int)data[i]);
+            Serial.print(' ');
+        }
+        Serial.print('\n');
+
         if(!FileExists(path))
         {
             if(!createFileIfDoesntExist || !CreateFile(path)) return -1;
@@ -63,6 +80,16 @@ namespace DataSaving
         size_t res = file.read(data, len);
 
         file.close();
+
+        
+        DebugInfo("Read Data: ");
+
+        for(int i = 0; i<len; i++)
+        {
+            Serial.print((int)data[i]);
+            Serial.print(' ');
+        }
+        Serial.print('\n');
 
         return res;
     }
