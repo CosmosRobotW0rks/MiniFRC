@@ -28,9 +28,21 @@ namespace MiniFRC_FMS.Modules.Comms
             server.ServerErrored += Server_ServerErrored;
             server.ClientConnected += (s, e) => ClientConnected?.Invoke(s, e);
             server.ClientDisconnected += (s, e) => ClientDisconnected?.Invoke(s, e);
+            server.ClientConnected += Server_ClientConnected;
+            server.ClientDisconnected += Server_ClientDisconnected;
 
             Logger.Log($"Loaded {packetCount} TCP packets", LogLevel.DEBUG);
             return true;
+        }
+
+        private void Server_ClientDisconnected(object? sender, Client e)
+        {
+            Logger.Log($"Client Disconnected ({e.GetHashCode()})", LogLevel.DEBUG);
+        }
+
+        private void Server_ClientConnected(object? sender, Client e)
+        {
+            Logger.Log($"Client Connected ({e.GetHashCode()})", LogLevel.DEBUG);
         }
 
         public void AttachPacketCallback<T>(Action<Client, T> callback, Client? cli = null) where T : IBasePacket

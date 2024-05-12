@@ -1,6 +1,7 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
 using MiniFRC_FMS.Modules.Comms.TCPPackets;
 using MiniFRC_FMS.Modules.DataSaving;
+using MiniFRC_FMS.Modules.Game.FieldDevices;
 using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
 using PacketCommunication.Server;
@@ -46,6 +47,27 @@ namespace MiniFRC_FMS.Modules.Game
             }
         }
 
+        async void HandleFMSControllerAuth(Client client, FMSControllerAuthPacket packet)
+        {
+            if (packet.SecurityKey != Config.SecurityKey)
+            {
+                await client.SendPacketAsync(new FMSControllerAuthResponsePacket(false));
+                return;
+            }
+
+            await client.SendPacketAsync(new FMSControllerAuthResponsePacket(true));
+            FMSControllerAppClients.Add(client);
+
+            Logger.Log("FMS Controller App Connected");
+            var matchModule = GetModule<MatchModule>();
+            var fieldModule = GetModule<FieldModule>();
+
+
+            await Task.Delay(100);
+            AnnounceMatchState(matchModule.match, matchModule.State, client);
+
+        }
+
         async void HandleMatchLoad(Client client, FMSControllerLoadMatchPacket packet)
         {
             if (!FMSControllerAppClients.Contains(client)) return;
@@ -87,23 +109,6 @@ namespace MiniFRC_FMS.Modules.Game
             else OnMatchAbort?.Invoke(this, null);
         }
 
-        async void HandleFMSControllerAuth(Client client, FMSControllerAuthPacket packet)
-        {
-            if (packet.SecurityKey != Config.SecurityKey)
-            {
-                await client.SendPacketAsync(new FMSControllerAuthResponsePacket(false));
-                return;
-            }
-
-            await client.SendPacketAsync(new FMSControllerAuthResponsePacket(true));
-            FMSControllerAppClients.Add(client);
-
-            Logger.Log("FMS Controller App Connected");
-            var matchModule = GetModule<MatchModule>();
-
-            await Task.Delay(100);
-            AnnounceMatchState(matchModule.match, matchModule.State, client);
-        }
 
         public void AnnounceMatchState(Match? match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
         {
@@ -126,6 +131,20 @@ namespace MiniFRC_FMS.Modules.Game
                 BLUEPoints = match?.BLUEPoints ?? 0
 
             };
+
+            if (singleClient == null)
+            {
+                Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+            }
+            else singleClient.SendPacketAsync(packet).Wait();
+        }
+
+        public void AnnounceDeviceStates(Dictionary<(DeviceType, TeamColor), DateTime> dict, Client singleClient = null)
+        {
+
+            FMSControllerDeviceLastseenUpdatedPacket packet = new FMSControllerDeviceLastseenUpdatedPacket(dict);
+
+
 
             if (singleClient == null)
             {

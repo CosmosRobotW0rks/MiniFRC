@@ -1,3 +1,4 @@
+#include "FS.h"
 #include <LittleFS.h>
 #include "Debugger.h"
 
@@ -22,13 +23,22 @@ namespace DataSaving
     {
         if(FileExists(path)) return false;
 
-        LittleFS.open(path, "w", true).close();
+        LittleFS.open(path, "w").close();
 
         return true;
     }
 
+    bool DeleteFile(const char* path)
+    {
+        if(!FileExists(path)) return false;
+
+        return LittleFS.remove(path);
+    }
+
     size_t WriteData(const char* path, const uint8_t* data, const size_t len, bool createFileIfDoesntExist = true)
     {
+        DebugInfo("Write Data: ");
+
         if(!FileExists(path))
         {
             if(!createFileIfDoesntExist || !CreateFile(path)) return -1;
@@ -63,6 +73,9 @@ namespace DataSaving
         size_t res = file.read(data, len);
 
         file.close();
+
+        
+        DebugInfo("Read Data: ");
 
         return res;
     }

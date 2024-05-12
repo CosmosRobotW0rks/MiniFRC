@@ -34,6 +34,8 @@
             buttonConnect = new Button();
             groupBoxLogin = new GroupBox();
             groupBox2 = new GroupBox();
+            labelBluePoints = new Label();
+            labelRedPoints = new Label();
             labelMatchInfo = new Label();
             labelMatchTime = new Label();
             labelMatchState = new Label();
@@ -59,8 +61,7 @@
             buttonMatchStart = new Button();
             label8 = new Label();
             label3 = new Label();
-            labelRedPoints = new Label();
-            labelBluePoints = new Label();
+            richTextBoxDevicesLastSeen = new RichTextBox();
             groupBoxLogin.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam2).BeginInit();
@@ -125,7 +126,7 @@
             groupBoxLogin.Controls.Add(textBoxSecuityKey);
             groupBoxLogin.Location = new Point(12, 12);
             groupBoxLogin.Name = "groupBoxLogin";
-            groupBoxLogin.Size = new Size(271, 115);
+            groupBoxLogin.Size = new Size(486, 115);
             groupBoxLogin.TabIndex = 5;
             groupBoxLogin.TabStop = false;
             groupBoxLogin.Text = "Login";
@@ -160,12 +161,34 @@
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(label3);
             groupBox2.Enabled = false;
-            groupBox2.Location = new Point(289, 21);
+            groupBox2.Location = new Point(504, 12);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(397, 604);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Match Operations";
+            // 
+            // labelBluePoints
+            // 
+            labelBluePoints.Font = new Font("Segoe UI", 30F, FontStyle.Bold);
+            labelBluePoints.ForeColor = Color.Blue;
+            labelBluePoints.Location = new Point(202, 348);
+            labelBluePoints.Name = "labelBluePoints";
+            labelBluePoints.Size = new Size(120, 52);
+            labelBluePoints.TabIndex = 31;
+            labelBluePoints.Text = "0";
+            labelBluePoints.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labelRedPoints
+            // 
+            labelRedPoints.Font = new Font("Segoe UI", 30F, FontStyle.Bold);
+            labelRedPoints.ForeColor = Color.Red;
+            labelRedPoints.Location = new Point(75, 348);
+            labelRedPoints.Name = "labelRedPoints";
+            labelRedPoints.Size = new Size(120, 52);
+            labelRedPoints.TabIndex = 7;
+            labelRedPoints.Text = "0";
+            labelRedPoints.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // labelMatchInfo
             // 
@@ -174,7 +197,6 @@
             labelMatchInfo.Name = "labelMatchInfo";
             labelMatchInfo.Size = new Size(382, 183);
             labelMatchInfo.TabIndex = 30;
-            labelMatchInfo.Text = "1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7";
             // 
             // labelMatchTime
             // 
@@ -413,37 +435,28 @@
             label3.Text = "Red Allience";
             label3.TextAlign = ContentAlignment.BottomCenter;
             // 
-            // labelRedPoints
+            // richTextBoxDevicesLastSeen
             // 
-            labelRedPoints.Font = new Font("Segoe UI", 30F, FontStyle.Bold);
-            labelRedPoints.ForeColor = Color.Red;
-            labelRedPoints.Location = new Point(75, 348);
-            labelRedPoints.Name = "labelRedPoints";
-            labelRedPoints.Size = new Size(120, 52);
-            labelRedPoints.TabIndex = 7;
-            labelRedPoints.Text = "0";
-            labelRedPoints.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // labelBluePoints
-            // 
-            labelBluePoints.Font = new Font("Segoe UI", 30F, FontStyle.Bold);
-            labelBluePoints.ForeColor = Color.Blue;
-            labelBluePoints.Location = new Point(202, 348);
-            labelBluePoints.Name = "labelBluePoints";
-            labelBluePoints.Size = new Size(120, 52);
-            labelBluePoints.TabIndex = 31;
-            labelBluePoints.Text = "0";
-            labelBluePoints.TextAlign = ContentAlignment.MiddleCenter;
+            richTextBoxDevicesLastSeen.BorderStyle = BorderStyle.None;
+            richTextBoxDevicesLastSeen.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            richTextBoxDevicesLastSeen.Location = new Point(12, 133);
+            richTextBoxDevicesLastSeen.Name = "richTextBoxDevicesLastSeen";
+            richTextBoxDevicesLastSeen.ReadOnly = true;
+            richTextBoxDevicesLastSeen.Size = new Size(486, 489);
+            richTextBoxDevicesLastSeen.TabIndex = 7;
+            richTextBoxDevicesLastSeen.Text = "";
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(756, 637);
+            ClientSize = new Size(1116, 637);
+            Controls.Add(richTextBoxDevicesLastSeen);
             Controls.Add(groupBox2);
             Controls.Add(groupBoxLogin);
             Name = "FormMain";
             Text = "Form1";
+            FormClosing += FormMain_FormClosing;
             Load += FormMain_Load;
             groupBoxLogin.ResumeLayout(false);
             groupBoxLogin.PerformLayout();
@@ -494,5 +507,6 @@
         private Label labelMatchInfo;
         private Label labelRedPoints;
         private Label labelBluePoints;
+        private RichTextBox richTextBoxDevicesLastSeen;
     }
 }

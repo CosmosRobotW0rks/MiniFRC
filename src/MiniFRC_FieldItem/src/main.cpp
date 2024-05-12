@@ -3,50 +3,77 @@
 #include "Config/MFRCConfig.h"
 #include "Debugger.h"
 
-// FIELD ITEM INCLUDES
-#include "FieldItems/FieldItemID.h"
-#include "FieldItems/Packets.h"
+// FIELD Device INCLUDES
+#include "FieldDevices/BaseFieldDevice.h"
+#include "FieldDevices/Packets.h"
 
-#include "FieldItems/Devices/Speaker/Speaker.h"
+#include "FieldDevices/Devices/Speaker/Speaker.h"
+
 
 Config *config;
 void InitConfig();
 
-FieldItemInitialize fieldItemInit = nullptr;
-FieldItemPeriodic fieldItemPeriodic = nullptr;
-void LoadFieldItemByConfig();
+void LoadFieldDevicesByConfig();
 
 void ConnectToFMS();
-void AuthClient();
+void AuthClients();
 void StartPingTask();
+void InitDevices();
+
+
+PacketClient* Device1Client = nullptr;
+PacketClient* Device2Client = nullptr;
+
+BaseFieldDevice* Device1 = nullptr;
+BaseFieldDevice* Device2 = nullptr;
+
+bool Device1Exists = false;
+bool Device2Exists = false;
+
+
+BaseFieldDevice* GetFieldDeviceByDeviceType(DeviceType t)
+{
+  switch (t)
+  {
+    case DeviceType::Speaker: return new FieldDevice_Speaker();
+  
+  default:
+  DebugWarningF("Unknown device type %d", t);
+    break;
+  }
+
+  return nullptr;
+}
+
+
 
 void setup()
 {
+
   Serial.begin(115200);
 
   InitConfig();
-  DebugInfoF("Config loaded\nSSID: %s\nPassword: %s\nSecurity Key: %d\nFMS IP: %d.%d.%d.%d\nTeam Color: %d\nDevice Type: %d\n\n", config->SSID, config->PW, config->SecurityKey, config->FMSIP[0], config->FMSIP[1], config->FMSIP[2], config->FMSIP[3], config->teamColor, config->deviceType);
+  
 
-  LoadFieldItemByConfig();
-  DebugInfo("Loaded the field item");
+  DebugInfoF("MAIN CONFIG IP: %d.%d.%d.%d\n", config->FMSIP[0], config->FMSIP[1], config->FMSIP[2], config->FMSIP[3]);
+  DebugInfoF("MAIN CONFIG PORT: %d\n", config->FMSPORT);
+  DebugInfoF("MAIN CONFIG TEAM COLORS: %d, %d\n", config->teamColor1, config->teamColor2);
+  DebugInfoF("MAIN CONFIG DEVICE IDS: %d, %d\n\n", config->deviceType1, config->deviceType2);
+  
+  LoadFieldDevicesByConfig();
 
   ConnectToFMS();
-  AuthClient();
+  AuthClients();
 
   StartPingTask();
 
-  bool initres = fieldItemInit();
-  if (!initres)
-  {
-    DebugError("Failed to initialize field item, restarting..");
-    ESP.restart();
-    return;
-  }
+  InitDevices();
 }
 
 void loop()
 {
-  fieldItemPeriodic();
+  if(Device1Exists) Device1->Periodic();
+  if(Device2Exists) Device2->Periodic();
 }
 
 
@@ -68,27 +95,74 @@ void InitConfig()
   }
 }
 
+
+int pingFailCount = 0;
 void StartPingTask()
 {
+  DebugInfo("STARTING DA PING TASK");
   xTaskCreate([](void *pvParameters)
   {
     Packet_Ping_0 pingPacket;
 
     while (true)
     {
-      bool pingsuc = PacketClient::SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
-      if(!pingsuc) DebugWarning("Failed to send ping packet");
-      delay(2000);
+      bool device1Suc = !Device1Exists ? true : Device1Client->SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
+      bool device2Suc = !Device2Exists ? true : Device2Client->SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
+
+      bool pingsuc = device1Suc && device2Suc;
+      if(!pingsuc)
+      {
+        pingFailCount++;
+        DebugWarningF("Failed to send ping packet (%d)", pingFailCount);
+
+        if(pingFailCount == 10)
+        {
+          DebugError("Failed to send ping packet 10 times, restarting..");
+          ESP.restart();
+        }
+      }
+      else pingFailCount = 0;
+      delay(1000);
     }
   },
   "PingTask", 4096, nullptr, 1, nullptr);
+  
+  DebugInfo("STARTED DA PING TASK");
+}
+
+
+wl_status_t WaitForConnectionResult(int timeoutMS)
+{
+  ulong start = millis();
+
+  while(WiFi.status() != WL_CONNECTED && millis() - start < timeoutMS)
+  {
+    delay(100);
+  }
+
+  return WiFi.status();
+}
+
+void ConnectToFMSSingle(PacketClient* cli)
+{
+  DebugInfo("Connecting to FMS");
+
+  bool cliconnected = cli->Connect(IPAddress(config->FMSIP), config->FMSPORT, 5000);
+
+  if(cliconnected)
+    DebugInfo("Connected to FMS");
+  else
+  {
+    DebugError("Failed to connect to FMS, restarting..");
+    ESP.restart();
+  }
 }
 
 void ConnectToFMS()
 {
-  WiFi.begin(config->SSID, config->PW);
+  WiFi.begin(config->NETSSID, config->NETPW);
   DebugInfo("Connecting to WiFi");
-  wl_status_t status = (wl_status_t)WiFi.waitForConnectResult(20000);
+  wl_status_t status = WaitForConnectionResult(20000);
   if(status == WL_CONNECTED)
     DebugInfo("Connected to WiFi");
   else
@@ -98,23 +172,24 @@ void ConnectToFMS()
     return;
   }
 
-  DebugInfo("Connecting to FMS");
-  bool cliconnected = PacketClient::Connect(IPAddress(config->FMSIP), config->FMSPORT, 20000);
-  if(cliconnected)
-    DebugInfo("Connected to FMS");
-  else
+  if(Device1Exists)
   {
-    DebugError("Failed to connect to FMS, restarting..");
-    ESP.restart();
+    Device1Client = new PacketClient();
+    ConnectToFMSSingle(Device1Client);
   }
-   
+
+  
+  if(Device2Exists)
+  {
+    Device2Client = new PacketClient();
+    ConnectToFMSSingle(Device2Client);
+  }
 }
 
 int8_t authRes = -1;
-void AuthClient()
+void AuthSingleClient(PacketClient* client, TeamColor color, DeviceType device)
 {
-
-  PacketClient::RegisterPacket(2, sizeof(Packet_ClientIDResponse_2), (PacketClient::PacketCallback)[](uint8_t *data, size_t len)
+  client->RegisterPacket(2, sizeof(Packet_ClientIDResponse_2), (PacketCallback)[](uint8_t *data, size_t len)
   {
     Packet_ClientIDResponse_2* packet = (Packet_ClientIDResponse_2*)data;
 
@@ -129,12 +204,12 @@ void AuthClient()
   });
 
   Packet_ClientID_1 authPacket;
-  authPacket.teamColor = config->teamColor;
-  authPacket.deviceType = config->deviceType;
+  authPacket.teamColor = color;
+  authPacket.deviceType = device;
   authPacket.SecurityKey = config->SecurityKey;
 
 
-  bool authPacketSent = PacketClient::SendPacket(1, &authPacket, sizeof(Packet_ClientID_1));
+  bool authPacketSent = client->SendPacket(1, &authPacket, sizeof(Packet_ClientID_1));
   if (!authPacketSent)
   {
     DebugError("Failed to send auth packet, restarting..");
@@ -166,26 +241,42 @@ void AuthClient()
   }
 }
 
-
-void LoadFieldItemByConfig()
+void AuthClients()
 {
-  switch (config->deviceType)
-  {
-  case DeviceType::Speaker:
-    fieldItemInit = FieldItem_Speaker::Initialize;
-    fieldItemPeriodic = FieldItem_Speaker::Periodic;
-    break;
+  if(Device1Exists)
+  AuthSingleClient(Device1Client, config->teamColor1, config->deviceType1);
 
-  default:
-    DebugError("Invalid device type, restarting..");
-    ESP.restart();
-    break;
+  if(Device2Exists)
+  AuthSingleClient(Device2Client, config->teamColor2, config->deviceType2);
+}
+
+
+void LoadFieldDevicesByConfig()
+{
+   Device1Exists = config->deviceType1 != DeviceType::NONE;
+   Device2Exists = config->deviceType2 != DeviceType::NONE;
+
+   if(Device1Exists) Device1 = GetFieldDeviceByDeviceType(config->deviceType1);
+   if(Device2Exists) Device2 = GetFieldDeviceByDeviceType(config->deviceType2);
+
+   DebugInfo("Loaded field devices");
+}
+
+void InitDevices()
+{
+  if(Device1Exists)
+  {
+    Device1->deviceType = config->deviceType1;
+    Device1->teamColor = config->teamColor1;
+    Device1->Client = Device1Client;
+    Device1->Initialize();
   }
-
-  if (fieldItemInit == nullptr || fieldItemPeriodic == nullptr)
+  if(Device2Exists)
   {
-    DebugError("Failed to load field item, restarting..");
-    ESP.restart();
-    return;
+    
+    Device2->deviceType = config->deviceType2;
+    Device2->teamColor = config->teamColor2;
+    Device2->Client = Device2Client;
+    Device2->Initialize();
   }
 }
