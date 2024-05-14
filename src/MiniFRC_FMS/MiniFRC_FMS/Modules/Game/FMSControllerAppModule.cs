@@ -112,45 +112,53 @@ namespace MiniFRC_FMS.Modules.Game
 
         public void AnnounceMatchState(Match? match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
         {
-            var packet = new FMSControllerMatchStateUpdatedPacket()
+            try
             {
-                matchState = state,
-                ID_RED1 = match?.TeamRED1 ?? 0,
-                ID_RED2 = match?.TeamRED2 ?? 0,
-                ID_BLUE1 = match?.TeamBLUE1 ?? 0,
-                ID_BLUE2 = match?.TeamBLUE2 ?? 0,
-                MatchID = match?.MatchID ?? 0,
-                MatchDuration = match?.MatchDuration ?? 0,
-                RemainingTime = match?.RemainingTime ?? 0,
-                Countdown = match?.RemainingCountdown ?? 0,
-                matchType = match?.Type ?? 0,
-                Practice = (match?.IsPractice ?? false) ? (byte)1 : (byte)0,
-                Rematch = (match?.IsRematch ?? false) ? (byte)1 : (byte)0,
+                var packet = new FMSControllerMatchStateUpdatedPacket()
+                {
+                    matchState = state,
+                    ID_RED1 = match?.TeamRED1 ?? 0,
+                    ID_RED2 = match?.TeamRED2 ?? 0,
+                    ID_BLUE1 = match?.TeamBLUE1 ?? 0,
+                    ID_BLUE2 = match?.TeamBLUE2 ?? 0,
+                    MatchID = match?.MatchID ?? 0,
+                    MatchDuration = match?.MatchDuration ?? 0,
+                    RemainingTime = match?.RemainingTime ?? 0,
+                    Countdown = match?.RemainingCountdown ?? 0,
+                    matchType = match?.Type ?? 0,
+                    Practice = (match?.IsPractice ?? false) ? (byte)1 : (byte)0,
+                    Rematch = (match?.IsRematch ?? false) ? (byte)1 : (byte)0,
 
-                REDPoints = match?.REDPoints ?? 0,
-                BLUEPoints = match?.BLUEPoints ?? 0
+                    REDPoints = match?.REDPoints ?? 0,
+                    BLUEPoints = match?.BLUEPoints ?? 0
 
-            };
+                };
 
-            if (singleClient == null)
-            {
-                Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+                if (singleClient == null)
+                {
+                    Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+                }
+                else singleClient.SendPacketAsync(packet).Wait();
             }
-            else singleClient.SendPacketAsync(packet).Wait();
-        }
+            catch(Exception ex) { Logger.Log(LogLevel.WARNING, $"Failed to announce match state to FMS Controllers (ex: {ex.Message})"); }
+}
 
         public void AnnounceDeviceStates(Dictionary<(DeviceType, TeamColor), DateTime> dict, Client singleClient = null)
         {
-
-            FMSControllerDeviceLastseenUpdatedPacket packet = new FMSControllerDeviceLastseenUpdatedPacket(dict);
-
-
-
-            if (singleClient == null)
+            try
             {
-                Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+
+                FMSControllerDeviceLastseenUpdatedPacket packet = new FMSControllerDeviceLastseenUpdatedPacket(dict);
+
+
+
+                if (singleClient == null)
+                {
+                    Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+                }
+                else singleClient.SendPacketAsync(packet).Wait();
             }
-            else singleClient.SendPacketAsync(packet).Wait();
+            catch(Exception ex) { Logger.Log(LogLevel.WARNING, $"Failed to announce device states to FMS Controllers (ex: {ex.Message})"); }
         }
     }
 }
