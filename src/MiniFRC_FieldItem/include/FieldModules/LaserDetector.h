@@ -7,9 +7,9 @@ private:
     uint8_t _laserPin;
     uint8_t _detectorPin;
 
-    uint16_t _onReading = -1;
+    uint16_t _threshold = -1;
 
-    float minDiffPercent = .25f;
+    const float minDiffPercent = .25f;
 
     void ToggleLaser(bool state)
     {
@@ -52,19 +52,15 @@ public:
         // 0,4 < 0,25
         if(offPercent < minDiffPercent) return false;
 
-        _onReading = resOn;
+        _threshold = resOn - (resOn * offPercent);
 
         return true;
     }
 
     bool Detect()
     {
-        if(_onReading == -1) return false;
-
-        uint16_t reading = GetReading(2);
+        if(_threshold == -1) return false;
         
-        float diff = (float)reading / (float)_onReading;
-
-        return diff >= minDiffPercent;
+        return GetReading(2) >= _threshold;
     }
 };
