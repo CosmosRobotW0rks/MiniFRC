@@ -49,8 +49,8 @@ public:
         
         float offPercent = ((float)resOff / (float)resOn); // 0,4
 
-        // 0,4 >= 0,25
-        if(offPercent >= minDiffPercent) return false;
+        // 0,4 < 0,25
+        if(offPercent < minDiffPercent) return false;
 
         _onReading = resOn;
 
