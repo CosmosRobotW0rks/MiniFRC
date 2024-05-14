@@ -9,7 +9,7 @@ private:
 
     uint16_t _threshold = -1;
 
-    const float minDiffPercent = .25f;
+    const float maxDistortion = .25f;
 
     void ToggleLaser(bool state)
     {
@@ -46,13 +46,12 @@ public:
         uint16_t resOff = GetReading(5); // 2000
 
         if(resOff > resOn) return false;
-        
-        float offPercent = ((float)resOff / (float)resOn); // 0,4
 
-        // 0,4 < 0,25
-        if(offPercent < minDiffPercent) return false;
+        uint16_t threshold = resOff + (resOff * maxDistortion);
 
-        _threshold = resOn - (resOn * offPercent);
+        if(threshold > resOn) return false;
+
+        _threshold = threshold;
 
         return true;
     }
@@ -61,6 +60,6 @@ public:
     {
         if(_threshold == -1) return false;
         
-        return GetReading(2) >= _threshold;
+        return GetReading(2) <= _threshold;
     }
 };
