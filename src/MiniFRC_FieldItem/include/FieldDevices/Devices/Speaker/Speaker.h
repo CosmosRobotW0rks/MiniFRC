@@ -12,13 +12,17 @@ class FieldDevice_Speaker : public BaseFieldDevice
         
         return true;
     }
-    
-    void Periodic()
+
+    void Score()
     {
         Packet_Speaker_Score_3 p;
 
         Client->SendPacket(3, &p, sizeof(Packet_Speaker_Score_3));
-
+    }
+    
+    void Periodic()
+    {
+        Score();
         delay(2000);
     }
 };
