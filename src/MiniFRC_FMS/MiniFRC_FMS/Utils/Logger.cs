@@ -11,7 +11,8 @@ namespace MiniFRC_FMS.Utils
         DEBUG,
         INFO,
         WARNING,
-        ERROR
+        ERROR,
+        CRITICAL
     };
 
     internal static class Logger
@@ -22,7 +23,8 @@ namespace MiniFRC_FMS.Utils
             { LogLevel.DEBUG, 13},
             { LogLevel.INFO, 3},
             { LogLevel.WARNING, 6},
-            { LogLevel.ERROR, 12}
+            { LogLevel.ERROR, 12},
+            { LogLevel.CRITICAL, 4 }
         };
 
 

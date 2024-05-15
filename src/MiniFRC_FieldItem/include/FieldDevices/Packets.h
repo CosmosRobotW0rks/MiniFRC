@@ -51,8 +51,17 @@ struct Packet_Speaker_Score
 
 };
 
-const uint8_t Packet_Speaker_ToggleMotors_ID = 12;
-struct Packet_Speaker_ToggleMotors
+
+// ----- AMP -----
+
+const uint8_t Packet_Amp_Score_ID = 15;
+struct Packet_Amp_Score
 {
-    uint8_t MotorsEnabled;
+
+};
+
+const uint8_t Packet_Amp_Score_ID = 16;
+struct Packet_Amp_Amplified
+{
+
 };

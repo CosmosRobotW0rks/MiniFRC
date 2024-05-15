@@ -97,6 +97,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
                     await Task.Delay(1000);
                 }
+                RemainingCountdown = 0;
                 if (IsAborted) return;
 
                 State = MatchState.Running;
@@ -118,6 +119,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
                     await Task.Delay(1000);
                 }
+                RemainingTime = 0;
                 if (IsAborted) return;
 
                 State = MatchState.Standby;

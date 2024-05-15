@@ -33,6 +33,7 @@ namespace MiniFRC_FMS.Modules
                 .Where(
                     x =>
                         x.IsClass
+                        && x.Namespace != null
                         && x.Namespace.StartsWith("MiniFRC_FMS.Modules")
                         && x.IsAssignableTo(typeof(BaseModule))
                         && x != typeof(BaseModule)
@@ -59,13 +60,13 @@ namespace MiniFRC_FMS.Modules
                     if (module == null)
                     {
                         Logger.Log(LogLevel.ERROR, $"Failed to initialize module {moduleType.Name} (NULL)");
-                        continue;
+                        throw new Exception("Failed to init module " + moduleType.Name);
                     }
 
                     if (!module.InitModule(this))
                     {
                         Logger.Log(LogLevel.ERROR, $"Failed to initialize module {moduleType.Name}");
-                        continue;
+                        throw new Exception("Failed to init module " + moduleType.Name);
                     }
 
                     Logger.Log($"Initialized module {moduleType.Name}");
@@ -75,7 +76,10 @@ namespace MiniFRC_FMS.Modules
                 }
                 catch(Exception ex)
                 {
-                    Logger.Log(LogLevel.ERROR, $"Failed to initialize module {moduleType.Name} (EX: {ex.Message})");
+                    modules = null;
+                    Logger.Log(LogLevel.CRITICAL, $"Module Initialization failed [{moduleType.Name}] (EX: {ex.Message})");
+                    Console.ReadLine();
+                    Environment.Exit(0);
                 }
             }
 

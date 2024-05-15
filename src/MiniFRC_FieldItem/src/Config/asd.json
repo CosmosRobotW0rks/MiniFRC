@@ -1,0 +1,11 @@
+{
+    "NETSSID":"BK_School",
+    "NETPW": "8K-$cH0oL!",
+    "SecurityKey":16777216,
+    "FMSIP":[10,134,100,230],
+    "FMSPort":8081,
+    "teamColor1":1,
+    "deviceType1": 1,
+    "teamColor2":0,
+    "deviceType2": 0
+}

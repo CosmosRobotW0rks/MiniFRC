@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace MiniFRC_FMS.Modules.Game
 {
-    [ModuleInitPriority(100)]
+    [ModuleInitPriority(48)]
     internal class FMSControllerAppModule : BaseModule
     {
         private TCPServerModule? TCPServerModule = null;

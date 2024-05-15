@@ -27,10 +27,12 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets // 70-
 
         public byte Accepted { get; set; }
 
+
         public ClientIDResponsePacket(bool accepted)
         {
             Accepted = accepted ? (byte)1 : (byte)0;
         }
+        
     }
 
     internal struct ClientCalibratePacket : IBasePacket
@@ -49,6 +51,7 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets // 70-
             Success = accepted ? (byte)1 : (byte)0;
         }
     }
+
 
     internal struct ClientToggleEnabledPacket : IBasePacket
     {

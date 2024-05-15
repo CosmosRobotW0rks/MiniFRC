@@ -18,7 +18,31 @@ namespace MiniFRC_FMS
 
             //ModulesMain.Instance.GetModule<FieldModule>().OnSpeakerScore += FieldModule_OnSpeakerScore;
 
-            await Task.Delay(-1);
+            while(true)
+            {
+                try
+                {
+                    string str = Console.ReadLine();
+                    switch (str)
+                    {
+                        case "updateleaderboard":
+                            ModulesMain.Instance.GetModule<AuDisModule>().UpdateLeaderboard();
+                            break;
+
+                        default:
+                            int input = int.Parse(str);
+
+
+                            ModulesMain.Instance.GetModule<AuDisModule>().SwitchPage((AuDisPage)input);
+                            break;
+                    }
+                }
+                catch(Exception ex)
+                {
+
+                }
+                
+            }
         }
 
     }

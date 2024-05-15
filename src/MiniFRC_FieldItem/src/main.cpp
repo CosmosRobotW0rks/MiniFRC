@@ -117,11 +117,14 @@ void StartPingTask()
         if(pingFailCount == 10)
         {
           DebugError("Failed to send ping packet 10 times, restarting..");
+          if(Device1Exists) Device1->EnabledChanged(false);
+          if(Device2Exists) Device2->EnabledChanged(false);
+          delay(100);
           ESP.restart();
         }
       }
       else pingFailCount = 0;
-      delay(1000);
+      delay(100);
     }
   },
   "PingTask", 4096, nullptr, 1, nullptr);

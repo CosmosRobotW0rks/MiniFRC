@@ -1,4 +1,4 @@
-#include "FieldDevices/Devices/Speaker/Speaker.h"
+#include "FieldDevices/Devices/Speaker.h"
 #include "Debugger.h"
 
 

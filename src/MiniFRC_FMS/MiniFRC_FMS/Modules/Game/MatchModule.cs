@@ -13,6 +13,7 @@ using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerMatchStat
 using Match = MiniFRC_FMS.Modules.Game.Models.Match;
 namespace MiniFRC_FMS.Modules.Game
 {
+    [ModuleInitPriority(49)]
     internal class MatchModule : BaseModule
     {
         
@@ -80,12 +81,14 @@ namespace MiniFRC_FMS.Modules.Game
 
             Task.WaitAll(
             fieldModule.ToggleEnabledAllAsync(false),
-            fmsControllerModule.AnnounceMatchStateAsync(match, State));
+            fmsControllerModule.AnnounceMatchStateAsync(match, State),
+            Task.Run(() => GetModule<AuDisModule>().UpdateMatchState()));
         }
 
         private void Match_OnEnd(object? sender, EventArgs e)
         {
             Logger.Log($"Match Ended (RED P: {match.REDPoints} / BLUE P: {match.BLUEPoints})");
+            GetModule<AuDisModule>().UpdateMatchState();
 
 
             if (match == null) { Logger.Log(LogLevel.WARNING, "Couldn't save the match, match is null"); }
@@ -108,21 +111,25 @@ namespace MiniFRC_FMS.Modules.Game
             var fieldModule = GetModule<FieldModule>();
             Task.WaitAll(
             fieldModule.ToggleEnabledAllAsync(true),
-            fmsControllerModule.AnnounceMatchStateAsync(match, State));
+            fmsControllerModule.AnnounceMatchStateAsync(match, State),
+            Task.Run(() => GetModule<AuDisModule>().UpdateMatchState()));
         }
 
         private void Match_OnTimeUpdate(object? sender, ushort e)
         {
+            Task.Run(() => GetModule<AuDisModule>().UpdateMatchState());
             _ = fmsControllerModule.AnnounceMatchStateAsync(match, State);
         }
 
         private void Match_OnCountdownUpdate(object? sender, byte e)
         {
+            Task.Run(() => GetModule<AuDisModule>().UpdateMatchState());
             _ = fmsControllerModule.AnnounceMatchStateAsync(match, State);
         }
 
         private void Match_OnPointUpdate(object? sender, EventArgs e)
         {
+            Task.Run(() => GetModule<AuDisModule>().UpdateMatchState());
             _ = fmsControllerModule.AnnounceMatchStateAsync(match, State);
         }
         #endregion

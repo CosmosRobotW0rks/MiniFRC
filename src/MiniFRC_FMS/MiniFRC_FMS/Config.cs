@@ -9,6 +9,7 @@ namespace MiniFRC_FMS
     internal static class Config
     {
         public const string WebSVRootURL = "http://localhost:8080/";
+        public const string WebSocketRootURL = "ws://10.134.100.230:8082";
         public const string TCPServerEndpoint = "10.134.100.230:8081";
         public const int PingExpireTimeMS = 5000;
 

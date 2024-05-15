@@ -19,4 +19,14 @@ namespace MiniFRC_FMS.Modules.Game.Models
         Speaker = 1,
         Amp
     }
+
+    internal enum AuDisPage : byte
+    {
+        NONE = 0,
+        Match,
+        AfterMatch,
+        Scores,
+        CalculatingPoints
+
+    }
 }

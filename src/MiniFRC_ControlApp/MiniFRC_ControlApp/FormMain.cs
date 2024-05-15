@@ -40,6 +40,11 @@ namespace MiniFRC_ControlApp
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
+            if(ServerCommunication.client != null && ServerCommunication.client.Connected)
+            {
+                ServerCommunication.Disconnect();
+            }
+
             try
             {
                 ServerCommunication.Connect(IPEndPoint.Parse(textBoxEndpoint.Text));
@@ -65,9 +70,13 @@ namespace MiniFRC_ControlApp
                         {
                             if (ctr is GroupBox) ctr.Enabled = true;
                         }
-
-                        groupBoxLogin.Enabled = false;
+                        buttonConnect.Text = "Reconnect";
+                        return;
                     }
+
+                    MessageBox.Show("Error occured while authenticating");
+
+                    ServerCommunication.Disconnect();
                 }
                 catch (Exception ex)
                 {
@@ -76,7 +85,6 @@ namespace MiniFRC_ControlApp
                 finally
                 {
                     this.Enabled = true;
-                    ServerCommunication.Disconnect();
                 }
             });
 

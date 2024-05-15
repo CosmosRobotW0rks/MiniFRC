@@ -160,7 +160,7 @@ namespace MiniFRC_FMS.Modules.Game
                 }
 
                 await client.SendPacketAsync(new ClientIDResponsePacket(true));
-
+                
                 PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null & x.PropertyType.IsSubclassOf(typeof(BaseFieldDevice))).ToArray();
                 foreach (PropertyInfo info in props)
                 {
@@ -182,6 +182,8 @@ namespace MiniFRC_FMS.Modules.Game
 
                     return;
                 }
+
+
 
 
                 Logger.Log(LogLevel.WARNING, $"Couldn't find the property for the device {packet.DeviceType} (Team: {packet.TeamColor})");

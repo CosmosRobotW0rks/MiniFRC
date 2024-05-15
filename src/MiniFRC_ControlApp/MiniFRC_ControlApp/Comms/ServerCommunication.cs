@@ -24,7 +24,7 @@ namespace MiniFRC_ControlApp.Comms
 
         public static void Disconnect() // No disconnect for the packetclient?? lol? TODO: Add it ASAP
         {
-
+            client = null;
         }
 
         public static async Task<bool> Authenticate(ulong securityKey)

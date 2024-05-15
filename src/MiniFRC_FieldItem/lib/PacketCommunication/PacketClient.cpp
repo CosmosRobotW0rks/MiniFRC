@@ -27,7 +27,7 @@ bool PacketClient::Connect(IPAddress IP, uint16_t port, uint32_t timeoutMS)
     delay(100);
 
 
-    while (!client->connected() || millis() - start < timeoutMS)
+    while (!client->connected() && millis() - start < timeoutMS)
     {
         delay(100);
     }

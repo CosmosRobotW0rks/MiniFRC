@@ -508,5 +508,6 @@
         private Label labelRedPoints;
         private Label labelBluePoints;
         private RichTextBox richTextBoxDevicesLastSeen;
+        private Button buttonReconnect;
     }
 }

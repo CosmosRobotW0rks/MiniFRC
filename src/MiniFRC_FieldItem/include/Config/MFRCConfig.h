@@ -48,5 +48,5 @@ namespace MFRCConfig
     Config* GetConfig();
 
 
-    bool SaveConfig(Config cfg);
+    bool SaveConfig();
 }
