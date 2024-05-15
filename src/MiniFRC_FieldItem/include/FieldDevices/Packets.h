@@ -2,32 +2,57 @@
 #include "BaseFieldDevice.h"
 
 // ----- MISC -----
-struct Packet_Ping_0
+
+const uint8_t Packet_Ping_ID = 0;
+struct Packet_Ping
 {
     
 };
 
-struct Packet_ClientID_1
+const uint8_t Packet_ClientID_ID = 1;
+struct Packet_ClientID
 {
-    TeamColor teamColor;
-    DeviceType deviceType;
+    uint8_t teamColor;
+    uint8_t deviceType;
     uint64_t SecurityKey;
 };
 
-struct Packet_ClientIDResponse_2
+const uint8_t Packet_ClientIDResponse_ID = 2;
+struct Packet_ClientIDResponse
 {
     uint8_t Accepted;
+};
+
+const uint8_t Packet_ClientCalibrate_ID = 3;
+struct Packet_ClientCalibrate
+{
+    
+};
+
+const uint8_t Packet_ClientCalibrateResponse_ID = 4;
+struct Packet_ClientCalibrateResponse
+{
+    uint8_t Success;
+};
+
+const uint8_t Packet_ClientToggleEnabled_ID = 5;
+struct Packet_ClientToggleEnabled
+{
+    uint8_t State;
 };
 
 
 
 // ----- SPEAKER -----
-struct Packet_Speaker_Score_3
+
+const uint8_t Packet_Speaker_Score_ID = 11;
+struct Packet_Speaker_Score
 {
 
 };
 
-struct Packet_Speaker_ToggleMotors_4
+const uint8_t Packet_Speaker_ToggleMotors_ID = 12;
+struct Packet_Speaker_ToggleMotors
 {
     uint8_t MotorsEnabled;
 };

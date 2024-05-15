@@ -1,13 +1,13 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
-using MiniFRC_FMS.Modules.Comms.TCPPackets;
+using MiniFRC_FMS.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static MiniFRC_FMS.Modules.Comms.TCPPackets.FMSControllerLoadMatchPacket;
-using static MiniFRC_FMS.Modules.Comms.TCPPackets.FMSControllerMatchStateUpdatedPacket;
-using MatchType = MiniFRC_FMS.Modules.Comms.TCPPackets.FMSControllerLoadMatchPacket.MatchType;
+using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerLoadMatchPacket;
+using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerMatchStateUpdatedPacket;
+using MatchType = MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerLoadMatchPacket.MatchType;
 
 namespace MiniFRC_FMS.Modules.Game.Models
 {
@@ -72,36 +72,71 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public UInt16 RemainingTime { get; private set; }
         private async Task MatchTask()
         {
-            RemainingCountdown = 3 + 1;
-            RemainingTime = (ushort)(MatchDuration + 1);
-
-
-
-            State = MatchState.Countdown;
-            while (State == MatchState.Countdown && RemainingCountdown > 1 && !IsAborted)
+            try
             {
-                RemainingCountdown--;
-                if (!IsAborted) OnCountdownUpdate?.Invoke(this, RemainingCountdown);
+                RemainingCountdown = 3 + 1;
+                RemainingTime = (ushort)(MatchDuration + 1);
 
-                await Task.Delay(1000);
+
+
+                State = MatchState.Countdown;
+                while (State == MatchState.Countdown && RemainingCountdown > 1 && !IsAborted)
+                {
+                    RemainingCountdown--;
+
+                    try
+                    {
+                        if (!IsAborted) OnCountdownUpdate?.Invoke(this, RemainingCountdown);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(LogLevel.ERROR, $"Error while invoking OnCountdownUpdate event: {ex.Message}");
+                    }
+
+
+
+                    await Task.Delay(1000);
+                }
+                if (IsAborted) return;
+
+                State = MatchState.Running;
+
+                try
+                {
+                    OnStart?.Invoke(this, null);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(LogLevel.ERROR, $"Error while invoking OnStart event: {ex.Message}");
+                }
+
+                while (State == MatchState.Running && RemainingTime > 1 && !IsAborted)
+                {
+                    RemainingTime--;
+                    if (!IsAborted) OnTimeUpdate?.Invoke(this, RemainingTime);
+
+
+                    await Task.Delay(1000);
+                }
+                if (IsAborted) return;
+
+                State = MatchState.Standby;
+
+                try
+                {
+                    OnEnd?.Invoke(this, null);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(LogLevel.ERROR, $"Error while invoking OnEnd event: {ex.Message}");
+                }
             }
-            if (IsAborted) return;
-
-            State = MatchState.Running;
-
-            while (State == MatchState.Running && RemainingTime > 1 && !IsAborted)
+            catch(Exception ex)
             {
-                RemainingTime--;
-                if (!IsAborted) OnTimeUpdate?.Invoke(this, RemainingTime);
-
-
-                await Task.Delay(1000);
+                Logger.Log(LogLevel.ERROR, $"An error occured while running match task (Ex: {ex.Message}) / Aborting");
+                IsAborted = true;
+                return;
             }
-            if (IsAborted) return;
-
-            State = MatchState.Standby;
-
-            OnEnd?.Invoke(this, null);
         }
 
         public void Start()

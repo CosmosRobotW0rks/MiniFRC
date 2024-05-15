@@ -12,14 +12,14 @@ namespace MiniFRC_ControlApp.Comms
     #region AUTH
     internal struct FMSControllerAuthPacket : IBasePacket
     {
-        public byte ID => 5;
+        public byte ID => (byte)PacketIDs.FMSControllerAuthPacket;
 
         public ulong SecurityKey { get; set; }
     }
 
     internal struct FMSControllerAuthResponsePacket : IBasePacket
     {
-        public byte ID => 6;
+        public byte ID => (byte)PacketIDs.FMSControllerAuthResponsePacket;
 
         public byte Authenticated { get; set; }
 
@@ -34,7 +34,7 @@ namespace MiniFRC_ControlApp.Comms
     #region MATCH CONTROL
     internal struct FMSControllerLoadMatchPacket : IBasePacket
     {
-        public byte ID => 7;
+        public byte ID => (byte)PacketIDs.FMSControllerLoadMatchPacket;
 
         public byte ID_RED1 { get; set; }
         public byte ID_RED2 { get; set; }
@@ -42,7 +42,7 @@ namespace MiniFRC_ControlApp.Comms
         public byte ID_BLUE2 { get; set; }
 
         public byte MatchID { get; set; }
-        public UInt16 MatchDuration { get; set; }
+        public ushort MatchDuration { get; set; }
 
         public byte Rematch { get; set; }
         public byte Practice { get; set; }
@@ -60,7 +60,7 @@ namespace MiniFRC_ControlApp.Comms
 
     internal struct FMSControllerLoadMatchResponsePacket : IBasePacket
     {
-        public byte ID => 8;
+        public byte ID => (byte)PacketIDs.FMSControllerLoadMatchResponsePacket;
 
         public MatchLoadStatus matchLoadStatus { get; set; }
 
@@ -82,7 +82,7 @@ namespace MiniFRC_ControlApp.Comms
 
     internal struct FMSControllerStartStopMatchPacket : IBasePacket
     {
-        public byte ID => 9;
+        public byte ID => (byte)PacketIDs.FMSControllerStartStopMatchPacket;
 
         public byte State { get; set; }
 
@@ -95,7 +95,7 @@ namespace MiniFRC_ControlApp.Comms
 
     internal struct FMSControllerStartStopMatchResponsePacket : IBasePacket
     {
-        public byte ID => 10;
+        public byte ID => (byte)PacketIDs.FMSControllerStartStopMatchResponsePacket;
 
         public byte Success { get; set; }
 
@@ -108,7 +108,7 @@ namespace MiniFRC_ControlApp.Comms
 
     internal struct FMSControllerMatchStateUpdatedPacket : IBasePacket
     {
-        public byte ID => 11;
+        public byte ID => (byte)PacketIDs.FMSControllerMatchStateUpdatedPacket;
 
         public MatchState matchState { get; set; }
 
@@ -118,8 +118,8 @@ namespace MiniFRC_ControlApp.Comms
         public byte ID_BLUE2 { get; set; }
 
         public byte MatchID { get; set; }
-        public UInt16 MatchDuration { get; set; }
-        public UInt16 RemainingTime { get; set; }
+        public ushort MatchDuration { get; set; }
+        public ushort RemainingTime { get; set; }
         public byte Countdown { get; set; }
 
 
@@ -146,16 +146,16 @@ namespace MiniFRC_ControlApp.Comms
 
     internal struct FMSControllerAuDisPageUpdatedPacket : IBasePacket
     {
-        public byte ID => 12;
+        public byte ID => (byte)PacketIDs.FMSControllerAuDisPageUpdatedPacket;
 
         // TODO: Add Page Data
     }
     #endregion
 
-    #region DEVICE INFO    
+    #region DEVICE INFO
     internal struct FMSControllerDeviceLastseenUpdatedPacket : IBasePacket
     {
-        public byte ID => 13;
+        public byte ID => (byte)PacketIDs.FMSControllerDeviceLastseenUpdatedPacket;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
         public byte[] deviceIDs = new byte[100];
@@ -174,7 +174,7 @@ namespace MiniFRC_ControlApp.Comms
             for (int i = 0; i < _deviceIds.Count; i++)
             {
                 var deviceId = _deviceIds.ElementAt(i).Key;
-                deviceIDs[i] = (byte)((byte)deviceId.Item1 | ((byte)deviceId.Item2 << 6));
+                deviceIDs[i] = (byte)((byte)deviceId.Item1 | (byte)deviceId.Item2 << 6);
                 deviceLastSeens[i] = _deviceIds.ElementAt(i).Value.Ticks;
             }
 
@@ -198,4 +198,5 @@ namespace MiniFRC_ControlApp.Comms
         }
     }
     #endregion
+
 }

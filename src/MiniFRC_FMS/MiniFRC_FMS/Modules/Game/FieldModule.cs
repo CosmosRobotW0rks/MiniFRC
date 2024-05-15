@@ -1,8 +1,9 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
-using MiniFRC_FMS.Modules.Comms.TCPPackets.FieldDevicePackets;
+using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
 using MiniFRC_FMS.Modules.Game.FieldDevices;
 using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
+using PacketCommunication;
 using PacketCommunication.Server;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,52 @@ namespace MiniFRC_FMS.Modules.Game
         public Speaker? BLUESpeaker { get; private set; } = null;
 
 
+        public BaseFieldDevice[] GetAllFieldDevices()
+        {
+            PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null && x.PropertyType.IsSubclassOf(typeof(BaseFieldDevice))).ToArray();
+            List<BaseFieldDevice> devices = new();
+
+            foreach (PropertyInfo info in props)
+            {
+                BaseFieldDevice? device = (BaseFieldDevice?)info.GetValue(this);
+                if (device == null) continue;
+
+                devices.Add(device);
+            }
+
+            return devices.ToArray();
+        }
+
+
+
+        public async Task AnnouncePacketAsync<T>(T packet) where T : IBasePacket, new()
+        {
+            try
+            {
+                BaseFieldDevice[] devices = GetAllFieldDevices();
+
+                List<Task> tasks = new();
+
+                foreach (BaseFieldDevice device in devices)
+                {
+                    if (device.TCPClient == null)
+                    {
+                        Logger.Log(LogLevel.WARNING, $"Device {device.Name} TCPClient is null");
+                        continue;
+                    }
+
+                    tasks.Add(device.TCPClient.SendPacketAsync(packet));
+                }
+
+                await Task.WhenAll(tasks);
+            }
+            catch(Exception ex)
+            {
+                Logger.Log(LogLevel.ERROR, $"An error occured while announcing packet to field devices (Ex: {ex.Message})");
+            }
+        }
+
+
 
         protected override bool Init()
         {
@@ -43,7 +90,7 @@ namespace MiniFRC_FMS.Modules.Game
                 try
                 {
 
-                    fmsControllerModule.AnnounceDeviceStates(GetDevicesInfo());
+                    fmsControllerModule.AnnounceDeviceStatesAsync(GetDevicesInfo());
                     await Task.Delay(1000);
                 }
                 catch (Exception ex)

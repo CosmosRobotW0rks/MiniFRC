@@ -52,7 +52,7 @@ bool PacketClient::SendPacket(uint8_t packetID, void *packet, uint len)
     return client->write((char *)temp, packetLen) == packetLen;
 }
 
-bool PacketClient::RegisterPacket(uint8_t packetId, uint16_t packetSize, PacketCallback callback)
+bool PacketClient::RegisterPacket(uint8_t packetId, uint16_t packetSize, PacketCallback callback, void* args)
 {
     if (packetId == 255)
         return false; // Special ID
@@ -62,6 +62,7 @@ bool PacketClient::RegisterPacket(uint8_t packetId, uint16_t packetSize, PacketC
     packetIDs[packetCount] = packetId;
     packetSizes[packetCount] = packetSize;
     packetCallbacks[packetCount] = callback;
+    argss[packetCount] = args;
     packetCount++;
 
     return true;
@@ -87,7 +88,7 @@ inline void PacketClient::HandlePacket(uint8_t packetid, uint8_t *packetBuf, siz
     ulong time = millis() - temp;
     Serial.printf("Time took: %d\n", time);
 
-    packetCallbacks[packetIndex](packetBuf, len);
+    packetCallbacks[packetIndex](packetBuf, len, argss[packetIndex]);
 }
 
 void PacketClient::DataReceived(void *idk, AsyncClient *__client, void *data, size_t len)

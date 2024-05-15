@@ -3,63 +3,85 @@
 
 class LaserDetector
 {
-private:
-    uint8_t _laserPin;
-    uint8_t _detectorPin;
+public:
+    LaserDetector() {}
 
-    uint16_t _threshold = -1;
-
-    const float maxDistortion = .25f;
-
-    void ToggleLaser(bool state)
+    void attach(uint8_t laserPin, uint8_t detectorPin)
     {
+        pinMode(laserPin, OUTPUT);
+        pinMode(detectorPin, INPUT);
+
+        _laserPin = laserPin;
+        _detectorPin = detectorPin;
+    }
+
+    bool calibrate()
+    {
+        DebugInfo("Calibrating LDR...");
+        toggle_laser(true);
+        delay(100);
+        uint16_t on_read = get_reading(128); // 5000
+
+        toggle_laser(false);
+        delay(100);
+        uint16_t off_read = get_reading(128); // 2000
+
+        DebugInfoF("LDR Low value: %d, high value: %d\n", off_read, on_read);
+
+        int16_t diff = on_read - off_read;
+        threshold = off_read + diff * 0.25;
+        DebugInfoF("LDR Diff: %d, threshold: %d\n", diff, threshold);
+
+        thr_sign = diff > 0;
+
+        bool detected_before = detect();
+
+        toggle_laser(true);
+        bool detected_after = detect();
+
+        DebugInfo("LDR Done");
+        if (detected_after && !(detected_before))
+            return true;
+
+        return false;
+    }
+
+    bool detect()
+    {
+        if (threshold == -1)
+            return false;
+        if (!laser_enabled)
+            return false;
+
+        uint16_t val = get_reading(128);
+
+        // ESP_LOGI("ldr", "value: %d", val);
+        return ((val <= threshold) == thr_sign);
+    }
+
+    void toggle_laser(bool state)
+    {
+        laser_enabled = state;
         digitalWrite(_laserPin, state);
     }
 
-    uint16_t GetReading(uint8_t samples = 1)
+private:
+    uint16_t get_reading(uint8_t samples)
     {
-        uint64_t reading = 0;
+        double reading = 0;
         for (uint8_t i = 0; i < samples; i++)
         {
             reading += analogRead(_detectorPin);
         }
-        
-        return reading / samples;
+
+        return reading / ((double)samples);
     }
 
-public:
-    LaserDetector(uint8_t laserPin, uint8_t detectorPin)
-    {
-        _laserPin = laserPin;
-        _detectorPin = detectorPin;
-        pinMode(laserPin, OUTPUT);
-    }
+    uint16_t threshold = -1;
+    bool thr_sign = true;
 
-    ~LaserDetector();
+    bool laser_enabled = false;
 
-    bool Calibrate()
-    {
-        ToggleLaser(true);
-        uint16_t resOn = GetReading(5); // 5000
-        
-        ToggleLaser(false);
-        uint16_t resOff = GetReading(5); // 2000
-
-        if(resOff > resOn) return false;
-
-        uint16_t threshold = resOff + (resOff * maxDistortion);
-
-        if(threshold > resOn) return false;
-
-        _threshold = threshold;
-
-        return true;
-    }
-
-    bool Detect()
-    {
-        if(_threshold == -1) return false;
-        
-        return GetReading(2) <= _threshold;
-    }
+    uint8_t _laserPin;
+    uint8_t _detectorPin;
 };

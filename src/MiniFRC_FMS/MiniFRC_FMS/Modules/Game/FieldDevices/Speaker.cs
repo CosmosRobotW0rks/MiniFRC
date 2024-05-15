@@ -1,5 +1,5 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
-using MiniFRC_FMS.Modules.Comms.TCPPackets.FieldDevicePackets;
+using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
 using MiniFRC_FMS.Modules.Game.Models;
 using PacketCommunication.Client;
 using PacketCommunication.Server;

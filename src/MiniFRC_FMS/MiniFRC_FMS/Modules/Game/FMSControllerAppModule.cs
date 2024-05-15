@@ -1,9 +1,10 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
-using MiniFRC_FMS.Modules.Comms.TCPPackets;
+using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets;
 using MiniFRC_FMS.Modules.DataSaving;
 using MiniFRC_FMS.Modules.Game.FieldDevices;
 using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
+using PacketCommunication;
 using PacketCommunication.Server;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace MiniFRC_FMS.Modules.Game
 
 
             await Task.Delay(100);
-            AnnounceMatchState(matchModule.match, matchModule.State, client);
+            AnnounceMatchStateAsync(matchModule.match, matchModule.State, client);
 
         }
 
@@ -109,8 +110,32 @@ namespace MiniFRC_FMS.Modules.Game
             else OnMatchAbort?.Invoke(this, null);
         }
 
+        public async Task AnnouncePacketAsync<T>(T packet) where T : IBasePacket, new()
+        {
+            try
+            {
+                List<Task> tasks = new();
 
-        public void AnnounceMatchState(Match? match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
+                foreach (Client cli in FMSControllerAppClients)
+                {
+                    if (cli == null)
+                    {
+                        continue;
+                    }
+
+                    tasks.Add(cli.SendPacketAsync(packet));
+                }
+
+                await Task.WhenAll(tasks);
+            }
+            catch(Exception ex)
+            {
+                Logger.Log(LogLevel.ERROR, $"Failed to announce {typeof(T).Name} packet to FMS Controller Clients / ex: {ex.Message}");
+            }
+        }
+
+
+        public async Task AnnounceMatchStateAsync(Match? match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
         {
             try
             {
@@ -136,14 +161,14 @@ namespace MiniFRC_FMS.Modules.Game
 
                 if (singleClient == null)
                 {
-                    Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+                    await AnnouncePacketAsync(packet);
                 }
-                else singleClient.SendPacketAsync(packet).Wait();
+                else await singleClient.SendPacketAsync(packet);
             }
             catch(Exception ex) { Logger.Log(LogLevel.WARNING, $"Failed to announce match state to FMS Controllers (ex: {ex.Message})"); }
 }
 
-        public void AnnounceDeviceStates(Dictionary<(DeviceType, TeamColor), DateTime> dict, Client singleClient = null)
+        public async Task AnnounceDeviceStatesAsync(Dictionary<(DeviceType, TeamColor), DateTime> dict, Client singleClient = null)
         {
             try
             {
@@ -154,9 +179,9 @@ namespace MiniFRC_FMS.Modules.Game
 
                 if (singleClient == null)
                 {
-                    Task.WaitAll(FMSControllerAppClients.Select(x => x.SendPacketAsync(packet)).ToArray());
+                    await AnnouncePacketAsync(packet);
                 }
-                else singleClient.SendPacketAsync(packet).Wait();
+                else await singleClient.SendPacketAsync(packet);
             }
             catch(Exception ex) { Logger.Log(LogLevel.WARNING, $"Failed to announce device states to FMS Controllers (ex: {ex.Message})"); }
         }

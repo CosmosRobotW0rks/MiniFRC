@@ -3,26 +3,60 @@
 #include "PacketClient.h"
 #include "Debugger.h"
 #include "FieldDevices/BaseFieldDevice.h"
+#include "FieldModules/LaserDetector.h"
 
-class FieldDevice_Speaker : public BaseFieldDevice
-{
-    public:
-    bool Initialize()
-    {
-        
-        return true;
-    }
+#define CONVEYOR_FWD 25
+#define CONVEYOR_BWD 33
+#define RAMP_FWD 27
+#define RAMP_BWD 26
+#define INTAKE_FWD 23
 
-    void Score()
-    {
-        Packet_Speaker_Score_3 p;
+#define LASER_P 22
+#define LDR 36
 
-        Client->SendPacket(3, &p, sizeof(Packet_Speaker_Score_3));
-    }
-    
-    void Periodic()
-    {
-        Score();
-        delay(2000);
-    }
+#define CONVEYOR_FWD_CH 0
+#define CONVEYOR_BWD_CH 1
+#define RAMP_FWD_CH 2
+#define RAMP_BWD_CH 3
+#define INTAKE_FWD_CH 4
+
+class FieldDevice_Speaker : public BaseFieldDevice {
+protected:
+    bool Initialize();
+    void EnabledChanged(bool enabled);
+    bool Calibrate();
+public:
+
+    void set_override(double intake_pw, double conveyor_pw, double ramp_pw);
+    void disable_override();
+
+private:
+    static void task(void* param);
+
+    void score();
+    void update();
+
+    void on_note();
+
+    void update_note();
+    void update_motors();
+
+    void motor_write(int f_ch, int b_ch, int16_t pwr);
+
+    LaserDetector note_detector;
+
+    bool enabled = false;
+
+    double intake_pw = 0, conveyor_pw = 0, ramp_pw = 0;
+    bool ovr = false;
+
+    bool has_note = false;
+    bool had_note = false;
+
+    uint64_t last_note_us;
+    uint64_t last_note_enter_us;
+    uint64_t last_note_exit_us;
+
+    void(*on_note_f)(void*) = nullptr;
+    void* on_note_f_arg;
 };

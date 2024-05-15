@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniFRC_FMS.Modules.Comms.TCPPackets.FieldDevicePackets
+namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets // 100-109
 {
 
     internal struct SpeakerScorePacket : IBasePacket
     {
-        public byte ID => 3;
+        public byte ID => (byte)PacketIDs.SpeakerScorePacket;
     }
 
     internal struct SpeakerToggleMotorsPacket : IBasePacket
     {
-        public byte ID => 4;
+        public byte ID => (byte)PacketIDs.SpeakerToggleMotorsPacket;
 
         public bool MotorsEnabled { get; set; }
 

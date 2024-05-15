@@ -1,4 +1,5 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
+using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
 using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static MiniFRC_FMS.Modules.Comms.TCPPackets.FMSControllerMatchStateUpdatedPacket;
+using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerMatchStateUpdatedPacket;
 using Match = MiniFRC_FMS.Modules.Game.Models.Match;
 namespace MiniFRC_FMS.Modules.Game
 {
@@ -35,7 +36,7 @@ namespace MiniFRC_FMS.Modules.Game
         public void LoadMatch(Match _match)
         {
             this.match = _match;
-            fmsControllerModule.AnnounceMatchState(match, State);
+            fmsControllerModule.AnnounceMatchStateAsync(match, State);
 
 
             match.OnCountdownUpdate += Match_OnCountdownUpdate;
@@ -71,33 +72,50 @@ namespace MiniFRC_FMS.Modules.Game
         private void Match_OnAbort(object? sender, EventArgs e)
         {
             match = null;
-            fmsControllerModule.AnnounceMatchState(match, State);
+
+
+            var fieldModule = GetModule<FieldModule>();
+
+            Task.WaitAll(
+            fieldModule.AnnouncePacketAsync(new ClientToggleEnabledPacket(false)),
+            fmsControllerModule.AnnounceMatchStateAsync(match, State));
         }
 
         private void Match_OnEnd(object? sender, EventArgs e)
         {
+
+            Logger.Log($"Match Ended (RED: {match.REDPoints} / BLUE: {match.BLUEPoints})");
             match = null;
-            fmsControllerModule.AnnounceMatchState(match, State);
+
+
+            var fieldModule = GetModule<FieldModule>();
+
+            Task.WaitAll(
+            fieldModule.AnnouncePacketAsync(new ClientToggleEnabledPacket(false)),
+            fmsControllerModule.AnnounceMatchStateAsync(match, State));
         }
 
         private void Match_OnStart(object? sender, EventArgs e)
         {
-            fmsControllerModule.AnnounceMatchState(match, State);
+            var fieldModule = GetModule<FieldModule>();
+            Task.WaitAll(
+            fieldModule.AnnouncePacketAsync(new ClientToggleEnabledPacket(true)),
+            fmsControllerModule.AnnounceMatchStateAsync(match, State));
         }
 
         private void Match_OnTimeUpdate(object? sender, ushort e)
         {
-            fmsControllerModule.AnnounceMatchState(match, State);
+            _ = fmsControllerModule.AnnounceMatchStateAsync(match, State);
         }
 
         private void Match_OnCountdownUpdate(object? sender, byte e)
         {
-            fmsControllerModule.AnnounceMatchState(match, State);
+            _ = fmsControllerModule.AnnounceMatchStateAsync(match, State);
         }
 
         private void Match_OnPointUpdate(object? sender, EventArgs e)
         {
-            fmsControllerModule.AnnounceMatchState(match, State);
+            _ = fmsControllerModule.AnnounceMatchStateAsync(match, State);
         }
         #endregion
     }

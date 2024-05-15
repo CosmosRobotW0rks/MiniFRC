@@ -72,8 +72,7 @@ void setup()
 
 void loop()
 {
-  if(Device1Exists) Device1->Periodic();
-  if(Device2Exists) Device2->Periodic();
+  delay(0);
 }
 
 
@@ -102,12 +101,12 @@ void StartPingTask()
   DebugInfo("STARTING DA PING TASK");
   xTaskCreate([](void *pvParameters)
   {
-    Packet_Ping_0 pingPacket;
+    Packet_Ping pingPacket;
 
     while (true)
     {
-      bool device1Suc = !Device1Exists ? true : Device1Client->SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
-      bool device2Suc = !Device2Exists ? true : Device2Client->SendPacket(0, &pingPacket, sizeof(Packet_Ping_0));
+      bool device1Suc = !Device1Exists ? true : Device1Client->SendPacket(Packet_Ping_ID, &pingPacket, sizeof(Packet_Ping));
+      bool device2Suc = !Device2Exists ? true : Device2Client->SendPacket(Packet_Ping_ID, &pingPacket, sizeof(Packet_Ping));
 
       bool pingsuc = device1Suc && device2Suc;
       if(!pingsuc)
@@ -189,9 +188,9 @@ void ConnectToFMS()
 int8_t authRes = -1;
 void AuthSingleClient(PacketClient* client, TeamColor color, DeviceType device)
 {
-  client->RegisterPacket(2, sizeof(Packet_ClientIDResponse_2), (PacketCallback)[](uint8_t *data, size_t len)
+  client->RegisterPacket(Packet_ClientIDResponse_ID, sizeof(Packet_ClientIDResponse), (PacketCallback)[](uint8_t *data, size_t len, void* args)
   {
-    Packet_ClientIDResponse_2* packet = (Packet_ClientIDResponse_2*)data;
+    Packet_ClientIDResponse* packet = (Packet_ClientIDResponse*)data;
 
     if (!packet->Accepted)
     {
@@ -203,13 +202,13 @@ void AuthSingleClient(PacketClient* client, TeamColor color, DeviceType device)
     authRes = packet->Accepted;
   });
 
-  Packet_ClientID_1 authPacket;
+  Packet_ClientID authPacket;
   authPacket.teamColor = color;
   authPacket.deviceType = device;
   authPacket.SecurityKey = config->SecurityKey;
 
 
-  bool authPacketSent = client->SendPacket(1, &authPacket, sizeof(Packet_ClientID_1));
+  bool authPacketSent = client->SendPacket(Packet_ClientID_ID, &authPacket, sizeof(Packet_ClientID));
   if (!authPacketSent)
   {
     DebugError("Failed to send auth packet, restarting..");
@@ -256,6 +255,8 @@ void LoadFieldDevicesByConfig()
    Device1Exists = config->deviceType1 != DeviceType::NONE;
    Device2Exists = config->deviceType2 != DeviceType::NONE;
 
+   DebugInfoF("Devices: %d, %d", Device1Exists, Device2Exists);
+
    if(Device1Exists) Device1 = GetFieldDeviceByDeviceType(config->deviceType1);
    if(Device2Exists) Device2 = GetFieldDeviceByDeviceType(config->deviceType2);
 
@@ -269,7 +270,7 @@ void InitDevices()
     Device1->deviceType = config->deviceType1;
     Device1->teamColor = config->teamColor1;
     Device1->Client = Device1Client;
-    Device1->Initialize();
+    Device1->Init();
   }
   if(Device2Exists)
   {
@@ -277,6 +278,6 @@ void InitDevices()
     Device2->deviceType = config->deviceType2;
     Device2->teamColor = config->teamColor2;
     Device2->Client = Device2Client;
-    Device2->Initialize();
+    Device2->Init();
   }
 }
