@@ -1,6 +1,7 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
 using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
 using MiniFRC_FMS.Modules.Game.Models;
+using MiniFRC_FMS.Utils;
 using PacketCommunication.Client;
 using PacketCommunication.Server;
 using System;
@@ -13,8 +14,6 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 {
     internal class Speaker : BaseFieldDevice
     {
-        public Action ScoreCB { get; set; }
-
         public override void Init()
         {
             this.TCPClient.AttachPacketCallback<SpeakerScorePacket>(x =>

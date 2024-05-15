@@ -26,6 +26,12 @@ namespace MiniFRC_FMS.Modules.Game
         [FieldDevice(DeviceType.Speaker, PointSource.Speaker, TeamColor.BLUE)]
         public Speaker? BLUESpeaker { get; private set; } = null;
 
+        [FieldDevice(DeviceType.Amp, PointSource.Amp, TeamColor.RED)]
+        public Speaker? REDAmp { get; private set; } = null;
+
+        [FieldDevice(DeviceType.Amp, PointSource.Amp, TeamColor.BLUE)]
+        public Speaker? BLUEAmp { get; private set; } = null;
+
 
         public BaseFieldDevice[] GetAllFieldDevices()
         {
@@ -43,9 +49,7 @@ namespace MiniFRC_FMS.Modules.Game
             return devices.ToArray();
         }
 
-
-
-        public async Task AnnouncePacketAsync<T>(T packet) where T : IBasePacket, new()
+        private async Task AnnouncePacketAsync<T>(T packet) where T : IBasePacket, new()
         {
             try
             {
@@ -66,12 +70,32 @@ namespace MiniFRC_FMS.Modules.Game
 
                 await Task.WhenAll(tasks);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.Log(LogLevel.ERROR, $"An error occured while announcing packet to field devices (Ex: {ex.Message})");
             }
         }
 
+        public async Task ToggleEnabledAllAsync(bool enabled)
+        {
+            try
+            {
+                BaseFieldDevice[] devices = GetAllFieldDevices();
+
+                List<Task> t = new();
+                foreach (BaseFieldDevice device in devices)
+                {
+
+                    t.Add(device.SetEnabledAsync(enabled));
+                }
+
+                await Task.WhenAll(t);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.ERROR, $"An error occured while toggling enabled states (Ex: {ex.Message})");
+            }
+        }
 
 
         protected override bool Init()

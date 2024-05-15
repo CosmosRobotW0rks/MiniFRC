@@ -28,9 +28,16 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
 
         // SPEAKER
         SpeakerScorePacket,
-        SpeakerToggleMotorsPacket,
-        __PLACEHOLDER6,
+        SpeakerManuelMotorControl,
         __PLACEHOLDER7,
+        __PLACEHOLDER8,
+
+        // AMP
+        AmpScorePacket,
+        AmpManuelMotorControl,
+        __PLACEHOLDER9,
+        __PLACEHOLDER10,
+        
 
         // FMS CONTROLLER PACKETS
         FMSControllerAuthPacket,

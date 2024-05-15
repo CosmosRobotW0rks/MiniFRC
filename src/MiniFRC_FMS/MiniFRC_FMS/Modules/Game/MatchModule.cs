@@ -1,5 +1,6 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
 using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
+using MiniFRC_FMS.Modules.DataSaving;
 using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
 using System;
@@ -71,35 +72,42 @@ namespace MiniFRC_FMS.Modules.Game
         #region Match Events
         private void Match_OnAbort(object? sender, EventArgs e)
         {
+            Logger.Log($"Match Aborted (RED P: {match.REDPoints} / BLUE P: {match.BLUEPoints})");
             match = null;
 
 
             var fieldModule = GetModule<FieldModule>();
 
             Task.WaitAll(
-            fieldModule.AnnouncePacketAsync(new ClientToggleEnabledPacket(false)),
+            fieldModule.ToggleEnabledAllAsync(false),
             fmsControllerModule.AnnounceMatchStateAsync(match, State));
         }
 
         private void Match_OnEnd(object? sender, EventArgs e)
         {
+            Logger.Log($"Match Ended (RED P: {match.REDPoints} / BLUE P: {match.BLUEPoints})");
 
-            Logger.Log($"Match Ended (RED: {match.REDPoints} / BLUE: {match.BLUEPoints})");
+
+            if (match == null) { Logger.Log(LogLevel.WARNING, "Couldn't save the match, match is null"); }
+            else GetModule<DataSavingModule>().Matches.Add(match);
+
+
             match = null;
 
 
             var fieldModule = GetModule<FieldModule>();
 
             Task.WaitAll(
-            fieldModule.AnnouncePacketAsync(new ClientToggleEnabledPacket(false)),
+            fieldModule.ToggleEnabledAllAsync(false),
             fmsControllerModule.AnnounceMatchStateAsync(match, State));
+
         }
 
         private void Match_OnStart(object? sender, EventArgs e)
         {
             var fieldModule = GetModule<FieldModule>();
             Task.WaitAll(
-            fieldModule.AnnouncePacketAsync(new ClientToggleEnabledPacket(true)),
+            fieldModule.ToggleEnabledAllAsync(true),
             fmsControllerModule.AnnounceMatchStateAsync(match, State));
         }
 

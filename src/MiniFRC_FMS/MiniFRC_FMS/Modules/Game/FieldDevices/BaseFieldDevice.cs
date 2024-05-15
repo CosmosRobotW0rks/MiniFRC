@@ -1,5 +1,6 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
 using MiniFRC_FMS.Modules.Comms.TCPPackets;
+using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
 using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
 using PacketCommunication.Server;
@@ -28,6 +29,8 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
         public PointSource pointSource { get; private set; }
 
+        public bool Enabled { get; private set; }
+
         public event EventHandler<BaseFieldDevice> OnPingExpire;
         private bool Initialized = false;
 
@@ -49,6 +52,19 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
             TCPClient.PacketReceived += TCPClient_PacketReceived; 
 
             Task.Run(PingCheck);
+        }
+
+        public async Task SetEnabledAsync(bool enabled)
+        {
+            try
+            {
+                await TCPClient.SendPacketAsync(new ClientToggleEnabledPacket(enabled));
+                Enabled = enabled;
+            }
+            catch(Exception ex)
+            {
+                Logger.Log(LogLevel.ERROR, $"An error occured while toggling enabled state of {Name} (Ex: {ex.Message})");
+            }
         }
 
         private void TCPClient_PacketReceived(object? sender, PacketCommunication.IBasePacket e)

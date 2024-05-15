@@ -9,7 +9,8 @@ namespace MiniFRC_FMS.Modules.Game.Models
     internal enum PointSource
     {
         Other = 0,
-        Speaker
+        Speaker,
+        Amp
     }
 
     internal class Point

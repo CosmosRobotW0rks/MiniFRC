@@ -17,20 +17,27 @@ namespace MiniFRC_ControlApp.Comms
         ClientCalibratePacket,
         ClientCalibrateResponsePacket,
         ClientToggleEnabledPacket,
-        PLACEHOLDER1,
-        PLACEHOLDER2,
-        PLACEHOLDER3,
-        PLACEHOLDER4,
-        PLACEHOLDER5,
+        __PLACEHOLDER1,
+        __PLACEHOLDER2,
+        __PLACEHOLDER3,
+        __PLACEHOLDER4,
+        __PLACEHOLDER5,
 
 
         //   ------ FIELD DEVICE PACKETS -----
 
         // SPEAKER
         SpeakerScorePacket,
-        SpeakerToggleMotorsPacket,
-        PLACEHOLDER6,
-        PLACEHOLDER7,
+        SpeakerManuelMotorControl,
+        __PLACEHOLDER7,
+        __PLACEHOLDER8,
+
+        // AMP
+        AmpScorePacket,
+        AmpManuelMotorControl,
+        __PLACEHOLDER9,
+        __PLACEHOLDER10,
+
 
         // FMS CONTROLLER PACKETS
         FMSControllerAuthPacket,
