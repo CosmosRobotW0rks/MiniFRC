@@ -2,19 +2,27 @@
 #include <WiFi.h>
 #include "Config/MFRCConfig.h"
 #include "Debugger.h"
+#include <ESPAsyncWebServer.h>
+#include <ElegantOTA.h>
+#include <AsyncTCP.h>
 
 // FIELD Device INCLUDES
 #include "FieldDevices/BaseFieldDevice.h"
 #include "FieldDevices/Packets.h"
 
-#include "FieldDevices/Devices/Speaker/Speaker.h"
-
+#include "FieldDevices/Devices/Speaker.h"
+#include "FieldDevices/Devices/Amp.h"
+#include "FieldDevices/Devices/Fan.h"
+#include "FieldDevices/Devices/DriverStation.h"
+#include "FieldDevices/Devices/Source.h"
 
 Config *config;
 void InitConfig();
 
 void LoadFieldDevicesByConfig();
 
+void ConnectToWiFi();
+void InitOTA();
 void ConnectToFMS();
 void AuthClients();
 void StartPingTask();
@@ -36,6 +44,10 @@ BaseFieldDevice* GetFieldDeviceByDeviceType(DeviceType t)
   switch (t)
   {
     case DeviceType::Speaker: return new FieldDevice_Speaker();
+    case DeviceType::Amp: return new FieldDevice_Amp();
+    case DeviceType::Fan: return new FieldDevice_Fan();
+    case DeviceType::DriverStation: return new FieldDevice_DriverStation();
+    case DeviceType::Source: return new FieldDevice_Source();
   
   default:
   DebugWarningF("Unknown device type %d", t);
@@ -59,6 +71,9 @@ void setup()
   DebugInfoF("MAIN CONFIG PORT: %d\n", config->FMSPORT);
   DebugInfoF("MAIN CONFIG TEAM COLORS: %d, %d\n", config->teamColor1, config->teamColor2);
   DebugInfoF("MAIN CONFIG DEVICE IDS: %d, %d\n\n", config->deviceType1, config->deviceType2);
+
+  ConnectToWiFi();
+  InitOTA();
   
   LoadFieldDevicesByConfig();
 
@@ -72,7 +87,8 @@ void setup()
 
 void loop()
 {
-  delay(0);
+  ElegantOTA.loop();
+  delay(10);
 }
 
 
@@ -94,6 +110,49 @@ void InitConfig()
   }
 }
 
+AsyncWebServer otaServer(80);
+void InitOTA()
+{
+  otaServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", String(config->deviceType1) + "/" + String(config->teamColor1) + "/" + String(config->deviceType2) + "/" + String(config->teamColor2));
+  });
+  ElegantOTA.setAutoReboot(true);
+  ElegantOTA.begin(&otaServer, "admin", String(config->SecurityKey).c_str());
+  // ElegantOTA callbacks
+  //ElegantOTA.onStart(onOTAStart);
+  //ElegantOTA.onProgress(onOTAProgress);
+  //ElegantOTA.onEnd(onOTAEnd);
+
+  otaServer.begin();
+  DebugInfo("OTA Started");
+}
+
+wl_status_t WaitForConnectionResult(int timeoutMS)
+{
+  ulong start = millis();
+
+  while(WiFi.status() != WL_CONNECTED && millis() - start < timeoutMS)
+  {
+    delay(100);
+  }
+
+  return WiFi.status();
+}
+
+void ConnectToWiFi()
+{
+  WiFi.begin(config->NETSSID, config->NETPW);
+  DebugInfo("Connecting to WiFi");
+  wl_status_t status = WaitForConnectionResult(20000);
+  if(status == WL_CONNECTED)
+    DebugInfoF("Connected to WiFi (IP: %s) (MAC: %s)\n", WiFi.localIP().toString().c_str(), WiFi.macAddress().c_str());
+  else
+  {
+    DebugErrorF("Failed to connect to WiFi (status: %d), restarting..", status);
+    ESP.restart();
+    return;
+  }
+}
 
 int pingFailCount = 0;
 void StartPingTask()
@@ -132,19 +191,6 @@ void StartPingTask()
   DebugInfo("STARTED DA PING TASK");
 }
 
-
-wl_status_t WaitForConnectionResult(int timeoutMS)
-{
-  ulong start = millis();
-
-  while(WiFi.status() != WL_CONNECTED && millis() - start < timeoutMS)
-  {
-    delay(100);
-  }
-
-  return WiFi.status();
-}
-
 void ConnectToFMSSingle(PacketClient* cli)
 {
   DebugInfo("Connecting to FMS");
@@ -161,20 +207,7 @@ void ConnectToFMSSingle(PacketClient* cli)
 }
 
 void ConnectToFMS()
-{
-  WiFi.begin(config->NETSSID, config->NETPW);
-  DebugInfo("Connecting to WiFi");
-  wl_status_t status = WaitForConnectionResult(20000);
-  if(status == WL_CONNECTED)
-    DebugInfo("Connected to WiFi");
-  else
-  {
-    DebugErrorF("Failed to connect to WiFi (status: %d), restarting..", status);
-    ESP.restart();
-    return;
-  }
-
-  if(Device1Exists)
+{ if(Device1Exists)
   {
     Device1Client = new PacketClient();
     ConnectToFMSSingle(Device1Client);

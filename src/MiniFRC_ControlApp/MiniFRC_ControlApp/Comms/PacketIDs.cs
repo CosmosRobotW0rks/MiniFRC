@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MiniFRC_ControlApp.Comms
 {
+
     enum PacketIDs
     {
         // MISC
@@ -28,15 +29,25 @@ namespace MiniFRC_ControlApp.Comms
 
         // SPEAKER
         SpeakerScorePacket,
-        SpeakerManuelMotorControl,
+        __PLACEHOLDER6,
         __PLACEHOLDER7,
         __PLACEHOLDER8,
 
         // AMP
         AmpScorePacket,
-        AmpManuelMotorControl,
+        AmpAmplifiedPacket,
         __PLACEHOLDER9,
         __PLACEHOLDER10,
+
+        // DRIVER STATION
+        DriverStationAmpReadyPacket,
+        DriverStationSourceReadyPacket,
+
+        DriverStationAmpPressedPacket,
+        DriverStationAmplifiedPacket,
+
+        DriverStationSourcePressedPacket,
+        DriverStationSourceTriggeredPacket,
 
 
         // FMS CONTROLLER PACKETS
@@ -49,6 +60,8 @@ namespace MiniFRC_ControlApp.Comms
         FMSControllerMatchStateUpdatedPacket,
         FMSControllerAuDisPageUpdatedPacket,
         FMSControllerDeviceLastseenUpdatedPacket,
+        FMSControllerEnableDisableDevicePacket,
+        FMSControllerEnableDisableDeviceResponsePacket,
 
 
     }

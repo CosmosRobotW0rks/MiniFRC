@@ -17,11 +17,13 @@ namespace MiniFRC_FMS
 
         public static class Field
         {
-            public const string REDSpeakerHost = "";
-            public const int REDSpeakerPort = 0;
+            public const int SpeakerScore = 2;
+            public const int SpeakerAmplifiedScore = 5;
 
-            public const string BLUESpeakerHost = "";
-            public const int BLUESpeakerPort = 0;
+            public const int AmplificationDuration = 20000;
+            public const int AmpScore = 1;
+
+            public const int SourceCooldown = 10;
         }
 
         public static class Points

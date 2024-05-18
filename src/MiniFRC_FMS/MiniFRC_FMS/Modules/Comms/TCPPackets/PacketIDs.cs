@@ -17,7 +17,7 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         ClientCalibratePacket,
         ClientCalibrateResponsePacket,
         ClientToggleEnabledPacket,
-        __PLACEHOLDER1,
+        ClientInitializationStatusPacket,
         __PLACEHOLDER2,
         __PLACEHOLDER3,
         __PLACEHOLDER4,
@@ -37,7 +37,22 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         AmpAmplifiedPacket,
         __PLACEHOLDER9,
         __PLACEHOLDER10,
-        
+
+        // DRIVER STATION
+        DriverStationAmpReadyPacket,
+        DriverStationSourceReadyPacket,
+
+        DriverStationAmpPressedPacket,
+        DriverStationAmplifiedPacket,
+
+        DriverStationSourcePressedPacket,
+        DriverStationSourceTriggeredPacket,
+
+        // SOURCE
+        SourceDropPacket,
+        __PLACEHOLDER11,
+        __PLACEHOLDER12,
+
 
         // FMS CONTROLLER PACKETS
         FMSControllerAuthPacket,
@@ -49,6 +64,8 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         FMSControllerMatchStateUpdatedPacket,
         FMSControllerAuDisPageUpdatedPacket,
         FMSControllerDeviceLastseenUpdatedPacket,
+        FMSControllerEnableDisableDevicePacket,
+        FMSControllerEnableDisableDeviceResponsePacket,
 
 
     }

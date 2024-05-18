@@ -1,11 +1,37 @@
 {
-    "NETSSID":"BK_School",
-    "NETPW": "8K-$cH0oL!",
-    "SecurityKey":16777216,
-    "FMSIP":[10,134,100,230],
-    "FMSPort":8081,
-    "teamColor1":1,
-    "deviceType1": 1,
-    "teamColor2":0,
-    "deviceType2": 0
+    "MatchID": 99,
+    "IsPractice": false,
+    "IsRematch": false,
+    "MatchType": "Qualification",
+    "RedTeams": [
+        {
+            "ID": 1,
+            "Name": "TestTeam1",
+            "RP": 0
+        },
+        {
+            "ID": 2,
+            "Name": "TestTeam2",
+            "RP": 0
+        }
+    ],
+    "BlueTeams": [
+        {
+            "ID": 3,
+            "Name": "TestTeam3",
+            "RP": 0
+        },
+        {
+            "ID": 4,
+            "Name": "TestTeam4",
+            "RP": 0
+        }
+    ],
+    "RedPoints": 5,
+    "BluePoints": 0,
+    "PointInfo": {
+        "Types":["Speaker", "Amp", "Some Other Shit"],
+        "RedPoints": [5,5,5],
+        "BluePoints": [5,5,5]
+    }
 }

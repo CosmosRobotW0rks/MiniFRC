@@ -31,6 +31,8 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
         public bool Enabled { get; private set; }
 
+        public byte ID => (byte)(((byte)teamColor << 6) | (byte)deviceType);
+
         public event EventHandler<BaseFieldDevice> OnPingExpire;
         private bool Initialized = false;
 
@@ -53,6 +55,9 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
             Task.Run(PingCheck);
         }
+
+        public virtual void MatchStart() { }
+        public virtual void MatchStop() { }
 
         public async Task SetEnabledAsync(bool enabled)
         {

@@ -1,4 +1,5 @@
 ﻿using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
+using MiniFRC_FMS.Modules.Game.Models;
 using MiniFRC_FMS.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,20 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
         {
             this.TCPClient.AttachPacketCallback<AmpScorePacket>(x =>
             {
-                this.Score(5);
+                var field = ModulesMain.Instance.GetModule<FieldModule>();
+
+                Speaker? speaker = (Speaker)field.GetAllFieldDevices(x => x.deviceType == DeviceType.Speaker && x.teamColor == this.teamColor).FirstOrDefault();
+                if(speaker == null) { Logger.Log(LogLevel.WARNING, "Speaker is null, cannot set ready to amplify"); return; }
+                
+                speaker.SetReadyToAmplifyAsync().Wait();
+
+                this.Score(Config.Field.AmpScore);
             });
+        }
+
+        public async Task NotifyAmplificationEndedAsync()
+        {
+            await this.TCPClient.SendPacketAsync(new AmpAmplifiedPacket());
         }
 
     }

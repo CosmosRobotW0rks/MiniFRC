@@ -7,13 +7,20 @@
 enum DeviceType : uint8_t
 {
     NONE = 0,
-    Speaker = 1
+    Speaker,
+    Amp,
+    Source,
+    Trap,
+    DriverStation,
+    Stage,
+    Fan
 };
 
 enum TeamColor : uint8_t
 {
-    RED = 0,
-    BLUE = 1
+    TCNONE = 0,
+    RED = 1,
+    BLUE = 2
 };
 
 
@@ -42,6 +49,16 @@ public:
             DebugInfoF("Receigle enabledd ppacket: %d\n", packet->State);
             device->EnabledChanged(packet->State);
         }, this);
+
+        bool initStatus = Initialize();
+
+        Packet_ClientInitializationStatus packet;
+        packet.Success = initStatus;
+
+        if(!Client->SendPacket(Packet_ClientInitializationStatus_ID, (uint8_t*)&initStatus, sizeof(Packet_ClientInitializationStatus)))
+        {
+            DebugError("Failed to send initialization status packet");
+        }
 
         //return true;
         return Initialize();

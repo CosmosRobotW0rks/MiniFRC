@@ -16,6 +16,12 @@ namespace MiniFRC_ControlApp
     internal enum DeviceType : byte
     {
         NONE = 0,
-        Speaker = 1
+        Speaker,
+        Amp,
+        Source,
+        Trap,
+        DriverStation,
+        Stage,
+        Fan
     }
 }

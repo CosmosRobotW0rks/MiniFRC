@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MiniFRC_FMS.Utils;
+using System.Text.RegularExpressions;
+using Match = MiniFRC_FMS.Modules.Game.Models.Match;
 
 namespace MiniFRC_FMS.Modules.Game
 {
@@ -94,6 +96,30 @@ namespace MiniFRC_FMS.Modules.Game
             wsModule.Announce(cmd);
         }
 
+        public void AnnounceAfterMatch(Match match)
+        {
+            Team[] allTeams = dsModule.Teams.GetAll().ToArray();
+
+            AuDisCommand cmd = new AuDisCommand(AuDisCommand.Command.updateAfterMatch, new
+            {
+                MatchID = match.MatchID,
+                IsPractice = match.IsPractice,
+                IsRematch = match.IsRematch,
+                MatchType = match.Type.ToString(), // Qualification, Semifinal, Final
+
+                RedTeams = match.REDAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
+                BlueTeams = match.BLUEAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
+
+                RedPoints = match.REDPoints,
+                BluePoints = match.BLUEPoints,
+                PointInfo = new
+                {
+                    Types = new string[] {},
+
+                }
+            });
+        }
+
 
         private class AuDisCommand
         {
@@ -102,7 +128,8 @@ namespace MiniFRC_FMS.Modules.Game
                 updatePage,
 
                 updateLeaderboard,
-                updateMatchState
+                updateMatchState,
+                updateAfterMatch
             }
 
             public string command { get; private set; }

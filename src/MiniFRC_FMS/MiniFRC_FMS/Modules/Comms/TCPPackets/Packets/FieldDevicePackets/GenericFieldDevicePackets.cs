@@ -64,4 +64,16 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets // 70-
             Enabled = enabled ? (byte)1 : (byte)0;
         }
     }
+
+    internal struct ClientInitializationStatusPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.ClientInitializationStatusPacket;
+
+        public byte Initialized { get; set; }
+
+        public ClientInitializationStatusPacket(bool initialized)
+        {
+            Initialized = initialized ? (byte)1 : (byte)0;
+        }
+    }
 }

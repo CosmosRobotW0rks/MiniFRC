@@ -19,6 +19,9 @@ namespace MiniFRC_FMS.Modules.Game
 
     internal class FieldModule : BaseModule
     {
+        [FieldDevice(DeviceType.Fan, PointSource.Other, TeamColor.NONE)]
+        public Fan? Fan { get; private set; } = null;
+
         [FieldDevice(DeviceType.Speaker, PointSource.Speaker, TeamColor.RED)]
         public Speaker? REDSpeaker { get; private set; } = null;
 
@@ -27,13 +30,19 @@ namespace MiniFRC_FMS.Modules.Game
         public Speaker? BLUESpeaker { get; private set; } = null;
 
         [FieldDevice(DeviceType.Amp, PointSource.Amp, TeamColor.RED)]
-        public Speaker? REDAmp { get; private set; } = null;
+        public Amp? REDAmp { get; private set; } = null;
 
         [FieldDevice(DeviceType.Amp, PointSource.Amp, TeamColor.BLUE)]
-        public Speaker? BLUEAmp { get; private set; } = null;
+        public Amp? BLUEAmp { get; private set; } = null;
+
+        [FieldDevice(DeviceType.DriverStation, PointSource.Other, TeamColor.RED)]
+        public DriverStation? REDDriverStation { get; private set; } = null;
+
+        [FieldDevice(DeviceType.DriverStation, PointSource.Other, TeamColor.BLUE)]
+        public DriverStation? BLUEDriverStation { get; private set; } = null;
 
 
-        public BaseFieldDevice[] GetAllFieldDevices()
+        public BaseFieldDevice[] GetAllFieldDevices(Func<BaseFieldDevice, bool>? condition = null)
         {
             PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null && x.PropertyType.IsSubclassOf(typeof(BaseFieldDevice))).ToArray();
             List<BaseFieldDevice> devices = new();
@@ -46,7 +55,14 @@ namespace MiniFRC_FMS.Modules.Game
                 devices.Add(device);
             }
 
-            return devices.ToArray();
+            return condition == null ? devices.ToArray() : devices.Where(condition).ToArray();
+        }
+
+        public T? GetFieldDevice<T>(TeamColor team) where T : BaseFieldDevice
+        {
+            BaseFieldDevice[] devices = GetAllFieldDevices();
+
+            return (T?)devices.Where(y => y.GetType() == typeof(T) && y.teamColor == team).FirstOrDefault();
         }
 
         private async Task AnnouncePacketAsync<T>(T packet) where T : IBasePacket, new()
@@ -97,16 +113,41 @@ namespace MiniFRC_FMS.Modules.Game
             }
         }
 
+        public async Task AnnounceMatchStartStopAsync(bool state)
+        {
+            try
+            {
+
+                BaseFieldDevice[] devices = GetAllFieldDevices();
+
+                foreach (BaseFieldDevice device in devices)
+                {
+                    if (state)
+                        device.MatchStart();
+                    else
+                        device.MatchStop();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.ERROR, $"An error occured while announcing match enabled/disabled (Ex: {ex.Message})");
+            }
+        }
+
 
         protected override bool Init()
         {
-            GetModule<TCPServerModule>()?.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
+            var tcpServerModule = GetModule<TCPServerModule>();
+            tcpServerModule.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
+            tcpServerModule.AttachPacketCallback<ClientInitializationStatusPacket>(HandleClientInitStatus);
 
-            Task.Run(UpdateFMSControlersWithFieldDataAsync);
+            Task.Run(UpdateFMSControllersWithFieldDataAsync);
             return true;
         }
 
-        private async Task UpdateFMSControlersWithFieldDataAsync()
+
+
+        private async Task UpdateFMSControllersWithFieldDataAsync()
         {
             FMSControllerAppModule fmsControllerModule = GetModule<FMSControllerAppModule>();
             while (true)
@@ -149,6 +190,17 @@ namespace MiniFRC_FMS.Modules.Game
             Logger.Log(LogLevel.WARNING, $"Potential disconnection from \"{fieldDevice.Name}\"");
         }
 
+
+        async void HandleClientInitStatus(Client client, ClientInitializationStatusPacket packet)
+        {
+            BaseFieldDevice? device = GetAllFieldDevices(x => x.TCPClient == client).FirstOrDefault();
+            if (device == null) return;
+
+            if (packet.Initialized == 1) Logger.Log($"{device.Name} initialized");
+            else Logger.Log(LogLevel.WARNING, $"{device.Name} failed to initialize");
+        }
+
+
         async void HandleClientIdentification(Client client, ClientIDPacket packet)
         {
             try
@@ -160,7 +212,7 @@ namespace MiniFRC_FMS.Modules.Game
                 }
 
                 await client.SendPacketAsync(new ClientIDResponsePacket(true));
-                
+
                 PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null & x.PropertyType.IsSubclassOf(typeof(BaseFieldDevice))).ToArray();
                 foreach (PropertyInfo info in props)
                 {

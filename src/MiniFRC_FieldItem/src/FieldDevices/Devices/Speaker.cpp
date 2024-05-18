@@ -21,7 +21,11 @@ bool FieldDevice_Speaker::Initialize()
 
     note_detector.attach(LASER_P, LDR);
     bool noteDetectorSuc = note_detector.calibrate();
-
+    if(!noteDetectorSuc)
+    {
+        DebugError("Failed to calibrate note detector");
+        return false;
+    }
     xTaskCreate(task, "spkr", 4096, this, 0, NULL);
 
     DebugInfo("INITIALIZED SPEAKER");

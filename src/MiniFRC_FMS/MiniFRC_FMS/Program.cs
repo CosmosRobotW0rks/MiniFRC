@@ -25,6 +25,10 @@ namespace MiniFRC_FMS
                     string str = Console.ReadLine();
                     switch (str)
                     {
+                        case "amplify":
+                            await ModulesMain.Instance.GetModule<FieldModule>().REDSpeaker.SetReadyToAmplifyAsync();
+                            Logger.Log(LogLevel.DEBUG, "Amplified amp");
+                            break;
                         case "updateleaderboard":
                             ModulesMain.Instance.GetModule<AuDisModule>().UpdateLeaderboard();
                             break;

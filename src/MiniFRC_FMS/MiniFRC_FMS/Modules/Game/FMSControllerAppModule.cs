@@ -35,6 +35,10 @@ namespace MiniFRC_FMS.Modules.Game
 
             TCPServerModule?.AttachPacketCallback<FMSControllerLoadMatchPacket>(HandleMatchLoad);
             TCPServerModule?.AttachPacketCallback<FMSControllerStartStopMatchPacket>(HandleMatchStartStop);
+
+            TCPServerModule?.AttachPacketCallback<FMSControllerEnableDisableDevicePacket>(HandleEnableDisableDeviceReq);
+
+
             TCPServerModule.ClientDisconnected += TCPServerModule_ClientDisconnected;
             return true;
         }
@@ -65,19 +69,52 @@ namespace MiniFRC_FMS.Modules.Game
 
 
             await Task.Delay(100);
-            AnnounceMatchStateAsync(matchModule.match, matchModule.State, client);
+            await AnnounceMatchStateAsync(matchModule.match, matchModule.State, client);
 
         }
+        async void HandleEnableDisableDeviceReq(Client client, FMSControllerEnableDisableDevicePacket packet)
+        {
+            if (!FMSControllerAppClients.Contains(client)) return;
+
+            var fieldModule = GetModule<FieldModule>();
+
+            if (packet.DeviceCount == 0) await fieldModule.ToggleEnabledAllAsync(packet.Enabled);
+            else
+            {
+                var allDevices = fieldModule.GetAllFieldDevices();
+
+                List<Task> t = new List<Task>();
+
+                for (int i = 0; i<packet.DeviceCount; i++)
+                {
+                    byte deviceID = packet.DeviceIDs[i];
+                    BaseFieldDevice? device = allDevices.Where(x => x.ID == deviceID).FirstOrDefault();
+                    if (device == null)
+                    {
+                        Logger.Log(LogLevel.WARNING, "Couldn't find the device with the ID " + deviceID.ToString());
+                        return;
+                    }
+
+                    t.Add(device.SetEnabledAsync(packet.Enabled));
+                }
+
+
+                await Task.WhenAll(t);
+            }
+
+            await client.SendPacketAsync(new FMSControllerEnableDisableDeviceResponsePacket());
+        }
+
 
         async void HandleMatchLoad(Client client, FMSControllerLoadMatchPacket packet)
         {
             if (!FMSControllerAppClients.Contains(client)) return;
 
-            Match match = new Match(packet.MatchID, packet.matchType, packet.Practice == 1, packet.Rematch == 1,packet.MatchDuration, packet.ID_RED1, packet.ID_RED2, packet.ID_BLUE1, packet.ID_BLUE2);
+            Match match = new Match(packet.MatchID, packet.matchType, packet.Practice == 1, packet.Rematch == 1,packet.MatchDuration, packet.ID_RED1, packet.ID_RED2, packet.ID_RED3, packet.ID_BLUE1, packet.ID_BLUE2, packet.ID_BLUE3);
             var dataSaving = GetModule<DataSavingModule>();
             var matchModule = GetModule<MatchModule>();
 
-            int c = (dataSaving.Teams.GetWhere(x => x.ID == packet.ID_RED1 || x.ID == packet.ID_RED2 || x.ID == packet.ID_BLUE1 || x.ID == packet.ID_BLUE2)).Count;
+            int c = (dataSaving.Teams.GetWhere(x => x.ID == packet.ID_RED1 || x.ID == packet.ID_RED2 || x.ID == packet.ID_RED3 || x.ID == packet.ID_BLUE1 || x.ID == packet.ID_BLUE2 || x.ID == packet.ID_BLUE3)).Count;
             if(c  != 4)
             {
                 await client.SendPacketAsync(new FMSControllerLoadMatchResponsePacket(FMSControllerLoadMatchResponsePacket.MatchLoadStatus.IncorrectTeamIDs));
@@ -144,8 +181,10 @@ namespace MiniFRC_FMS.Modules.Game
                     matchState = state,
                     ID_RED1 = match?.TeamRED1 ?? 0,
                     ID_RED2 = match?.TeamRED2 ?? 0,
+                    ID_RED3 = match?.TeamRED3 ?? 0,
                     ID_BLUE1 = match?.TeamBLUE1 ?? 0,
                     ID_BLUE2 = match?.TeamBLUE2 ?? 0,
+                    ID_BLUE3 = match?.TeamBLUE3 ?? 0,
                     MatchID = match?.MatchID ?? 0,
                     MatchDuration = match?.MatchDuration ?? 0,
                     RemainingTime = match?.RemainingTime ?? 0,

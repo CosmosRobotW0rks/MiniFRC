@@ -30,20 +30,32 @@ public:
 
         int16_t diff = on_read - off_read;
         threshold = off_read + diff * 0.25;
-        DebugInfoF("LDR Diff: %d, threshold: %d\n", diff, threshold);
+        //DebugInfoF("LDR Diff: %d, threshold: %d\n", diff, threshold);
 
         thr_sign = diff > 0;
 
-        bool detected_before = detect();
+        bool detected_before = detect_rw();
 
         toggle_laser(true);
-        bool detected_after = detect();
+        delay(100);
+        bool detected_after = detect_rw();
 
-        DebugInfo("LDR Done");
-        if (detected_after && !(detected_before))
+        //DebugInfo("LDR Done");
+        bool ok = detected_before && !(detected_after);
+        DebugInfoF("LDR ok: %d", ok);
+
+        if (ok)
             return true;
 
         return false;
+    }
+
+    bool detect_rw(){
+        uint16_t val = get_reading(128);
+        bool detected =(val <= threshold) == thr_sign;
+        //ESP_LOGE("ldr", "detected: %d", detected);
+
+        return detected;
     }
 
     bool detect()
@@ -53,10 +65,7 @@ public:
         if (!laser_enabled)
             return false;
 
-        uint16_t val = get_reading(128);
-
-        // ESP_LOGI("ldr", "value: %d", val);
-        return ((val <= threshold) == thr_sign);
+        return detect_rw();
     }
 
     void toggle_laser(bool state)

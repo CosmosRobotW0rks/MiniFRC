@@ -38,7 +38,8 @@ namespace MiniFRC_FMS.Modules.Game
         public void LoadMatch(Match _match)
         {
             this.match = _match;
-            fmsControllerModule.AnnounceMatchStateAsync(match, State);
+            _ = fmsControllerModule.AnnounceMatchStateAsync(match, State);
+            GetModule<AuDisModule>().UpdateMatchState();
 
 
             match.OnCountdownUpdate += Match_OnCountdownUpdate;
@@ -81,6 +82,7 @@ namespace MiniFRC_FMS.Modules.Game
 
             Task.WaitAll(
             fieldModule.ToggleEnabledAllAsync(false),
+            fieldModule.AnnounceMatchStartStopAsync(false),
             fmsControllerModule.AnnounceMatchStateAsync(match, State),
             Task.Run(() => GetModule<AuDisModule>().UpdateMatchState()));
         }
@@ -102,6 +104,7 @@ namespace MiniFRC_FMS.Modules.Game
 
             Task.WaitAll(
             fieldModule.ToggleEnabledAllAsync(false),
+            fieldModule.AnnounceMatchStartStopAsync(false),
             fmsControllerModule.AnnounceMatchStateAsync(match, State));
 
         }
@@ -111,6 +114,7 @@ namespace MiniFRC_FMS.Modules.Game
             var fieldModule = GetModule<FieldModule>();
             Task.WaitAll(
             fieldModule.ToggleEnabledAllAsync(true),
+            fieldModule.AnnounceMatchStartStopAsync(true),
             fmsControllerModule.AnnounceMatchStateAsync(match, State),
             Task.Run(() => GetModule<AuDisModule>().UpdateMatchState()));
         }

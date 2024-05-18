@@ -112,7 +112,7 @@ namespace MFRCConfig
 
         // TODO: SERIALIZE OR FIND A WORKAROUND
 
-        char* data = "{\"NETSSID\":\"BK_School\",\"NETPW\":\"8K-$cH0oL!\",\"SecurityKey\":16777216,\"FMSIP\":[10,134,100,230],\"FMSPort\":8081,\"teamColor1\":1,\"deviceType1\":1,\"teamColor2\":0,\"deviceType2\":0}";
+        char* data = "{\"NETSSID\":\"BK_School\",\"NETPW\":\"8K-$cH0oL!\",\"SecurityKey\":16777216,\"FMSIP\":[10,134,100,230],\"FMSPort\":8081,\"teamColor1\":1,\"deviceType1\":5,\"teamColor2\":0,\"deviceType2\":0}";
         bool s = DataSaving::DeleteFile(ConfigPath);
         if (!s)
             DebugWarning("Failed to delete old config file");

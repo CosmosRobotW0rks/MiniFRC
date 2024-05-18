@@ -1,5 +1,6 @@
 using MiniFRC_ControlApp.Comms;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace MiniFRC_ControlApp
 {
@@ -9,7 +10,51 @@ namespace MiniFRC_ControlApp
         {
             InitializeComponent();
         }
+        Dictionary<byte, string> Devices = new Dictionary<byte, string>();
 
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            // CREDS
+            if (!File.Exists("creds.txt")) return;
+
+            string[] lines = File.ReadAllLines("creds.txt");
+
+            if (lines.Length != 2) return;
+
+            textBoxEndpoint.Text = lines[0];
+            textBoxSecuityKey.Text = lines[1];
+
+            // DEVICES
+            foreach (DeviceType device in Enum.GetValues<DeviceType>())
+            {
+                if (device == DeviceType.NONE) continue;
+
+                if (device == DeviceType.Fan) Devices.Add(Utils.GetDeviceIDByDeviceInfo(device, TeamColor.NONE), device.ToString());
+                else
+                {
+                    Devices.Add(Utils.GetDeviceIDByDeviceInfo(device, TeamColor.RED), Utils.GetDeviceNameByDeviceInfo(device, TeamColor.RED));
+                    Devices.Add(Utils.GetDeviceIDByDeviceInfo(device, TeamColor.BLUE), Utils.GetDeviceNameByDeviceInfo(device, TeamColor.BLUE));
+                }
+            }
+
+            foreach (var kvp in Devices)
+            {
+                comboBoxDeviceSelection.Items.Add(kvp.Value);
+            }
+        }
+
+        void AttachPacketCallbacks()
+        {
+            ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(HandleMatchUpdate);
+            ServerCommunication.AttachPacketCB<FMSControllerDeviceLastseenUpdatedPacket>(DisplayDeviceLastSeen);
+        }
+
+        #region Device Last Seen
         void DisplayDeviceLastSeen(FMSControllerDeviceLastseenUpdatedPacket packet)
         {
             var devices = packet.GetDevices();
@@ -22,7 +67,7 @@ namespace MiniFRC_ControlApp
             {
                 int diffSecs = (int)(kvp.Value - now).TotalSeconds;
 
-                richTextBoxDevicesLastSeen.AppendText($"{kvp.Key.Item2} {kvp.Key.Item1}: ", Color.Black, new Font(boxFont, FontStyle.Bold));
+                richTextBoxDevicesLastSeen.AppendText(Utils.GetDeviceNameByDeviceInfo(kvp.Key.Item1, kvp.Key.Item2), Color.Black, new Font(boxFont, FontStyle.Bold));
 
                 string text = $"[{kvp.Value.ToLongTimeString()}]{(kvp.Value == DateTime.MinValue ? "" : $"({diffSecs})")}\n";
                 TimeSpan diff = now - kvp.Value;
@@ -31,16 +76,12 @@ namespace MiniFRC_ControlApp
                 else richTextBoxDevicesLastSeen.AppendText(text, Color.Red, new Font(boxFont, FontStyle.Italic | FontStyle.Bold | FontStyle.Strikeout));
             }
         }
+        #endregion
 
-        void AttachPacketCallbacks()
-        {
-            ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(HandleMatchUpdate);
-            ServerCommunication.AttachPacketCB<FMSControllerDeviceLastseenUpdatedPacket>(DisplayDeviceLastSeen);
-        }
-
+        #region Login
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-            if(ServerCommunication.client != null && ServerCommunication.client.Connected)
+            if (ServerCommunication.client != null && ServerCommunication.client.Connected)
             {
                 ServerCommunication.Disconnect();
             }
@@ -90,9 +131,9 @@ namespace MiniFRC_ControlApp
 
 
         }
+        #endregion
 
-
-
+        #region Match Control
         void HandleMatchUpdate(FMSControllerMatchStateUpdatedPacket p)
         {
             labelMatchState.Text = $"Match State: {p.matchState}";
@@ -114,8 +155,10 @@ namespace MiniFRC_ControlApp
                 $"Match Type: {p.matchType}\n" +
                 $"TR1: {p.ID_RED1}\n" +
                 $"TR2: {p.ID_RED2}\n" +
+                $"TR3: {p.ID_RED3}\n" +
                 $"TB1: {p.ID_BLUE1}\n" +
                 $"TB2: {p.ID_BLUE2}\n" +
+                $"TB3: {p.ID_BLUE3}\n" +
                 $"Rematch: {p.Rematch == 1}\n" +
                 $"Practice: {p.Practice == 1}\n";
 
@@ -124,11 +167,6 @@ namespace MiniFRC_ControlApp
 
         }
 
-
-        private void FormMain_Load(object sender, EventArgs e)
-        {
-
-        }
 
 
         private void buttonMatchLoad_Click(object sender, EventArgs e)
@@ -139,8 +177,10 @@ namespace MiniFRC_ControlApp
 
             byte red1 = (byte)numericUpDownMatchRedAllienceTeam1.Value;
             byte red2 = (byte)numericUpDownMatchRedAllienceTeam2.Value;
+            byte red3 = (byte)numericUpDownMatchRedAllienceTeam3.Value;
             byte blue1 = (byte)numericUpDownMatchBlueAllienceTeam1.Value;
             byte blue2 = (byte)numericUpDownMatchBlueAllienceTeam2.Value;
+            byte blue3 = (byte)numericUpDownMatchBlueAllienceTeam3.Value;
             FMSControllerLoadMatchPacket.MatchType matchType = radioButtonMatchQual.Checked ? FMSControllerLoadMatchPacket.MatchType.Qualification : radioButtonMatchSFinal.Checked ? FMSControllerLoadMatchPacket.MatchType.Semifinal : FMSControllerLoadMatchPacket.MatchType.Final;
 
 
@@ -156,8 +196,10 @@ namespace MiniFRC_ControlApp
                     {
                         ID_BLUE1 = blue1,
                         ID_BLUE2 = blue2,
+                        ID_BLUE3 = blue3,
                         ID_RED1 = red1,
                         ID_RED2 = red2,
+                        ID_RED3 = red3,
                         MatchDuration = matchDuration,
                         MatchID = matchid,
                         Rematch = checkBoxMatchRematch.Checked ? (byte)1 : (byte)0,
@@ -274,11 +316,151 @@ namespace MiniFRC_ControlApp
                 }
             });
         }
+        #endregion
 
-        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        #region Field Control
+        private void buttonEnableAll_Click(object sender, EventArgs e)
         {
-            Environment.Exit(0);
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    var packet = new FMSControllerEnableDisableDevicePacket(new byte[0], true);
+
+                    var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerEnableDisableDevicePacket, FMSControllerEnableDisableDeviceResponsePacket>(packet, TimeSpan.FromSeconds(5));
+                    if (resp.TimedOut)
+                    {
+                        MessageBox.Show("Server response timed out");
+                        return;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while enabling all devices\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
         }
+
+        private void buttonDisableAll_Click(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    var packet = new FMSControllerEnableDisableDevicePacket(new byte[0], false);
+
+                    var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerEnableDisableDevicePacket, FMSControllerEnableDisableDeviceResponsePacket>(packet, TimeSpan.FromSeconds(5));
+                    if (resp.TimedOut)
+                    {
+                        MessageBox.Show("Server response timed out");
+                        return;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while disabling all devices\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonEnableDevice_Click(object sender, EventArgs e)
+        {
+            if (comboBoxDeviceSelection.SelectedIndex == -1) return;
+
+            byte deviceID = Devices.ToList()[comboBoxDeviceSelection.SelectedIndex].Key;
+
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    var packet = new FMSControllerEnableDisableDevicePacket(new byte[] { deviceID}, true);
+
+                    var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerEnableDisableDevicePacket, FMSControllerEnableDisableDeviceResponsePacket>(packet, TimeSpan.FromSeconds(5));
+                    if (resp.TimedOut)
+                    {
+                        MessageBox.Show("Server response timed out");
+                        return;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while enabling device\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonDisableDevice_Click(object sender, EventArgs e)
+        {
+
+            if (comboBoxDeviceSelection.SelectedIndex == -1) return;
+
+            byte deviceID = Devices.ToList()[comboBoxDeviceSelection.SelectedIndex].Key;
+
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    var packet = new FMSControllerEnableDisableDevicePacket(new byte[] { deviceID }, false);
+
+                    var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerEnableDisableDevicePacket, FMSControllerEnableDisableDeviceResponsePacket>(packet, TimeSpan.FromSeconds(5));
+                    if (resp.TimedOut)
+                    {
+                        MessageBox.Show("Server response timed out");
+                        return;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while disabling device\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonDeviceShortcut1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonDeviceShortcutRST_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonShortcut2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxDeviceSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+        #endregion
+
     }
 
 

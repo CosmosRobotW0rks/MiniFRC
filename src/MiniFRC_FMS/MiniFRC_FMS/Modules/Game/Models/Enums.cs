@@ -8,7 +8,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
 {
     internal enum TeamColor : byte
     {
-        NONE = 0,
+        NONE,
         RED,
         BLUE
     }
@@ -16,8 +16,13 @@ namespace MiniFRC_FMS.Modules.Game.Models
     internal enum DeviceType : byte
     {
         NONE = 0,
-        Speaker = 1,
-        Amp
+        Speaker,
+        Amp,
+        Source,
+        Trap,
+        DriverStation,
+        Stage,
+        Fan
     }
 
     internal enum AuDisPage : byte

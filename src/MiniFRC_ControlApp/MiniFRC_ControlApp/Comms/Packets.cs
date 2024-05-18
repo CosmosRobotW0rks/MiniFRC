@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace MiniFRC_ControlApp.Comms
 {
 
+
     #region AUTH
     internal struct FMSControllerAuthPacket : IBasePacket
     {
@@ -38,8 +39,10 @@ namespace MiniFRC_ControlApp.Comms
 
         public byte ID_RED1 { get; set; }
         public byte ID_RED2 { get; set; }
+        public byte ID_RED3 { get; set; }
         public byte ID_BLUE1 { get; set; }
         public byte ID_BLUE2 { get; set; }
+        public byte ID_BLUE3 { get; set; }
 
         public byte MatchID { get; set; }
         public ushort MatchDuration { get; set; }
@@ -114,8 +117,10 @@ namespace MiniFRC_ControlApp.Comms
 
         public byte ID_RED1 { get; set; }
         public byte ID_RED2 { get; set; }
+        public byte ID_RED3 { get; set; }
         public byte ID_BLUE1 { get; set; }
         public byte ID_BLUE2 { get; set; }
+        public byte ID_BLUE3 { get; set; }
 
         public byte MatchID { get; set; }
         public ushort MatchDuration { get; set; }
@@ -130,13 +135,15 @@ namespace MiniFRC_ControlApp.Comms
         public int BLUEPoints { get; set; }
 
         public FMSControllerLoadMatchPacket.MatchType matchType { get; set; }
-
+        
         public enum MatchState : byte
         {
             Standby = 0,
             Loaded,
             Countdown,
-            Running
+            Running,
+            PointsCalculating,
+            AfterMatch
         }
     }
     #endregion
@@ -199,4 +206,34 @@ namespace MiniFRC_ControlApp.Comms
     }
     #endregion
 
+    #region DEVICE CONTROL
+
+    internal struct FMSControllerEnableDisableDevicePacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerEnableDisableDevicePacket;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+        public byte[] DeviceIDs = new byte[100];
+
+        public int DeviceCount { get; set; }
+        public bool Enabled { get; set; }
+
+        public FMSControllerEnableDisableDevicePacket() { }
+
+        public FMSControllerEnableDisableDevicePacket(byte[] deviceIDs, bool enabled)
+        {
+            deviceIDs.CopyTo(DeviceIDs, 0);
+
+            this.DeviceCount = deviceIDs.Length;
+
+            Enabled = enabled;
+        }
+
+    }
+
+    internal struct FMSControllerEnableDisableDeviceResponsePacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerEnableDisableDeviceResponsePacket;
+    }
+    #endregion
 }
