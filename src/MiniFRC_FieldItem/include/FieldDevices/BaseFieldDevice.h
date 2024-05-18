@@ -61,7 +61,7 @@ public:
         }
 
         //return true;
-        return Initialize();
+        return initStatus;
     }
 
 

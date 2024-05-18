@@ -14,9 +14,10 @@ protected:
     bool Calibrate();
 
     private:
+    bool drop = false;
     double cur_angle = 0;
     void goto_angle(int angle);
-    void Drop();
+    static void DropTask(void* args);
     Servo drop_server;
 
 };

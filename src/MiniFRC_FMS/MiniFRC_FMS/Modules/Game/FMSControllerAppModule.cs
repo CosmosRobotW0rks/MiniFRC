@@ -115,7 +115,7 @@ namespace MiniFRC_FMS.Modules.Game
             var matchModule = GetModule<MatchModule>();
 
             int c = (dataSaving.Teams.GetWhere(x => x.ID == packet.ID_RED1 || x.ID == packet.ID_RED2 || x.ID == packet.ID_RED3 || x.ID == packet.ID_BLUE1 || x.ID == packet.ID_BLUE2 || x.ID == packet.ID_BLUE3)).Count;
-            if(c  != 4)
+            if(c  != 6)
             {
                 await client.SendPacketAsync(new FMSControllerLoadMatchResponsePacket(FMSControllerLoadMatchResponsePacket.MatchLoadStatus.IncorrectTeamIDs));
                 return;

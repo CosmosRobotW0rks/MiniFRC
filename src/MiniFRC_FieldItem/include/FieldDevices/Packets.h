@@ -17,6 +17,7 @@ struct Packet_ClientID
     uint8_t teamColor;
     uint8_t deviceType;
     uint64_t SecurityKey;
+    uint8_t IPAddr[4];
 };
 
 const uint8_t Packet_ClientIDResponse_ID = 2;

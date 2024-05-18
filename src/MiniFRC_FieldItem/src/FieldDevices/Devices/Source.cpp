@@ -3,6 +3,15 @@
 bool FieldDevice_Source::Initialize()
 {
     drop_server.attach(13, 500, 2500);
+
+    Client->RegisterPacket(Packet_Source_Drop_ID, sizeof(Packet_Source_Drop), [](uint8_t* buf, size_t len, void* args){
+        FieldDevice_Source* source = (FieldDevice_Source*)args;
+        source->drop = true;
+    }, this);
+
+    xTaskCreate(DropTask, "DropTask", 4096, this, 0, NULL);
+    DebugInfo("DROP TASK CREATED");
+
     return true;
 }
 
@@ -16,23 +25,44 @@ bool FieldDevice_Source::Calibrate()
     return true;
 }
 
-void FieldDevice_Source::Drop()
+void FieldDevice_Source::DropTask(void* args)
 {
-    goto_angle(pos_b);
-    goto_angle(180);
-    goto_angle(pos_b);
-    goto_angle(pos_b + 2 * shake);
-    goto_angle(pos_b);
-    goto_angle(pos_b - shake);
-    goto_angle(pos_b);
+    FieldDevice_Source* source = (FieldDevice_Source*)args;
+
+    while(true)
+    {
+        if(!source->drop)
+        {
+            delay(100);
+
+            continue;
+        }
+
+        DebugInfo("Starting drop");
+
+        source->goto_angle(pos_a);
+        source->goto_angle(0);
+        source->goto_angle(pos_a);
+        source->goto_angle(pos_a - 2 * shake);
+        source->goto_angle(pos_a);
+        source->goto_angle(pos_a + shake);
+        source->goto_angle(pos_a); 
+
+        source->goto_angle(pos_b);
+        source->goto_angle(180);
+        source->goto_angle(pos_b);
+        source->goto_angle(pos_b + 2 * shake);
+        source->goto_angle(pos_b);
+        source->goto_angle(pos_b - shake);
+        source->goto_angle(pos_b); 
+
+        source->drop = false;
+        
+        DebugInfo("drop ended");
+    }
     
-    goto_angle(pos_a);
-    goto_angle(0);
-    goto_angle(pos_a);
-    goto_angle(pos_a - 2 * shake);
-    goto_angle(pos_a);
-    goto_angle(pos_a + shake);
-    goto_angle(pos_a);  
+
+    
 }
 
 void FieldDevice_Source::goto_angle(int angle) {

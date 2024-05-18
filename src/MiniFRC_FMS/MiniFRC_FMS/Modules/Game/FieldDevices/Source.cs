@@ -19,6 +19,7 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
         public async Task DropAsync()
         {
             await TCPClient.SendPacketAsync(new SourceDropPacket());
+            //NextNoteDropTime = DateTime.Now + TimeSpan.FromSeconds(Config.Field.SourceCooldown);
         }
 
     }

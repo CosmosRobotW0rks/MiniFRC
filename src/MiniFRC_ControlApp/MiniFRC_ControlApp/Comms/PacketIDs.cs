@@ -18,7 +18,7 @@ namespace MiniFRC_ControlApp.Comms
         ClientCalibratePacket,
         ClientCalibrateResponsePacket,
         ClientToggleEnabledPacket,
-        __PLACEHOLDER1,
+        ClientInitializationStatusPacket,
         __PLACEHOLDER2,
         __PLACEHOLDER3,
         __PLACEHOLDER4,
@@ -48,6 +48,11 @@ namespace MiniFRC_ControlApp.Comms
 
         DriverStationSourcePressedPacket,
         DriverStationSourceTriggeredPacket,
+
+        // SOURCE
+        SourceDropPacket,
+        __PLACEHOLDER11,
+        __PLACEHOLDER12,
 
 
         // FMS CONTROLLER PACKETS

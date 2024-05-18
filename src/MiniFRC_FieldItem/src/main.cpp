@@ -83,6 +83,8 @@ void setup()
   StartPingTask();
 
   InitDevices();
+
+  DebugInfoF("D1: %d / D2: %d", (int)Device1, (int)Device2);
 }
 
 void loop()
@@ -243,6 +245,13 @@ void AuthSingleClient(PacketClient* client, TeamColor color, DeviceType device)
   authPacket.deviceType = device;
   authPacket.SecurityKey = config->SecurityKey;
 
+  IPAddress ip = WiFi.localIP();
+
+  authPacket.IPAddr[0] = ip[0];
+  authPacket.IPAddr[1] = ip[1];
+  authPacket.IPAddr[2] = ip[2];
+  authPacket.IPAddr[3] = ip[3];
+
 
   bool authPacketSent = client->SendPacket(Packet_ClientID_ID, &authPacket, sizeof(Packet_ClientID));
   if (!authPacketSent)
@@ -303,6 +312,7 @@ void InitDevices()
 {
   if(Device1Exists)
   {
+    DebugInfo("Initing Device 1");
     Device1->deviceType = config->deviceType1;
     Device1->teamColor = config->teamColor1;
     Device1->Client = Device1Client;
@@ -310,7 +320,7 @@ void InitDevices()
   }
   if(Device2Exists)
   {
-    
+    DebugInfo("Initing Device 2");
     Device2->deviceType = config->deviceType2;
     Device2->teamColor = config->teamColor2;
     Device2->Client = Device2Client;
