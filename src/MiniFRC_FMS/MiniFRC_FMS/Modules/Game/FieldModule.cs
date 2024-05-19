@@ -8,6 +8,7 @@ using PacketCommunication.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.Serialization;
@@ -239,7 +240,7 @@ namespace MiniFRC_FMS.Modules.Game
                     fieldDevice.OnPingExpire += HandlePingExpire;
 
                     info.SetValue(this, obj);
-                    Logger.Log($"Field Device Connected ({fieldDevice.Name}) [{fieldDevice.TCPClient.GetHashCode()}]");
+                    Logger.Log($"Field Device Connected ({((IPEndPoint)client.TCPClient.Client.RemoteEndPoint).Address})({fieldDevice.Name}) [{fieldDevice.TCPClient.GetHashCode()}]");
 
                     return;
                 }
