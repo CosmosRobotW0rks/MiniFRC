@@ -85,9 +85,7 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
         protected void Score(int points)
         {
-            Point p = new Point(pointSource, points);
-
-            ModulesMain.Instance.GetModule<MatchModule>().AddPoints(teamColor, p);
+            ModulesMain.Instance.GetModule<MatchModule>().AddPoints(teamColor, pointSource, points);
         }
 
 

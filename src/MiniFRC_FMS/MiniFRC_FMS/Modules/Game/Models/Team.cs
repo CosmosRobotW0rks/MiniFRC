@@ -25,9 +25,12 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
                 foreach(Match match in matches)
                 {
-                    if (match.REDPoints == match.BLUEPoints) RP += 1;
-                    else if (match.REDAllience.Contains(ID) && match.REDPoints > match.BLUEPoints) RP += 2;
-                    else if (match.BLUEAllience.Contains(ID) && match.BLUEPoints > match.REDPoints) RP += 2;
+                    int redPoints = match.Points[TeamColor.RED].PointsSum;
+                    int bluePoints = match.Points[TeamColor.BLUE].PointsSum;
+
+                    if (redPoints == bluePoints) RP += 1;
+                    else if (match.REDAllience.Contains(ID) && redPoints > bluePoints) RP += 2;
+                    else if (match.BLUEAllience.Contains(ID) && bluePoints > redPoints) RP += 2;
                     
                 }
 

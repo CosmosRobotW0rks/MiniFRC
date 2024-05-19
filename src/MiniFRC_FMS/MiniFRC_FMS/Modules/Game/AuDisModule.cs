@@ -84,8 +84,8 @@ namespace MiniFRC_FMS.Modules.Game
                 RedTeams = match.REDAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
                 BlueTeams = match.BLUEAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
 
-                RedPoints = match.REDPoints,
-                BluePoints = match.BLUEPoints,
+                RedPoints = match.Points[TeamColor.RED],
+                BluePoints = match.Points[TeamColor.BLUE],
 
                 CD = match.RemainingCountdown,
                 RT = match.RemainingTime,
@@ -110,14 +110,16 @@ namespace MiniFRC_FMS.Modules.Game
                 RedTeams = match.REDAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
                 BlueTeams = match.BLUEAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
 
-                RedPoints = match.REDPoints,
-                BluePoints = match.BLUEPoints,
+                RedPoints = match.Points[TeamColor.RED].PointsSum,
+                BluePoints = match.Points[TeamColor.BLUE].PointsSum,
                 PointInfo = new
                 {
-                    Types = new string[] {},
-
+                    REDPoints = match.Points[TeamColor.RED].GetAftermatchPointArray(),
+                    BLUEPoints = match.Points[TeamColor.BLUE].GetAftermatchPointArray()
                 }
             });
+
+            wsModule.Announce(cmd);
         }
 
 

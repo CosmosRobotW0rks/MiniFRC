@@ -193,8 +193,8 @@ namespace MiniFRC_FMS.Modules.Game
                     Practice = (match?.IsPractice ?? false) ? (byte)1 : (byte)0,
                     Rematch = (match?.IsRematch ?? false) ? (byte)1 : (byte)0,
 
-                    REDPoints = match?.REDPoints ?? 0,
-                    BLUEPoints = match?.BLUEPoints ?? 0
+                    REDPoints = match?.Points?[TeamColor.RED].PointsSum ?? 0,
+                    BLUEPoints = match?.Points[TeamColor.BLUE].PointsSum ?? 0
 
                 };
 

@@ -20,7 +20,7 @@ namespace MiniFRC_FMS.Modules.Game
 
     internal class FieldModule : BaseModule
     {
-        [FieldDevice(DeviceType.Fan, PointSource.Other, TeamColor.NONE)]
+        [FieldDevice(DeviceType.Fan, PointSource.NONE, TeamColor.NONE)]
         public Fan? Fan { get; private set; } = null;
 
         [FieldDevice(DeviceType.Speaker, PointSource.Speaker, TeamColor.RED)]
@@ -31,10 +31,10 @@ namespace MiniFRC_FMS.Modules.Game
         public Speaker? BLUESpeaker { get; private set; } = null;
 
 
-        [FieldDevice(DeviceType.Source, PointSource.Other, TeamColor.RED)]
+        [FieldDevice(DeviceType.Source, PointSource.NONE, TeamColor.RED)]
         public Source? REDSource { get; private set; } = null;
 
-        [FieldDevice(DeviceType.Source, PointSource.Other, TeamColor.BLUE)]
+        [FieldDevice(DeviceType.Source, PointSource.NONE, TeamColor.BLUE)]
         public Source? BLUESource { get; private set; } = null;
 
         [FieldDevice(DeviceType.Amp, PointSource.Amp, TeamColor.RED)]
@@ -43,10 +43,10 @@ namespace MiniFRC_FMS.Modules.Game
         [FieldDevice(DeviceType.Amp, PointSource.Amp, TeamColor.BLUE)]
         public Amp? BLUEAmp { get; private set; } = null;
 
-        [FieldDevice(DeviceType.DriverStation, PointSource.Other, TeamColor.RED)]
+        [FieldDevice(DeviceType.DriverStation, PointSource.NONE, TeamColor.RED)]
         public DriverStation? REDDriverStation { get; private set; } = null;
 
-        [FieldDevice(DeviceType.DriverStation, PointSource.Other, TeamColor.BLUE)]
+        [FieldDevice(DeviceType.DriverStation, PointSource.NONE, TeamColor.BLUE)]
         public DriverStation? BLUEDriverStation { get; private set; } = null;
 
 

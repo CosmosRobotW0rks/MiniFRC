@@ -63,18 +63,20 @@ namespace MiniFRC_FMS.Modules.Game
             if(match != null) match.Abort();
         }
 
-        public void AddPoints(TeamColor team, Point point)
+        public int AddPoints(TeamColor team, PointSource source, int points)
         {
             if(match != null)
             {
-                match.AddPoints(team, point);
+                return match.Points[team].AddPoint(source, points);
             }
+
+            return -1;
         }
 
         #region Match Events
         private void Match_OnAbort(object? sender, EventArgs e)
         {
-            Logger.Log($"Match Aborted (RED P: {match.REDPoints} / BLUE P: {match.BLUEPoints})");
+            Logger.Log($"Match Aborted (RED P: {match.Points[TeamColor.RED].PointsSum} / BLUE P: {match.Points[TeamColor.BLUE].PointsSum})");
             match = null;
 
 
@@ -89,7 +91,7 @@ namespace MiniFRC_FMS.Modules.Game
 
         private void Match_OnEnd(object? sender, EventArgs e)
         {
-            Logger.Log($"Match Ended (RED P: {match.REDPoints} / BLUE P: {match.BLUEPoints})");
+            Logger.Log($"Match Ended (RED P: {match.Points[TeamColor.RED].PointsSum} / BLUE P: {match.Points[TeamColor.BLUE].PointsSum})");
             GetModule<AuDisModule>().UpdateMatchState();
 
 

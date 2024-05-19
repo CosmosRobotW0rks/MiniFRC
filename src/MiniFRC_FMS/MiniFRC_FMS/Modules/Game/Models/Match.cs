@@ -28,23 +28,20 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public byte TeamRED2 { get; private set; }
         public byte TeamRED3 { get; private set; }
         public byte[] REDAllience { get { return [TeamRED1, TeamRED2, TeamRED3]; } }
-        public int REDPoints => _REDPointsList.Sum(x => x.Points);
 
         public byte TeamBLUE1 { get; private set; }
         public byte TeamBLUE2 { get; private set; }
         public byte TeamBLUE3 { get; private set; }
         public byte[] BLUEAllience { get { return [TeamBLUE1, TeamBLUE2, TeamBLUE3]; } }
-        public int BLUEPoints => _BLUEPointsList.Sum(x => x.Points);
 
 
 
-        private List<Point> _REDPointsList = new();
-        private List<Point> _BLUEPointsList = new();
-
-        public Point[] REDPointsList => _REDPointsList.ToArray();
-        public Point[] BLUEPointsList => _BLUEPointsList.ToArray();
-
-
+        private Dictionary<TeamColor, PointCollection> _points = new Dictionary<TeamColor, PointCollection>()
+        {
+            { TeamColor.RED, new PointCollection() },
+            { TeamColor.BLUE, new PointCollection() }
+        };
+        public IReadOnlyDictionary<TeamColor, PointCollection> Points => _points.AsReadOnly();
         public Match(byte matchID, MatchType type, bool isPractice, bool isRematch, UInt16 matchDuration, byte teamRED1,byte teamRED2, byte teamRED3, byte teamBLUE1, byte teamBLUE2, byte teamBLUE3)
         {
             MatchID = matchID;
@@ -160,23 +157,6 @@ namespace MiniFRC_FMS.Modules.Game.Models
             IsAborted = true;
             State = MatchState.Standby;
             OnAbort?.Invoke(this, null);
-        }
-
-        internal void AddPoints(TeamColor team, Point point)
-        {
-            if(State != MatchState.Running) return;
-
-            switch(team)
-            {
-                case TeamColor.RED:
-                    _REDPointsList.Add(point);
-                    break;
-                case TeamColor.BLUE:
-                    _BLUEPointsList.Add(point);
-                    break;
-            }
-
-            OnPointUpdate?.Invoke(this, null);
         }
     }
 }
