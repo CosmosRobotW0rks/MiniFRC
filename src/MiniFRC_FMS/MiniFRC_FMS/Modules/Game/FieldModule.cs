@@ -49,6 +49,17 @@ namespace MiniFRC_FMS.Modules.Game
         public DriverStation? BLUEDriverStation { get; private set; } = null;
 
 
+        protected override bool Init()
+        {
+            var tcpServerModule = GetModule<TCPServerModule>();
+            tcpServerModule.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
+            tcpServerModule.AttachPacketCallback<ClientInitializationStatusPacket>(HandleClientInitStatus);
+
+            Task.Run(UpdateFMSControllersWithFieldDataAsync);
+            return true;
+        }
+
+
         public BaseFieldDevice[] GetAllFieldDevices(Func<BaseFieldDevice, bool>? condition = null)
         {
             PropertyInfo[] props = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(FieldDeviceAttribute)) != null && x.PropertyType.IsSubclassOf(typeof(BaseFieldDevice))).ToArray();
@@ -142,15 +153,6 @@ namespace MiniFRC_FMS.Modules.Game
         }
 
 
-        protected override bool Init()
-        {
-            var tcpServerModule = GetModule<TCPServerModule>();
-            tcpServerModule.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
-            tcpServerModule.AttachPacketCallback<ClientInitializationStatusPacket>(HandleClientInitStatus);
-
-            Task.Run(UpdateFMSControllersWithFieldDataAsync);
-            return true;
-        }
 
 
 
