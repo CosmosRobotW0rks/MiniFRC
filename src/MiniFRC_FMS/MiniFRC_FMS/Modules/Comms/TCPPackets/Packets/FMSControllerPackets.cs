@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets.ClientFMSLogPacket;
 
 namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets  // 20-69
 {
@@ -237,5 +238,26 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets  // 20-69
     {
         public byte ID => (byte)PacketIDs.FMSControllerEnableDisableDeviceResponsePacket;
     }
+
+    internal struct FMSControllerDeviceLogPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerDeviceLogPacket;
+
+        public byte DeviceID { get; set; }
+
+        public byte LogLevel { get; set; }
+
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+        public char[] Log = new char[100];
+
+        public FMSControllerDeviceLogPacket(byte deviceID, FMSLogLevel logLevel, string log)
+        {
+            DeviceID = deviceID;
+            LogLevel = (byte)logLevel;
+            log.ToCharArray().CopyTo(Log, 0);
+        }
+    }
+
     #endregion
 }

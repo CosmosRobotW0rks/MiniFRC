@@ -18,7 +18,7 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         ClientCalibrateResponsePacket,
         ClientToggleEnabledPacket,
         ClientInitializationStatusPacket,
-        __PLACEHOLDER2,
+        ClientFMSLogPacket,
         __PLACEHOLDER3,
         __PLACEHOLDER4,
         __PLACEHOLDER5,
@@ -66,6 +66,7 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         FMSControllerDeviceLastseenUpdatedPacket,
         FMSControllerEnableDisableDevicePacket,
         FMSControllerEnableDisableDeviceResponsePacket,
+        FMSControllerDeviceLogPacket
 
 
     }

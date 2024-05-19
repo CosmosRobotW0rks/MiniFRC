@@ -135,7 +135,7 @@ namespace MiniFRC_ControlApp.Comms
         public int BLUEPoints { get; set; }
 
         public FMSControllerLoadMatchPacket.MatchType matchType { get; set; }
-        
+
         public enum MatchState : byte
         {
             Standby = 0,
@@ -235,5 +235,34 @@ namespace MiniFRC_ControlApp.Comms
     {
         public byte ID => (byte)PacketIDs.FMSControllerEnableDisableDeviceResponsePacket;
     }
+
+    internal struct FMSControllerDeviceLogPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerDeviceLogPacket;
+
+        public byte DeviceID { get; set; }
+
+        public byte LogLevel { get; set; }
+
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+        public char[] Log = new char[100];
+
+        public FMSControllerDeviceLogPacket(byte deviceID, FMSLogLevel logLevel, string log)
+        {
+            DeviceID = deviceID;
+            LogLevel = (byte)logLevel;
+            log.ToCharArray().CopyTo(Log, 0);
+        }
+
+        public enum FMSLogLevel : byte
+        {
+            Debug = 0,
+            Warning,
+            Error,
+            Critical
+        }
+    }
+
     #endregion
 }

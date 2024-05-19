@@ -19,7 +19,7 @@ namespace MiniFRC_ControlApp.Comms
         ClientCalibrateResponsePacket,
         ClientToggleEnabledPacket,
         ClientInitializationStatusPacket,
-        __PLACEHOLDER2,
+        ClientFMSLogPacket,
         __PLACEHOLDER3,
         __PLACEHOLDER4,
         __PLACEHOLDER5,
@@ -67,6 +67,7 @@ namespace MiniFRC_ControlApp.Comms
         FMSControllerDeviceLastseenUpdatedPacket,
         FMSControllerEnableDisableDevicePacket,
         FMSControllerEnableDisableDeviceResponsePacket,
+        FMSControllerDeviceLogPacket
 
 
     }

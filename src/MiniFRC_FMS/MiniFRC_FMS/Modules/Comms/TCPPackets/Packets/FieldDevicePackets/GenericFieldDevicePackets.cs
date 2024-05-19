@@ -33,7 +33,7 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets // 70-
         {
             Accepted = accepted ? (byte)1 : (byte)0;
         }
-        
+
     }
 
     internal struct ClientCalibratePacket : IBasePacket
@@ -75,6 +75,28 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets // 70-
         public ClientInitializationStatusPacket(bool initialized)
         {
             Initialized = initialized ? (byte)1 : (byte)0;
+        }
+    }
+
+    internal struct ClientFMSLogPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.ClientFMSLogPacket;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+        public char[] Log = new char[100];
+        public string LogStr => new string(Log).Trim('\0');
+
+        public FMSLogLevel LogLevel { get; set; }
+
+        public ClientFMSLogPacket() { }
+
+
+        public enum FMSLogLevel : byte
+        {
+            Debug = 0,
+            Warning,
+            Error,
+            Critical
         }
     }
 }

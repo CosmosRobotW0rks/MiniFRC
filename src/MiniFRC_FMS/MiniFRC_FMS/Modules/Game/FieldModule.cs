@@ -1,4 +1,5 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
+using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets;
 using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
 using MiniFRC_FMS.Modules.Game.FieldDevices;
 using MiniFRC_FMS.Modules.Game.Models;
@@ -55,11 +56,23 @@ namespace MiniFRC_FMS.Modules.Game
             var tcpServerModule = GetModule<TCPServerModule>();
             tcpServerModule.AttachPacketCallback<ClientIDPacket>(HandleClientIdentification);
             tcpServerModule.AttachPacketCallback<ClientInitializationStatusPacket>(HandleClientInitStatus);
+            tcpServerModule.AttachPacketCallback<ClientFMSLogPacket>(HandleClientLog);
 
             Task.Run(UpdateFMSControllersWithFieldDataAsync);
             return true;
         }
 
+        private void HandleClientLog(Client client, ClientFMSLogPacket packet)
+        {
+            BaseFieldDevice? device = GetAllFieldDevices(x => x.TCPClient == client).FirstOrDefault();
+            if (device == null) { Logger.Log(LogLevel.WARNING, "Device instance not found, can't log to fms controller"); return; }
+
+            FMSControllerDeviceLogPacket p = new(device.ID, packet.LogLevel, packet.LogStr);
+
+            GetModule<FMSControllerAppModule>().AnnouncePacketAsync(p).Wait();
+
+            Logger.Log(LogLevel.DEBUG,$"Announced device log ({device.Name})");
+        }
 
         public BaseFieldDevice[] GetAllFieldDevices(Func<BaseFieldDevice, bool>? condition = null)
         {
