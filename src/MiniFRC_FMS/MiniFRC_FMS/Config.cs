@@ -23,12 +23,13 @@ namespace MiniFRC_FMS
             public const int AmplificationDuration = 20000;
             public const int AmpScore = 1;
 
-            public const int SourceCooldown = 10;
-        }
+            public const int StageClimbPerRobot = 2;
+            public const int Trap = 5;
 
-        public static class Points
-        {
-            public const int SpeakerScore = 5;
+            public const int SourceCooldown = 10;
+
+
+            public const int PenaltyPoints = 5;
         }
     }
 }

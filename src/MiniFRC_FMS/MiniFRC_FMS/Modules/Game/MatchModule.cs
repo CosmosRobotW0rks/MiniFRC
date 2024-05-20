@@ -65,7 +65,7 @@ namespace MiniFRC_FMS.Modules.Game
 
         public int AddPoints(TeamColor team, PointSource source, int points)
         {
-            if(match != null)
+            if (match != null)
             {
                 return match.Points[team].AddPoint(source, points);
             }
@@ -73,10 +73,44 @@ namespace MiniFRC_FMS.Modules.Game
             return -1;
         }
 
+        public bool RemovePoint(TeamColor team, int pointID)
+        {
+            if (match != null)
+            {
+                return match.Points[team].DeletePointByID(pointID);
+            }
+
+            return false;
+        }
+
+        public void SetStage(TeamColor team, int count)
+        {
+            if (match != null)
+            {
+                match.Points[team].DeletePoints(x => x.PointSource == PointSource.Stage);
+
+                if (count != 0)
+                    match.Points[team].AddPoint(PointSource.Stage, Config.Field.StageClimbPerRobot * count);
+            }
+        }
+
+        public void SetTrap(TeamColor team, bool state)
+        {
+            if (match != null)
+            {
+                match.Points[team].DeletePoints(x => x.PointSource == PointSource.Trap);
+
+                if (state)
+                    match.Points[team].AddPoint(PointSource.Trap, Config.Field.Trap);
+            }
+        }
+
+
         #region Match Events
         private void Match_OnAbort(object? sender, EventArgs e)
         {
             Logger.Log($"Match Aborted (RED P: {match.Points[TeamColor.RED].PointsSum} / BLUE P: {match.Points[TeamColor.BLUE].PointsSum})");
+            
             match = null;
 
 
@@ -94,11 +128,12 @@ namespace MiniFRC_FMS.Modules.Game
             Logger.Log($"Match Ended (RED P: {match.Points[TeamColor.RED].PointsSum} / BLUE P: {match.Points[TeamColor.BLUE].PointsSum})");
             GetModule<AuDisModule>().UpdateMatchState();
 
+            GetModule<AuDisModule>().AnnounceAfterMatch(match);
 
             if (match == null) { Logger.Log(LogLevel.WARNING, "Couldn't save the match, match is null"); }
             else GetModule<DataSavingModule>().Matches.Add(match);
 
-
+            match.ResetYellowCardsOfDisqualifiedTeams();
             match = null;
 
 

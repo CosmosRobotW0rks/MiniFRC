@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MiniFRC_FMS.Utils;
 using System.Text.RegularExpressions;
 using Match = MiniFRC_FMS.Modules.Game.Models.Match;
+using System.Linq.Expressions;
 
 namespace MiniFRC_FMS.Modules.Game
 {
@@ -84,8 +85,8 @@ namespace MiniFRC_FMS.Modules.Game
                 RedTeams = match.REDAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
                 BlueTeams = match.BLUEAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
 
-                RedPoints = match.Points[TeamColor.RED],
-                BluePoints = match.Points[TeamColor.BLUE],
+                RedPoints = match.Points[TeamColor.RED].PointsSum,
+                BluePoints = match.Points[TeamColor.BLUE].PointsSum,
 
                 CD = match.RemainingCountdown,
                 RT = match.RemainingTime,
@@ -105,7 +106,7 @@ namespace MiniFRC_FMS.Modules.Game
                 MatchID = match.MatchID,
                 IsPractice = match.IsPractice,
                 IsRematch = match.IsRematch,
-                MatchType = match.Type.ToString(), // Qualification, Semifinal, Final
+                MatchType = match.Type.ToString(),
 
                 RedTeams = match.REDAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
                 BlueTeams = match.BLUEAllience.Select(x => allTeams.Where(y => y.ID == x).FirstOrDefault()).ToArray(),
@@ -120,6 +121,7 @@ namespace MiniFRC_FMS.Modules.Game
             });
 
             wsModule.Announce(cmd);
+            Logger.Log(LogLevel.DEBUG, "ANNOUNCED AFTER MATCH");
         }
 
 

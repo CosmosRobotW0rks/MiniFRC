@@ -12,6 +12,7 @@ using LogLevel = MiniFRC_FMS.Utils.LogLevel;
 
 namespace MiniFRC_FMS.Modules.Comms
 {
+
     [ModuleInitPriority(3)]
     internal class WebSocketModule : BaseModule
     {
@@ -20,6 +21,8 @@ namespace MiniFRC_FMS.Modules.Comms
         List<WSClient> clients = new();
 
         public WSClient[] Clients => clients.ToArray();
+
+        public event EventHandler<WSDataReceivedEventArgs>? OnDataReceived;
 
 
         public int Announce(object data)
@@ -58,8 +61,8 @@ namespace MiniFRC_FMS.Modules.Comms
         {
             Logger.Log($"WS Client Connected ({client.GetHashCode()})", LogLevel.DEBUG);
             clients.Add(client);
+            client.OnDataReceive += (sender, data) => OnDataReceived?.Invoke(this, new WSDataReceivedEventArgs(data, client));
         }
-
 
         public class WSClient : WebSocketBehavior
         {
@@ -72,7 +75,7 @@ namespace MiniFRC_FMS.Modules.Comms
                 {
                     Send(data);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logger.Log($"WSClient SendData errored: {ex.Message}", LogLevel.WARNING);
                 }
@@ -115,5 +118,16 @@ namespace MiniFRC_FMS.Modules.Comms
 
         }
 
+
+        internal class WSDataReceivedEventArgs : EventArgs
+        {
+            public string Data { get; private set; }
+            public WSClient Client { get; private set; }
+            public WSDataReceivedEventArgs(string data, WSClient client) { Data = data; Client = client; }
+        }
+
+
     }
+
+
 }

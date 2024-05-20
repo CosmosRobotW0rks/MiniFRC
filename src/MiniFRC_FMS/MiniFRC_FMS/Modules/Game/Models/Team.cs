@@ -43,6 +43,8 @@ namespace MiniFRC_FMS.Modules.Game.Models
             Name = name;
         }
 
+        public int YellowCardCount = 0;
+
         public Team() { }
     }
 }

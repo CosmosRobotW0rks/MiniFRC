@@ -76,6 +76,8 @@
             comboBoxDeviceSelection = new ComboBox();
             buttonDisableAll = new Button();
             buttonEnableAll = new Button();
+            groupBox3 = new GroupBox();
+            numericUpDown1 = new NumericUpDown();
             groupBoxLogin.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam3).BeginInit();
@@ -88,6 +90,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchID).BeginInit();
             groupBox1.SuspendLayout();
             groupBoxFieldManualControl.SuspendLayout();
+            groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
             // textBoxEndpoint
@@ -617,11 +621,29 @@
             buttonEnableAll.UseVisualStyleBackColor = true;
             buttonEnableAll.Click += buttonEnableAll_Click;
             // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(numericUpDown1);
+            groupBox3.Location = new Point(907, 15);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(275, 101);
+            groupBox3.TabIndex = 10;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Yellow Card Operations";
+            // 
+            // numericUpDown1
+            // 
+            numericUpDown1.Location = new Point(64, 54);
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new Size(120, 23);
+            numericUpDown1.TabIndex = 0;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1116, 766);
+            ClientSize = new Size(1392, 766);
+            Controls.Add(groupBox3);
             Controls.Add(groupBoxFieldManualControl);
             Controls.Add(groupBox1);
             Controls.Add(groupBox2);
@@ -644,6 +666,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchID).EndInit();
             groupBox1.ResumeLayout(false);
             groupBoxFieldManualControl.ResumeLayout(false);
+            groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
         }
 
@@ -699,5 +723,7 @@
         private NumericUpDown numericUpDownMatchBlueAllienceTeam3;
         private Label label12;
         private NumericUpDown numericUpDownMatchRedAllienceTeam3;
+        private GroupBox groupBox3;
+        private NumericUpDown numericUpDown1;
     }
 }

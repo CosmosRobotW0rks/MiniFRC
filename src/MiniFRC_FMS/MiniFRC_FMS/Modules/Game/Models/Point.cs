@@ -64,14 +64,20 @@ namespace MiniFRC_FMS.Modules.Game.Models
             return true;
         }
 
+        public void DeletePoints(Func<Point, bool> condition)
+        {
+            Points.Where(condition).ToList().ForEach(x => DeletePointByID(x.PointID));
+        }
+
         public int[] GetAftermatchPointArray()
         {
             int speakerPoints = GetPointsSumOfPointSource(PointSource.Speaker);
             int ampPoints = GetPointsSumOfPointSource(PointSource.Amp);
+            int stagePoints = GetPointsSumOfPointSource(PointSource.Stage);
             int trapPoints = GetPointsSumOfPointSource(PointSource.Trap);
             int penalty = GetPointsSumOfPointSource(PointSource.Penalty);
 
-            return [ speakerPoints, ampPoints, trapPoints, penalty ];
+            return [ speakerPoints, ampPoints, stagePoints, trapPoints, penalty ];
         }
     }
 }

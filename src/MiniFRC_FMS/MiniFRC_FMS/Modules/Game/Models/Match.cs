@@ -1,9 +1,11 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
+using MiniFRC_FMS.Modules.DataSaving;
 using MiniFRC_FMS.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerLoadMatchPacket;
 using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerMatchStateUpdatedPacket;
@@ -73,6 +75,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public byte RemainingCountdown { get; private set; }
     
         public UInt16 RemainingTime { get; private set; }
+
         private async Task MatchTask()
         {
             try
@@ -157,6 +160,32 @@ namespace MiniFRC_FMS.Modules.Game.Models
             IsAborted = true;
             State = MatchState.Standby;
             OnAbort?.Invoke(this, null);
+        }
+
+        public void ResetYellowCardsOfDisqualifiedTeams()
+        {
+            var dsmodule = ModulesMain.Instance.GetModule<DataSavingModule>();
+            REDAllience.Select(x => dsmodule.Teams.GetWhere(y => y.ID == x).FirstOrDefault()).ToList().ForEach(x =>
+            {
+                if (x != null && x.YellowCardCount >= 2) x.YellowCardCount = 0;
+            });
+
+            dsmodule.Teams.SaveItems();
+
+        }
+
+        public int GetTeamIDByTeamIndex(TeamColor color, int teamIndex)
+        {
+
+            if (teamIndex < 0 || teamIndex > 2) return -1;
+
+            switch(color)
+            {
+                case TeamColor.RED: return REDAllience[teamIndex];
+                case TeamColor.BLUE: return BLUEAllience[teamIndex];
+            }
+
+            return -1;
         }
     }
 }

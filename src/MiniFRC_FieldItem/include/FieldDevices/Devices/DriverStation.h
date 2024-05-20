@@ -8,8 +8,8 @@
 #define PIN_BTNAMP 26
 #define PIN_BTNSOURCE 27
 
-#define PIN_LEDAMP 12
-#define PIN_LEDSOURCE 14
+#define PIN_LEDAMP 25
+#define PIN_LEDSOURCE 33
 
 class FieldDevice_DriverStation  : public BaseFieldDevice
 {

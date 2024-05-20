@@ -20,7 +20,7 @@ namespace MiniFRC_FMS.Modules.DataSaving
             LoadItems();
         }
 
-        private void SaveItems()
+        public void SaveItems()
         {
             if (!File.Exists(Filepath)) File.Create(Filepath).Close();
             File.WriteAllText(Filepath, JsonConvert.SerializeObject(items));

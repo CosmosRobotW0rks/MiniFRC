@@ -14,10 +14,18 @@ void FieldDevice_DriverStation::EnabledChanged(bool enabled)
 
 bool FieldDevice_DriverStation::Initialize()
 {
-    pinMode(PIN_BTNAMP, INPUT);
-    pinMode(PIN_BTNSOURCE, INPUT);
+    pinMode(PIN_BTNAMP, INPUT_PULLUP);
+    pinMode(PIN_BTNSOURCE, INPUT_PULLUP);
     pinMode(PIN_LEDAMP, OUTPUT);
     pinMode(PIN_LEDSOURCE, OUTPUT); 
+
+    ToggleAmpLED(true);
+    delay(1000);
+    ToggleAmpLED(false);
+
+    ToggleSourceLED(true);
+    delay(1000);
+    ToggleSourceLED(false);
 
     attachInterrupt(PIN_BTNAMP, [](){
         FieldDevice_DriverStation::AmpButtonPressed = true;
