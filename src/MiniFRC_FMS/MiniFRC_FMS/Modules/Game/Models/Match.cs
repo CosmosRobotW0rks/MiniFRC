@@ -3,6 +3,7 @@ using MiniFRC_FMS.Modules.DataSaving;
 using MiniFRC_FMS.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,17 +25,20 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
         public UInt16 MatchDuration { get; private set; }
 
-        public byte MatchID { get; private set; }
+        public int MatchID { get; private set; }
 
-        public byte TeamRED1 { get; private set; }
-        public byte TeamRED2 { get; private set; }
-        public byte TeamRED3 { get; private set; }
-        public byte[] REDAllience { get { return [TeamRED1, TeamRED2, TeamRED3]; } }
+        public int TeamRED1 { get; private set; }
+        public int TeamRED2 { get; private set; }
+        public int TeamRED3 { get; private set; }
+        public int[] REDAllience { get { return [TeamRED1, TeamRED2, TeamRED3]; } }
 
-        public byte TeamBLUE1 { get; private set; }
-        public byte TeamBLUE2 { get; private set; }
-        public byte TeamBLUE3 { get; private set; }
-        public byte[] BLUEAllience { get { return [TeamBLUE1, TeamBLUE2, TeamBLUE3]; } }
+
+        public int TeamBLUE1 { get; private set; }
+        public int TeamBLUE2 { get; private set; }
+        public int TeamBLUE3 { get; private set; }
+        public int[] BLUEAllience { get { return [TeamBLUE1, TeamBLUE2, TeamBLUE3]; } }
+
+        public List<int> DisqualifiedTeams = new();
 
 
 
@@ -44,7 +48,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
             { TeamColor.BLUE, new PointCollection() }
         };
         public IReadOnlyDictionary<TeamColor, PointCollection> Points => _points.AsReadOnly();
-        public Match(byte matchID, MatchType type, bool isPractice, bool isRematch, UInt16 matchDuration, byte teamRED1,byte teamRED2, byte teamRED3, byte teamBLUE1, byte teamBLUE2, byte teamBLUE3)
+        public Match(byte matchID, MatchType type, bool isPractice, bool isRematch, UInt16 matchDuration, int teamRED1, int teamRED2, int teamRED3, int teamBLUE1, int teamBLUE2, int teamBLUE3)
         {
             MatchID = matchID;
             Type = type;
@@ -128,7 +132,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
                 RemainingTime = 0;
                 if (IsAborted) return;
 
-                State = MatchState.Standby;
+                State = MatchState.PointsCalculating;
 
                 try
                 {
@@ -160,6 +164,16 @@ namespace MiniFRC_FMS.Modules.Game.Models
             IsAborted = true;
             State = MatchState.Standby;
             OnAbort?.Invoke(this, null);
+        }
+
+        public void SwitchToPointsCalculating()
+        {
+            State = MatchState.PointsCalculating;
+        }
+
+        public void SwitchToAftermatch()
+        {
+            State = MatchState.AfterMatch;
         }
 
         public void ResetYellowCardsOfDisqualifiedTeams()

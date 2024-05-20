@@ -17,7 +17,7 @@ bool FieldDevice_Source::Initialize()
 
 void FieldDevice_Source::EnabledChanged(bool enabled)
 {
-    
+       
 }
 
 bool FieldDevice_Source::Calibrate()

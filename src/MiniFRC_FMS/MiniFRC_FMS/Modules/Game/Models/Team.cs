@@ -25,6 +25,8 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
                 foreach(Match match in matches)
                 {
+                    if(match.DisqualifiedTeams.Contains(ID)) continue;
+
                     int redPoints = match.Points[TeamColor.RED].PointsSum;
                     int bluePoints = match.Points[TeamColor.BLUE].PointsSum;
 

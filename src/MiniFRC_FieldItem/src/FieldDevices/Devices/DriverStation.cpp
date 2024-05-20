@@ -9,7 +9,7 @@ bool FieldDevice_DriverStation::SourceCooldown = false;
 
 void FieldDevice_DriverStation::EnabledChanged(bool enabled)
 {
-
+    is_enabled = enabled;
 }
 
 bool FieldDevice_DriverStation::Initialize()
@@ -50,7 +50,7 @@ bool FieldDevice_DriverStation::Initialize()
         ds->OnAmplify();
     }, this);
 
-    this->Client->RegisterPacket(Packet_DriverStation_SourceButtonPress_ID, sizeof(Packet_DriverStation_SourceButtonPress), [](uint8_t* data, size_t len, void* args){
+    this->Client->RegisterPacket(Packet_DriverStation_SourceTriggered_ID, sizeof(Packet_DriverStation_SourceTriggered), [](uint8_t* data, size_t len, void* args){
         FieldDevice_DriverStation* ds = (FieldDevice_DriverStation*)args;
         ds->OnSourceTrigger();
     }, this);
@@ -81,9 +81,21 @@ void FieldDevice_DriverStation::task(void* args)
             FieldDevice_DriverStation::SourceButtonPressed = false;
             
         }
-        vTaskDelay(10);
+
+        if(!ds->is_enabled)
+            ds->UpdateBlinkStatus();
+
+        delay(10);
     }
     
+}
+
+void FieldDevice_DriverStation::UpdateBlinkStatus()
+{
+    long time = millis();
+
+    ToggleAmpLED((time % 1500) < 750);
+    ToggleSourceLED((time % 1500) > 750);
 }
 
 
@@ -163,8 +175,6 @@ void FieldDevice_DriverStation::OnSourceTrigger()
     vTaskDelete(NULL);
     }, "sourcetask", 4096, this, 0, NULL);
 }
-
-
 
 
 void FieldDevice_DriverStation::ToggleAmpLED(bool state)

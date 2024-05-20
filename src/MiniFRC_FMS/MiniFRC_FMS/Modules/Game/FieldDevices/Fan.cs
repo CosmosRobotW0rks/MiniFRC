@@ -1,4 +1,5 @@
 ﻿using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
+using MiniFRC_FMS.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,20 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
     {
         public override void Init()
         {
-
+            ToggleElectricity(true).Wait();
         }
 
+        public async Task ToggleElectricity(bool state)
+        {
+            try
+            {
+                await this.TCPClient.SendPacketAsync(new FanToggleElectricityPacket(state));
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.WARNING, $"Failed to toggle field electricity: {ex.Message}");
+            }
+
+        }
     }
 }

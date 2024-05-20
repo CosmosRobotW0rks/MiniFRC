@@ -22,16 +22,19 @@ namespace MiniFRC_FMS.Modules.Game
         protected override bool Init()
         {
             wsModule = GetModule<WebSocketModule>();
+            wsModule.OnClientConnected += (sender, e) =>
+            {
+                UpdateLeaderboard();
+                UpdateMatchState();
+            };
             dsModule = GetModule<DataSavingModule>();
             matchModule = GetModule<MatchModule>();
-            fieldModule = GetModule<FieldModule>();
             return true;
         }
 
         private WebSocketModule wsModule;
         private DataSavingModule dsModule;
         private MatchModule matchModule;
-        private FieldModule fieldModule;
 
         public AuDisPage Page { get; private set; }
 
@@ -45,6 +48,8 @@ namespace MiniFRC_FMS.Modules.Game
             wsModule.Announce(cmd);
             Logger.Log(LogLevel.DEBUG, $"Switched AuDis Page from {this.Page} to {page}");
             this.Page = page;
+
+            GetModule<FMSControllerAppModule>().AnnounceAuDisPageChangeAsync(this.Page).Wait();
         }
 
         
@@ -64,6 +69,9 @@ namespace MiniFRC_FMS.Modules.Game
 
         public void UpdateMatchState()
         {
+
+            FieldModule fieldModule = GetModule<FieldModule>();
+
             Team[] allTeams = dsModule.Teams.GetAll().ToArray();
 
             Match match = matchModule.match;

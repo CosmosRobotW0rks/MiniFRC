@@ -123,3 +123,11 @@ struct Packet_Source_Drop
 {
     
 };
+
+
+// ----- FAN -----
+const uint8_t Packet_Fan_ToggleElectricity_ID = 28;
+struct Packet_Fan_ToggleElectricity
+{
+    uint8_t state;
+};

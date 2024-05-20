@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 
 namespace MiniFRC_FMS.Modules.Game
 {
-
     internal class FieldModule : BaseModule
     {
         [FieldDevice(DeviceType.Fan, PointSource.NONE, TeamColor.NONE)]

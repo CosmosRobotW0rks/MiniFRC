@@ -1,5 +1,6 @@
 using MiniFRC_ControlApp.Comms;
 using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
 namespace MiniFRC_ControlApp
@@ -46,13 +47,20 @@ namespace MiniFRC_ControlApp
             {
                 comboBoxDeviceSelection.Items.Add(kvp.Value);
             }
+
         }
 
         void AttachPacketCallbacks()
         {
             ServerCommunication.AttachPacketCB<FMSControllerMatchStateUpdatedPacket>(HandleMatchUpdate);
             ServerCommunication.AttachPacketCB<FMSControllerDeviceLastseenUpdatedPacket>(DisplayDeviceLastSeen);
+
+            ServerCommunication.AttachPacketCB<FMSControllerPointAddedPacket>(HandlePointAdd);
+            ServerCommunication.AttachPacketCB<FMSControllerPointRemovedPacket>(HandlePointRemove);
+
+            ServerCommunication.AttachPacketCB<FMSControllerAuDisPageUpdatedPacket>(HandleAuDisUpdated);
         }
+
 
         #region Device Last Seen
         void DisplayDeviceLastSeen(FMSControllerDeviceLastseenUpdatedPacket packet)
@@ -136,6 +144,14 @@ namespace MiniFRC_ControlApp
         #region Match Control
         void HandleMatchUpdate(FMSControllerMatchStateUpdatedPacket p)
         {
+            if (p.matchState == FMSControllerMatchStateUpdatedPacket.MatchState.Standby)
+            {
+                REDPoints.Clear();
+                BLUEPoints.Clear();
+
+                ResetPointListboxes();
+            }
+
             labelMatchState.Text = $"Match State: {p.matchState}";
 
             switch (p.matchState)
@@ -386,7 +402,7 @@ namespace MiniFRC_ControlApp
             {
                 try
                 {
-                    var packet = new FMSControllerEnableDisableDevicePacket(new byte[] { deviceID}, true);
+                    var packet = new FMSControllerEnableDisableDevicePacket(new byte[] { deviceID }, true);
 
                     var resp = await ServerCommunication.client.SendPacketAndWaitForResponseAsync<FMSControllerEnableDisableDevicePacket, FMSControllerEnableDisableDeviceResponsePacket>(packet, TimeSpan.FromSeconds(5));
                     if (resp.TimedOut)
@@ -461,6 +477,199 @@ namespace MiniFRC_ControlApp
         }
         #endregion
 
+        #region Point Control
+
+        Dictionary<int, (PointSource, int)> REDPoints = new();
+        Dictionary<int, (PointSource, int)> BLUEPoints = new();
+
+        void ResetPointListboxes()
+        {
+            listBoxBLUEPoints.Items.Clear();
+            listBoxREDPoints.Items.Clear();
+
+
+            foreach (var kvp in REDPoints)
+            {
+                string text = $"{kvp.Value.Item1} - {kvp.Value.Item2}p";
+                listBoxREDPoints.Items.Add(text);
+            }
+
+            foreach (var kvp in BLUEPoints)
+            {
+                string text = $"{kvp.Value.Item1} - {kvp.Value.Item2}p";
+                listBoxBLUEPoints.Items.Add(text);
+            }
+        }
+
+        private void HandlePointRemove(FMSControllerPointRemovedPacket packet)
+        {
+            if (packet.Alliance == TeamColor.RED) REDPoints.Remove(packet.PointID);
+            else if (packet.Alliance == TeamColor.BLUE) BLUEPoints.Remove(packet.PointID);
+
+            ResetPointListboxes();
+        }
+
+        private void HandlePointAdd(FMSControllerPointAddedPacket packet)
+        {
+            if (packet.Alliance == TeamColor.RED) REDPoints.Add(packet.PointID, (packet.PointSource, packet.PointValue));
+            else if (packet.Alliance == TeamColor.BLUE) BLUEPoints.Add(packet.PointID, (packet.PointSource, packet.PointValue));
+
+            ResetPointListboxes();
+
+        }
+
+        private void buttonREDDeletePoint_Click(object sender, EventArgs e)
+        {
+            if (listBoxREDPoints.SelectedIndex == -1) return;
+
+            int pointID = REDPoints.ElementAt(listBoxREDPoints.SelectedIndex).Key;
+
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    FMSControllerRemovePointPacket packet = new FMSControllerRemovePointPacket(pointID, TeamColor.RED);
+
+                    await ServerCommunication.client.SendPacketAsync(packet);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while deleting red point\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonBLUEDeletePoint_Click(object sender, EventArgs e)
+        {
+
+            if (listBoxBLUEPoints.SelectedIndex == -1) return;
+
+            int pointID = BLUEPoints.ElementAt(listBoxBLUEPoints.SelectedIndex).Key;
+
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    FMSControllerRemovePointPacket packet = new FMSControllerRemovePointPacket(pointID, TeamColor.BLUE);
+
+                    await ServerCommunication.client.SendPacketAsync(packet);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while deleting blue point\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonApprovePoints_Click(object sender, EventArgs e)
+        {
+
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    var packet = new FMSControllerApprovePointsPacket();
+
+                    await ServerCommunication.client.SendPacketAsync(packet);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while approving points\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        #endregion
+
+        #region AuDisControl
+
+        private void HandleAuDisUpdated(FMSControllerAuDisPageUpdatedPacket packet)
+        {
+            labelAuDisPage.Text = $"Page: {packet.auDisPage}";
+        }
+
+        private void AuDisUpdatePage(object sender, EventArgs e)
+        {
+            int index = int.Parse((string)((Control)sender).Tag);
+
+            FMSControllerSwitchAuDisPagePacket packet = new() { auDisPage = (AuDisPage)index };
+
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    await ServerCommunication.client.SendPacketAsync(packet);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while sending audis update\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        #endregion
+
+
+        private void buttonEnableField_Click(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    await ServerCommunication.client.SendPacketAsync(new FMSControllerToggleElectricityPacket(true));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while toggling field electricity\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
+
+        private void buttonDisableField_Click(object sender, EventArgs e)
+        {
+
+            this.Enabled = false;
+            Task.Run(async delegate ()
+            {
+                try
+                {
+                    await ServerCommunication.client.SendPacketAsync(new FMSControllerToggleElectricityPacket(false));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occured while toggling field electricity\nex: " + ex.Message);
+                }
+                finally
+                {
+                    this.Enabled = true;
+                }
+            });
+        }
     }
 
 

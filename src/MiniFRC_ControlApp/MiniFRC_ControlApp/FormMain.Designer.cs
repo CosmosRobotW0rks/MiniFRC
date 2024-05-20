@@ -76,8 +76,21 @@
             comboBoxDeviceSelection = new ComboBox();
             buttonDisableAll = new Button();
             buttonEnableAll = new Button();
+            groupBox4 = new GroupBox();
+            buttonApprovePoints = new Button();
+            buttonBLUEDeletePoint = new Button();
+            buttonREDDeletePoint = new Button();
+            listBoxBLUEPoints = new ListBox();
+            listBoxREDPoints = new ListBox();
             groupBox3 = new GroupBox();
-            numericUpDown1 = new NumericUpDown();
+            labelAuDisPage = new Label();
+            button5 = new Button();
+            button4 = new Button();
+            button3 = new Button();
+            button2 = new Button();
+            button1 = new Button();
+            buttonEnableField = new Button();
+            buttonDisableField = new Button();
             groupBoxLogin.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam3).BeginInit();
@@ -90,8 +103,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchID).BeginInit();
             groupBox1.SuspendLayout();
             groupBoxFieldManualControl.SuspendLayout();
+            groupBox4.SuspendLayout();
             groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
             // textBoxEndpoint
@@ -189,7 +202,7 @@
             groupBox2.Enabled = false;
             groupBox2.Location = new Point(504, 12);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(397, 747);
+            groupBox2.Size = new Size(397, 810);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Match Operations";
@@ -621,29 +634,189 @@
             buttonEnableAll.UseVisualStyleBackColor = true;
             buttonEnableAll.Click += buttonEnableAll_Click;
             // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(buttonApprovePoints);
+            groupBox4.Controls.Add(buttonBLUEDeletePoint);
+            groupBox4.Controls.Add(buttonREDDeletePoint);
+            groupBox4.Controls.Add(listBoxBLUEPoints);
+            groupBox4.Controls.Add(listBoxREDPoints);
+            groupBox4.Location = new Point(907, 16);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(489, 806);
+            groupBox4.TabIndex = 11;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Point Operations";
+            // 
+            // buttonApprovePoints
+            // 
+            buttonApprovePoints.Location = new Point(6, 743);
+            buttonApprovePoints.Name = "buttonApprovePoints";
+            buttonApprovePoints.Size = new Size(477, 52);
+            buttonApprovePoints.TabIndex = 36;
+            buttonApprovePoints.Text = "Approve Points";
+            buttonApprovePoints.UseVisualStyleBackColor = true;
+            buttonApprovePoints.Click += buttonApprovePoints_Click;
+            // 
+            // buttonBLUEDeletePoint
+            // 
+            buttonBLUEDeletePoint.Location = new Point(247, 683);
+            buttonBLUEDeletePoint.Name = "buttonBLUEDeletePoint";
+            buttonBLUEDeletePoint.Size = new Size(236, 54);
+            buttonBLUEDeletePoint.TabIndex = 3;
+            buttonBLUEDeletePoint.Text = "Delete Selected";
+            buttonBLUEDeletePoint.UseVisualStyleBackColor = true;
+            buttonBLUEDeletePoint.Click += buttonBLUEDeletePoint_Click;
+            // 
+            // buttonREDDeletePoint
+            // 
+            buttonREDDeletePoint.Location = new Point(6, 683);
+            buttonREDDeletePoint.Name = "buttonREDDeletePoint";
+            buttonREDDeletePoint.Size = new Size(236, 54);
+            buttonREDDeletePoint.TabIndex = 2;
+            buttonREDDeletePoint.Text = "Delete Selected";
+            buttonREDDeletePoint.UseVisualStyleBackColor = true;
+            buttonREDDeletePoint.Click += buttonREDDeletePoint_Click;
+            // 
+            // listBoxBLUEPoints
+            // 
+            listBoxBLUEPoints.BackColor = Color.Blue;
+            listBoxBLUEPoints.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            listBoxBLUEPoints.ForeColor = Color.White;
+            listBoxBLUEPoints.FormattingEnabled = true;
+            listBoxBLUEPoints.ItemHeight = 21;
+            listBoxBLUEPoints.Location = new Point(248, 22);
+            listBoxBLUEPoints.Name = "listBoxBLUEPoints";
+            listBoxBLUEPoints.Size = new Size(236, 655);
+            listBoxBLUEPoints.TabIndex = 1;
+            // 
+            // listBoxREDPoints
+            // 
+            listBoxREDPoints.BackColor = Color.Red;
+            listBoxREDPoints.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            listBoxREDPoints.ForeColor = Color.White;
+            listBoxREDPoints.FormattingEnabled = true;
+            listBoxREDPoints.ItemHeight = 21;
+            listBoxREDPoints.Location = new Point(6, 22);
+            listBoxREDPoints.Name = "listBoxREDPoints";
+            listBoxREDPoints.Size = new Size(236, 655);
+            listBoxREDPoints.TabIndex = 0;
+            // 
             // groupBox3
             // 
-            groupBox3.Controls.Add(numericUpDown1);
-            groupBox3.Location = new Point(907, 15);
+            groupBox3.Controls.Add(labelAuDisPage);
+            groupBox3.Controls.Add(button5);
+            groupBox3.Controls.Add(button4);
+            groupBox3.Controls.Add(button3);
+            groupBox3.Controls.Add(button2);
+            groupBox3.Controls.Add(button1);
+            groupBox3.Location = new Point(1402, 16);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(275, 101);
-            groupBox3.TabIndex = 10;
+            groupBox3.Size = new Size(297, 312);
+            groupBox3.TabIndex = 12;
             groupBox3.TabStop = false;
-            groupBox3.Text = "Yellow Card Operations";
+            groupBox3.Text = "AuDis Control";
             // 
-            // numericUpDown1
+            // labelAuDisPage
             // 
-            numericUpDown1.Location = new Point(64, 54);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(120, 23);
-            numericUpDown1.TabIndex = 0;
+            labelAuDisPage.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelAuDisPage.Location = new Point(6, 264);
+            labelAuDisPage.Name = "labelAuDisPage";
+            labelAuDisPage.Size = new Size(285, 38);
+            labelAuDisPage.TabIndex = 5;
+            labelAuDisPage.Text = "Page: ?";
+            labelAuDisPage.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(6, 218);
+            button5.Name = "button5";
+            button5.Size = new Size(285, 43);
+            button5.TabIndex = 4;
+            button5.Tag = "4";
+            button5.Text = "Calculating Points";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += AuDisUpdatePage;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(6, 169);
+            button4.Name = "button4";
+            button4.Size = new Size(285, 43);
+            button4.TabIndex = 3;
+            button4.Tag = "3";
+            button4.Text = "Leaderboard";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += AuDisUpdatePage;
+            // 
+            // button3
+            // 
+            button3.Location = new Point(6, 120);
+            button3.Name = "button3";
+            button3.Size = new Size(285, 43);
+            button3.TabIndex = 2;
+            button3.Tag = "2";
+            button3.Text = "After Match";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += AuDisUpdatePage;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(6, 71);
+            button2.Name = "button2";
+            button2.Size = new Size(285, 43);
+            button2.TabIndex = 1;
+            button2.Tag = "1";
+            button2.Text = "Match";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += AuDisUpdatePage;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(6, 22);
+            button1.Name = "button1";
+            button1.Size = new Size(285, 43);
+            button1.TabIndex = 0;
+            button1.Tag = "0";
+            button1.Text = "Main Page";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += AuDisUpdatePage;
+            // 
+            // buttonEnableField
+            // 
+            buttonEnableField.BackColor = Color.Lime;
+            buttonEnableField.Font = new Font("Segoe UI Black", 16F, FontStyle.Bold);
+            buttonEnableField.ForeColor = Color.White;
+            buttonEnableField.Location = new Point(12, 661);
+            buttonEnableField.Name = "buttonEnableField";
+            buttonEnableField.Size = new Size(216, 161);
+            buttonEnableField.TabIndex = 13;
+            buttonEnableField.Text = "Enable Field";
+            buttonEnableField.UseVisualStyleBackColor = false;
+            buttonEnableField.Click += buttonEnableField_Click;
+            // 
+            // buttonDisableField
+            // 
+            buttonDisableField.BackColor = Color.Red;
+            buttonDisableField.Font = new Font("Segoe UI Black", 16F, FontStyle.Bold);
+            buttonDisableField.ForeColor = Color.White;
+            buttonDisableField.Location = new Point(282, 661);
+            buttonDisableField.Name = "buttonDisableField";
+            buttonDisableField.Size = new Size(216, 161);
+            buttonDisableField.TabIndex = 14;
+            buttonDisableField.Text = "Disable Field";
+            buttonDisableField.UseVisualStyleBackColor = false;
+            buttonDisableField.Click += buttonDisableField_Click;
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1392, 766);
+            ClientSize = new Size(1711, 855);
+            Controls.Add(buttonDisableField);
+            Controls.Add(buttonEnableField);
             Controls.Add(groupBox3);
+            Controls.Add(groupBox4);
             Controls.Add(groupBoxFieldManualControl);
             Controls.Add(groupBox1);
             Controls.Add(groupBox2);
@@ -666,8 +839,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchID).EndInit();
             groupBox1.ResumeLayout(false);
             groupBoxFieldManualControl.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
         }
 
@@ -723,7 +896,20 @@
         private NumericUpDown numericUpDownMatchBlueAllienceTeam3;
         private Label label12;
         private NumericUpDown numericUpDownMatchRedAllienceTeam3;
+        private GroupBox groupBox4;
+        private ListBox listBoxREDPoints;
+        private ListBox listBoxBLUEPoints;
+        private Button buttonBLUEDeletePoint;
+        private Button buttonREDDeletePoint;
+        private Button buttonApprovePoints;
         private GroupBox groupBox3;
-        private NumericUpDown numericUpDown1;
+        private Button button1;
+        private Button button2;
+        private Button button5;
+        private Button button4;
+        private Button button3;
+        private Label labelAuDisPage;
+        private Button buttonEnableField;
+        private Button buttonDisableField;
     }
 }

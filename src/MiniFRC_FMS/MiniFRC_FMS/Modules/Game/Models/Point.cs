@@ -38,6 +38,9 @@ namespace MiniFRC_FMS.Modules.Game.Models
             }
         }
 
+        public event EventHandler<Point>? PointAdded;
+        public event EventHandler<int>? PointRemoved;
+
         private List<Point> Points = new List<Point>();
         public int PointsSum => Points.Select(x => x.Points).Sum();
         int lastPointID = 0;
@@ -52,7 +55,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
         {
             Point p = new Point(pointSource, points, lastPointID++);
             Points.Add(p);
-
+            PointAdded?.Invoke(this, p);
             return p.PointID;
         }
 
@@ -60,8 +63,9 @@ namespace MiniFRC_FMS.Modules.Game.Models
         {
             var point = Points.Find(x => x.PointID == pointID);
             if (point == null) return false;
-            Points.Remove(point);
-            return true;
+            bool s = Points.Remove(point);
+            if(s) PointRemoved?.Invoke(this, pointID);
+            return s;
         }
 
         public void DeletePoints(Func<Point, bool> condition)

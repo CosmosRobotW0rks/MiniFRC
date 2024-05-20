@@ -1,4 +1,5 @@
 ﻿using MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FieldDevicePackets;
+using MiniFRC_FMS.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
         public async Task DropAsync()
         {
+            Logger.Log("Dropping note " + this.Name, LogLevel.DEBUG);
             await TCPClient.SendPacketAsync(new SourceDropPacket());
             //NextNoteDropTime = DateTime.Now + TimeSpan.FromSeconds(Config.Field.SourceCooldown);
         }

@@ -24,4 +24,26 @@ namespace MiniFRC_ControlApp
         Stage,
         Fan
     }
+
+
+    internal enum PointSource
+    {
+        NONE = 0,
+        Speaker,
+        Amp,
+        Stage,
+        Trap,
+        Penalty
+    }
+
+
+    internal enum AuDisPage : byte
+    {
+        NONE = 0,
+        Match,
+        AfterMatch,
+        Scores,
+        CalculatingPoints
+
+    }
 }

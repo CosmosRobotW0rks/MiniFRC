@@ -53,6 +53,9 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         __PLACEHOLDER11,
         __PLACEHOLDER12,
 
+        // FAN
+        FanToggleElectricityPacket,
+
 
         // FMS CONTROLLER PACKETS
         FMSControllerAuthPacket,
@@ -66,7 +69,12 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets
         FMSControllerDeviceLastseenUpdatedPacket,
         FMSControllerEnableDisableDevicePacket,
         FMSControllerEnableDisableDeviceResponsePacket,
-
+        FMSControllerNewPointAddedPacket,
+        FMSControllerRemovePointPacket,
+        FMSControllerPointRemovedPacket,
+        FMSControllerApprovePointsPacket,
+        FMSControllerSwitchAuDisPagePacket,
+        FMSControllerToggleElectricityPacket,
 
     }
 }

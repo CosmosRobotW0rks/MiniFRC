@@ -23,11 +23,12 @@ namespace MiniFRC_FMS.Modules.Comms
         public WSClient[] Clients => clients.ToArray();
 
         public event EventHandler<WSDataReceivedEventArgs>? OnDataReceived;
+        public event EventHandler<WSClient>? OnClientConnected;
 
 
         public int Announce(object data)
         {
-            foreach (var client in clients)
+            foreach (var client in clients.ToArray())
             {
                 if(client != null)
                 client.SendData(data);
@@ -38,8 +39,9 @@ namespace MiniFRC_FMS.Modules.Comms
 
         public int Announce(string data)
         {
-            foreach (var client in clients)
+            foreach (var client in clients.ToArray())
             {
+                if(client != null)
                 client.SendData(data);
             }
 
@@ -62,6 +64,7 @@ namespace MiniFRC_FMS.Modules.Comms
             Logger.Log($"WS Client Connected ({client.GetHashCode()})", LogLevel.DEBUG);
             clients.Add(client);
             client.OnDataReceive += (sender, data) => OnDataReceived?.Invoke(this, new WSDataReceivedEventArgs(data, client));
+            OnClientConnected?.Invoke(this, client);
         }
 
         public class WSClient : WebSocketBehavior

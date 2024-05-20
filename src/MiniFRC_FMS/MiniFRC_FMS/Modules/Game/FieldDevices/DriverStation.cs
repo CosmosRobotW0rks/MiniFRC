@@ -46,6 +46,12 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
             src.DropAsync().Wait();
             TCPClient.SendPacketAsync(new DriverStationSourceTriggeredPacket());
+
+            Task.Run(async ()=> {
+                await Task.Delay(Config.Field.SourceCooldown);
+                await NotifyReadyToTriggerSourceAsync();
+                Logger.Log(LogLevel.DEBUG, "Notified source");
+            });
         }
 
         public async Task NotifyReadyToAmplifyAsync()

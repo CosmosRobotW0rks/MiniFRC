@@ -49,6 +49,12 @@ namespace MiniFRC_FMS.Modules.Game
             match.OnAbort += Match_OnAbort;
             match.OnPointUpdate += Match_OnPointUpdate;
 
+            match.Points[TeamColor.RED].PointAdded += (sender, p) => GetModule<FMSControllerAppModule>().AnnouncePointAddedAsync(TeamColor.RED, p).Wait();
+            match.Points[TeamColor.RED].PointRemoved += (sender, id) => GetModule<FMSControllerAppModule>().AnnouncePointRemovedAsync(TeamColor.RED, id).Wait();
+
+            match.Points[TeamColor.BLUE].PointAdded += (sender, p) => GetModule<FMSControllerAppModule>().AnnouncePointAddedAsync(TeamColor.BLUE, p).Wait();
+            match.Points[TeamColor.BLUE].PointRemoved += (sender, id) => GetModule<FMSControllerAppModule>().AnnouncePointRemovedAsync(TeamColor.BLUE, id).Wait();
+
             Logger.Log(LogLevel.INFO, $"Match loaded (ID: {_match.MatchID})");
         }
 
@@ -105,6 +111,23 @@ namespace MiniFRC_FMS.Modules.Game
             }
         }
 
+        public void PointsApproved()
+        {
+            if (match == null || match.State != MatchState.PointsCalculating) return;
+            var fieldModule = GetModule<FieldModule>();
+            var audismodule = GetModule<AuDisModule>();
+            audismodule.AnnounceAfterMatch(match);
+            audismodule.SwitchPage(AuDisPage.AfterMatch);
+
+            GetModule<DataSavingModule>().Matches.Add(match);
+
+
+            match.ResetYellowCardsOfDisqualifiedTeams();
+
+            match = null;
+            fmsControllerModule.AnnounceMatchStateAsync(null, MatchState.Standby).Wait();
+        }
+
 
         #region Match Events
         private void Match_OnAbort(object? sender, EventArgs e)
@@ -126,18 +149,14 @@ namespace MiniFRC_FMS.Modules.Game
         private void Match_OnEnd(object? sender, EventArgs e)
         {
             Logger.Log($"Match Ended (RED P: {match.Points[TeamColor.RED].PointsSum} / BLUE P: {match.Points[TeamColor.BLUE].PointsSum})");
-            GetModule<AuDisModule>().UpdateMatchState();
-
-            GetModule<AuDisModule>().AnnounceAfterMatch(match);
-
-            if (match == null) { Logger.Log(LogLevel.WARNING, "Couldn't save the match, match is null"); }
-            else GetModule<DataSavingModule>().Matches.Add(match);
-
-            match.ResetYellowCardsOfDisqualifiedTeams();
-            match = null;
-
+            match.SwitchToPointsCalculating();
 
             var fieldModule = GetModule<FieldModule>();
+            var audismodule = GetModule<AuDisModule>();
+
+            audismodule.UpdateMatchState();
+            Task.Delay(4000).Wait();
+            audismodule.SwitchPage(AuDisPage.CalculatingPoints);
 
             Task.WaitAll(
             fieldModule.ToggleEnabledAllAsync(false),

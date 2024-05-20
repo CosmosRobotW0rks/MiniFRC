@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets  // 20-69
 {
 
-
     #region AUTH
     internal struct FMSControllerAuthPacket : IBasePacket
     {
@@ -117,14 +116,14 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets  // 20-69
 
         public MatchState matchState { get; set; }
 
-        public byte ID_RED1 { get; set; }
-        public byte ID_RED2 { get; set; }
-        public byte ID_RED3 { get; set; }
-        public byte ID_BLUE1 { get; set; }
-        public byte ID_BLUE2 { get; set; }
-        public byte ID_BLUE3 { get; set; }
+        public int ID_RED1 { get; set; }
+        public int ID_RED2 { get; set; }
+        public int ID_RED3 { get; set; }
+        public int ID_BLUE1 { get; set; }
+        public int ID_BLUE2 { get; set; }
+        public int ID_BLUE3 { get; set; }
 
-        public byte MatchID { get; set; }
+        public int MatchID { get; set; }
         public ushort MatchDuration { get; set; }
         public ushort RemainingTime { get; set; }
         public byte Countdown { get; set; }
@@ -150,6 +149,62 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets  // 20-69
     }
     #endregion
 
+    #region POINT CONTROL
+    internal struct FMSControllerPointAddedPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerNewPointAddedPacket;
+
+        public int PointID;
+        public TeamColor Alliance;
+        public PointSource PointSource;
+        public int PointValue;
+
+        public FMSControllerPointAddedPacket(int pointID, TeamColor alliance, PointSource pointSource, int pointValue)
+        {
+            PointID = pointID;
+            Alliance = alliance;
+            PointSource = pointSource;
+            PointValue = pointValue;
+        }
+    }
+
+    internal struct FMSControllerPointRemovedPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerPointRemovedPacket;
+
+        public TeamColor Alliance;
+
+        public int PointID;
+
+        public FMSControllerPointRemovedPacket(int pointID, TeamColor alliance)
+        {
+            this.PointID = pointID;
+            this.Alliance = alliance;
+        }
+    }
+
+    internal struct FMSControllerRemovePointPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerRemovePointPacket;
+
+        public TeamColor Alliance;
+
+        public int PointID;
+
+        public FMSControllerRemovePointPacket(int pointID, TeamColor alliance)
+        {
+            this.PointID = pointID;
+            this.Alliance = alliance;
+        }
+    }
+
+    internal struct FMSControllerApprovePointsPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerApprovePointsPacket;
+    }
+
+    #endregion
+
     #region AUDIENCE DISPLAY
     // AuDis = Audience Display
 
@@ -157,7 +212,15 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets  // 20-69
     {
         public byte ID => (byte)PacketIDs.FMSControllerAuDisPageUpdatedPacket;
 
-        // TODO: Add Page Data
+        public AuDisPage auDisPage { get; set; }
+    }
+
+    internal struct FMSControllerSwitchAuDisPagePacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerSwitchAuDisPagePacket;
+
+        public AuDisPage auDisPage { get; set; }
+
     }
     #endregion
 
@@ -238,4 +301,26 @@ namespace MiniFRC_FMS.Modules.Comms.TCPPackets.Packets  // 20-69
         public byte ID => (byte)PacketIDs.FMSControllerEnableDisableDeviceResponsePacket;
     }
     #endregion
+
+
+    #region FIELD CONTROL
+
+
+
+    internal struct FMSControllerToggleElectricityPacket : IBasePacket
+    {
+        public byte ID => (byte)PacketIDs.FMSControllerToggleElectricityPacket;
+
+
+        public byte State { get; set; }
+
+        public FMSControllerToggleElectricityPacket(bool state)
+        {
+            State = state ? (byte)1 : (byte)0;
+        }
+    }
+
+    #endregion
+
+
 }

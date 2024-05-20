@@ -38,9 +38,55 @@ namespace MiniFRC_FMS.Modules.Game
 
             TCPServerModule?.AttachPacketCallback<FMSControllerEnableDisableDevicePacket>(HandleEnableDisableDeviceReq);
 
+            TCPServerModule?.AttachPacketCallback<FMSControllerRemovePointPacket>(HandleRemovePoint);
+
+            TCPServerModule?.AttachPacketCallback<FMSControllerApprovePointsPacket>(HandlePointsApproval);
+
+            TCPServerModule?.AttachPacketCallback<FMSControllerSwitchAuDisPagePacket>(HandleAuDisPageSwitch);
+
+            TCPServerModule?.AttachPacketCallback<FMSControllerToggleElectricityPacket>(HandleToggleElectricity);
+
 
             TCPServerModule.ClientDisconnected += TCPServerModule_ClientDisconnected;
             return true;
+        }
+
+        private void HandleToggleElectricity(Client client, FMSControllerToggleElectricityPacket packet)
+        {
+            if (!FMSControllerAppClients.Contains(client)) return;
+
+            var fieldModule = GetModule<FieldModule>();
+
+            if(fieldModule.Fan == null) { Logger.Log("FAN is null, cannot toggle electricity"); return; }
+
+            fieldModule.Fan.ToggleElectricity(packet.State == (byte)1).Wait();
+        }
+
+        private void HandleAuDisPageSwitch(Client client, FMSControllerSwitchAuDisPagePacket packet)
+        {
+            if (!FMSControllerAppClients.Contains(client)) return;
+
+            var auDisModule = GetModule<AuDisModule>();
+
+            auDisModule.SwitchPage(packet.auDisPage);
+        }
+
+        private void HandlePointsApproval(Client client, FMSControllerApprovePointsPacket packet)
+        {
+            if (!FMSControllerAppClients.Contains(client)) return;
+
+            var matchModule = GetModule<MatchModule>();
+
+            matchModule.PointsApproved();
+        }
+
+        private void HandleRemovePoint(Client client, FMSControllerRemovePointPacket packet)
+        {
+            if (!FMSControllerAppClients.Contains(client)) return;
+
+            var matchModule = GetModule<MatchModule>();
+
+            matchModule.RemovePoint(packet.Alliance,packet.PointID);
         }
 
         private void TCPServerModule_ClientDisconnected(object? sender, Client e)
@@ -171,6 +217,39 @@ namespace MiniFRC_FMS.Modules.Game
             }
         }
 
+        public async Task AnnouncePointAddedAsync(TeamColor alliance, PointCollection.Point p)
+        {
+            try
+            {
+                var packet = new FMSControllerPointAddedPacket(p.PointID, alliance, p.PointSource, p.Points);
+
+                await AnnouncePacketAsync(packet);
+            }
+            catch (Exception ex) { Logger.Log(LogLevel.WARNING, $"Failed to announce point added to FMS Controllers (ex: {ex.Message})"); }
+        }
+
+        public async Task AnnouncePointRemovedAsync(TeamColor alliance, int pointID)
+        {
+            try
+            {
+                var packet = new FMSControllerPointRemovedPacket(pointID, alliance);
+
+                await AnnouncePacketAsync(packet);
+            }
+            catch (Exception ex) { Logger.Log(LogLevel.WARNING, $"Failed to announce point removed to FMS Controllers (ex: {ex.Message})"); }
+        }
+
+        public async Task AnnounceAuDisPageChangeAsync(AuDisPage newPage)
+        {
+            try
+            {
+                var packet = new FMSControllerAuDisPageUpdatedPacket() { auDisPage = newPage};
+
+                await AnnouncePacketAsync(packet);
+            }
+            catch (Exception ex) { Logger.Log(LogLevel.WARNING, $"Failed to announce audis page changed to FMS Controllers (ex: {ex.Message})"); }
+
+        }
 
         public async Task AnnounceMatchStateAsync(Match? match, FMSControllerMatchStateUpdatedPacket.MatchState state, Client singleClient = null)
         {

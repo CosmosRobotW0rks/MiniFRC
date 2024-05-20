@@ -8,8 +8,8 @@
 #define PIN_BTNAMP 26
 #define PIN_BTNSOURCE 27
 
-#define PIN_LEDAMP 25
-#define PIN_LEDSOURCE 33
+#define PIN_LEDAMP 33
+#define PIN_LEDSOURCE 25
 
 class FieldDevice_DriverStation  : public BaseFieldDevice
 {
@@ -36,8 +36,12 @@ class FieldDevice_DriverStation  : public BaseFieldDevice
     void OnAmplify();
     void OnSourceTrigger();
 
+    void UpdateBlinkStatus();
+
     static void ToggleAmpLED(bool state);
     static void ToggleSourceLED(bool state);
+
+    bool is_enabled = false;
 
     public:
 };
