@@ -17,7 +17,9 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
         public bool ReadyToBeAmplified { get; private set; } = false;
 
-        public bool Amplified { get; private set; } = false;
+        public bool Amplified => AmplifiedUntil > DateTime.Now;
+
+        public DateTime AmplifiedUntil { get; private set; } = DateTime.MinValue;
 
 
         public override void Init()
@@ -32,12 +34,13 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
         public async Task AmplifyAsync()
         {
-            Amplified = true;
+            AmplifiedUntil = DateTime.Now.AddMilliseconds(Config.Field.AmplificationDuration);
+
             ReadyToBeAmplified = false;
             _ = Task.Run(async () =>
             {
-                await Task.Delay(Config.Field.AmplificationDuration);
-                Amplified = false;
+                while (AmplifiedUntil > DateTime.Now) await Task.Delay(10);
+
                 Logger.Log("Not Amplified Anymore", LogLevel.DEBUG);
 
                 var amp = (Amp)ModulesMain.Instance.GetModule<FieldModule>().GetAllFieldDevices(x => x.teamColor == this.teamColor && x.deviceType == DeviceType.Amp).FirstOrDefault();

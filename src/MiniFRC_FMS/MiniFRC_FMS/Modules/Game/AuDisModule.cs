@@ -24,12 +24,14 @@ namespace MiniFRC_FMS.Modules.Game
             wsModule = GetModule<WebSocketModule>();
             dsModule = GetModule<DataSavingModule>();
             matchModule = GetModule<MatchModule>();
+            fieldModule = GetModule<FieldModule>();
             return true;
         }
 
         private WebSocketModule wsModule;
         private DataSavingModule dsModule;
         private MatchModule matchModule;
+        private FieldModule fieldModule;
 
         public AuDisPage Page { get; private set; }
 
@@ -88,10 +90,13 @@ namespace MiniFRC_FMS.Modules.Game
                 RedPoints = match.Points[TeamColor.RED].PointsSum,
                 BluePoints = match.Points[TeamColor.BLUE].PointsSum,
 
+                RedAmpRemainingTime = fieldModule.REDSpeaker == null || !fieldModule.REDSpeaker.Amplified ? 0 : (fieldModule.REDSpeaker.AmplifiedUntil - DateTime.Now).Seconds,
+                BlueAmpRemainingTime = fieldModule.BLUESpeaker == null || !fieldModule.BLUESpeaker.Amplified ? 0 : (fieldModule.BLUESpeaker.AmplifiedUntil - DateTime.Now).Seconds,
+
                 CD = match.RemainingCountdown,
                 RT = match.RemainingTime,
 
-                
+
             });
 
             wsModule.Announce(cmd);
