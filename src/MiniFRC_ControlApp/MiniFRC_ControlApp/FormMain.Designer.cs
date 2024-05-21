@@ -68,9 +68,6 @@
             richTextBoxDevicesLastSeen = new RichTextBox();
             groupBox1 = new GroupBox();
             groupBoxFieldManualControl = new GroupBox();
-            buttonShortcut2 = new Button();
-            buttonDeviceShortcutRST = new Button();
-            buttonDeviceShortcut1 = new Button();
             buttonDisableDevice = new Button();
             buttonEnableDevice = new Button();
             comboBoxDeviceSelection = new ComboBox();
@@ -91,6 +88,8 @@
             button1 = new Button();
             buttonEnableField = new Button();
             buttonDisableField = new Button();
+            buttonFieldDeviceControl = new Button();
+            groupBox5 = new GroupBox();
             groupBoxLogin.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMatchBlueAllienceTeam3).BeginInit();
@@ -105,6 +104,7 @@
             groupBoxFieldManualControl.SuspendLayout();
             groupBox4.SuspendLayout();
             groupBox3.SuspendLayout();
+            groupBox5.SuspendLayout();
             SuspendLayout();
             // 
             // textBoxEndpoint
@@ -202,7 +202,7 @@
             groupBox2.Enabled = false;
             groupBox2.Location = new Point(504, 12);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(397, 810);
+            groupBox2.Size = new Size(397, 741);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Match Operations";
@@ -539,9 +539,6 @@
             // 
             // groupBoxFieldManualControl
             // 
-            groupBoxFieldManualControl.Controls.Add(buttonShortcut2);
-            groupBoxFieldManualControl.Controls.Add(buttonDeviceShortcutRST);
-            groupBoxFieldManualControl.Controls.Add(buttonDeviceShortcut1);
             groupBoxFieldManualControl.Controls.Add(buttonDisableDevice);
             groupBoxFieldManualControl.Controls.Add(buttonEnableDevice);
             groupBoxFieldManualControl.Controls.Add(comboBoxDeviceSelection);
@@ -552,43 +549,13 @@
             groupBoxFieldManualControl.Size = new Size(486, 184);
             groupBoxFieldManualControl.TabIndex = 9;
             groupBoxFieldManualControl.TabStop = false;
-            groupBoxFieldManualControl.Text = "Field Manual Control";
-            // 
-            // buttonShortcut2
-            // 
-            buttonShortcut2.Location = new Point(424, 109);
-            buttonShortcut2.Name = "buttonShortcut2";
-            buttonShortcut2.Size = new Size(56, 69);
-            buttonShortcut2.TabIndex = 7;
-            buttonShortcut2.Text = "2";
-            buttonShortcut2.UseVisualStyleBackColor = true;
-            buttonShortcut2.Click += buttonShortcut2_Click;
-            // 
-            // buttonDeviceShortcutRST
-            // 
-            buttonDeviceShortcutRST.Location = new Point(362, 109);
-            buttonDeviceShortcutRST.Name = "buttonDeviceShortcutRST";
-            buttonDeviceShortcutRST.Size = new Size(56, 69);
-            buttonDeviceShortcutRST.TabIndex = 6;
-            buttonDeviceShortcutRST.Text = "RST";
-            buttonDeviceShortcutRST.UseVisualStyleBackColor = true;
-            buttonDeviceShortcutRST.Click += buttonDeviceShortcutRST_Click;
-            // 
-            // buttonDeviceShortcut1
-            // 
-            buttonDeviceShortcut1.Location = new Point(300, 109);
-            buttonDeviceShortcut1.Name = "buttonDeviceShortcut1";
-            buttonDeviceShortcut1.Size = new Size(56, 69);
-            buttonDeviceShortcut1.TabIndex = 5;
-            buttonDeviceShortcut1.Text = "1";
-            buttonDeviceShortcut1.UseVisualStyleBackColor = true;
-            buttonDeviceShortcut1.Click += buttonDeviceShortcut1_Click;
+            groupBoxFieldManualControl.Text = "Field Device Manual Control";
             // 
             // buttonDisableDevice
             // 
-            buttonDisableDevice.Location = new Point(150, 148);
+            buttonDisableDevice.Location = new Point(255, 148);
             buttonDisableDevice.Name = "buttonDisableDevice";
-            buttonDisableDevice.Size = new Size(130, 30);
+            buttonDisableDevice.Size = new Size(225, 30);
             buttonDisableDevice.TabIndex = 4;
             buttonDisableDevice.Text = "Disable";
             buttonDisableDevice.UseVisualStyleBackColor = true;
@@ -598,7 +565,7 @@
             // 
             buttonEnableDevice.Location = new Point(7, 148);
             buttonEnableDevice.Name = "buttonEnableDevice";
-            buttonEnableDevice.Size = new Size(130, 30);
+            buttonEnableDevice.Size = new Size(224, 30);
             buttonEnableDevice.TabIndex = 3;
             buttonEnableDevice.Text = "Enable";
             buttonEnableDevice.UseVisualStyleBackColor = true;
@@ -610,7 +577,7 @@
             comboBoxDeviceSelection.FormattingEnabled = true;
             comboBoxDeviceSelection.Location = new Point(6, 109);
             comboBoxDeviceSelection.Name = "comboBoxDeviceSelection";
-            comboBoxDeviceSelection.Size = new Size(274, 33);
+            comboBoxDeviceSelection.Size = new Size(474, 33);
             comboBoxDeviceSelection.TabIndex = 2;
             comboBoxDeviceSelection.SelectedIndexChanged += comboBoxDeviceSelection_SelectedIndexChanged;
             // 
@@ -787,9 +754,9 @@
             buttonEnableField.BackColor = Color.Lime;
             buttonEnableField.Font = new Font("Segoe UI Black", 16F, FontStyle.Bold);
             buttonEnableField.ForeColor = Color.White;
-            buttonEnableField.Location = new Point(12, 661);
+            buttonEnableField.Location = new Point(6, 19);
             buttonEnableField.Name = "buttonEnableField";
-            buttonEnableField.Size = new Size(216, 161);
+            buttonEnableField.Size = new Size(208, 123);
             buttonEnableField.TabIndex = 13;
             buttonEnableField.Text = "Enable Field";
             buttonEnableField.UseVisualStyleBackColor = false;
@@ -800,21 +767,42 @@
             buttonDisableField.BackColor = Color.Red;
             buttonDisableField.Font = new Font("Segoe UI Black", 16F, FontStyle.Bold);
             buttonDisableField.ForeColor = Color.White;
-            buttonDisableField.Location = new Point(282, 661);
+            buttonDisableField.Location = new Point(272, 19);
             buttonDisableField.Name = "buttonDisableField";
-            buttonDisableField.Size = new Size(216, 161);
+            buttonDisableField.Size = new Size(208, 123);
             buttonDisableField.TabIndex = 14;
             buttonDisableField.Text = "Disable Field";
             buttonDisableField.UseVisualStyleBackColor = false;
             buttonDisableField.Click += buttonDisableField_Click;
+            // 
+            // buttonFieldDeviceControl
+            // 
+            buttonFieldDeviceControl.Location = new Point(504, 759);
+            buttonFieldDeviceControl.Name = "buttonFieldDeviceControl";
+            buttonFieldDeviceControl.Size = new Size(397, 52);
+            buttonFieldDeviceControl.TabIndex = 15;
+            buttonFieldDeviceControl.Text = "Field Device Control";
+            buttonFieldDeviceControl.UseVisualStyleBackColor = true;
+            buttonFieldDeviceControl.Click += buttonFieldDeviceControl_Click;
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(buttonEnableField);
+            groupBox5.Controls.Add(buttonDisableField);
+            groupBox5.Location = new Point(12, 661);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(486, 150);
+            groupBox5.TabIndex = 16;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Field Control";
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1711, 855);
-            Controls.Add(buttonDisableField);
-            Controls.Add(buttonEnableField);
+            Controls.Add(groupBox5);
+            Controls.Add(buttonFieldDeviceControl);
             Controls.Add(groupBox3);
             Controls.Add(groupBox4);
             Controls.Add(groupBoxFieldManualControl);
@@ -841,6 +829,7 @@
             groupBoxFieldManualControl.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
+            groupBox5.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -889,9 +878,6 @@
         private ComboBox comboBoxDeviceSelection;
         private Button buttonEnableDevice;
         private Button buttonDisableDevice;
-        private Button buttonDeviceShortcut1;
-        private Button buttonShortcut2;
-        private Button buttonDeviceShortcutRST;
         private Label label11;
         private NumericUpDown numericUpDownMatchBlueAllienceTeam3;
         private Label label12;
@@ -911,5 +897,7 @@
         private Label labelAuDisPage;
         private Button buttonEnableField;
         private Button buttonDisableField;
+        private Button buttonFieldDeviceControl;
+        private GroupBox groupBox5;
     }
 }

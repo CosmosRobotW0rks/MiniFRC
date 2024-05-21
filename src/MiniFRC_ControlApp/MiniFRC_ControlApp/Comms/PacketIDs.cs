@@ -24,7 +24,6 @@ namespace MiniFRC_ControlApp.Comms
         __PLACEHOLDER4,
         __PLACEHOLDER5,
 
-
         //   ------ FIELD DEVICE PACKETS -----
 
         // SPEAKER

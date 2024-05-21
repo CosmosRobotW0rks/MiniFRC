@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -24,9 +25,16 @@ namespace MiniFRC_FMS.Modules.Game.Models
     {
         internal class Point
         {
+            [JsonProperty]
             public PointSource PointSource { get; private set; }
+
+            [JsonProperty] 
             public int Points { get; private set; }
+
+            [JsonProperty] 
             public DateTime Timestamp { get; private set; }
+
+            [JsonProperty] 
             public int PointID { get; private set; }
 
             public Point(PointSource pointSource, int points, int pointID)
@@ -41,6 +49,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public event EventHandler<Point>? PointAdded;
         public event EventHandler<int>? PointRemoved;
 
+        [JsonProperty]
         private List<Point> Points = new List<Point>();
         public int PointsSum => Points.Select(x => x.Points).Sum();
         int lastPointID = 0;

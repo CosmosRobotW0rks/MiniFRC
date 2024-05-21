@@ -1,11 +1,13 @@
 ﻿using MiniFRC_FMS.Modules.Comms;
 using MiniFRC_FMS.Modules.DataSaving;
 using MiniFRC_FMS.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static MiniFRC_FMS.Modules.Comms.TCPPackets.Packets.FMSControllerLoadMatchPacket;
@@ -17,37 +19,61 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
     internal class Match
     {
+        [JsonProperty]
         public MatchState State { get; private set; } = MatchState.Loaded;
 
+        [JsonProperty]
         public MatchType Type { get; private set; }
+
+        [JsonProperty]
         public bool IsPractice { get; private set; }
+
+        [JsonProperty]
         public bool IsRematch { get; private set; }
 
         public UInt16 MatchDuration { get; private set; }
 
+        [JsonProperty]
         public int MatchID { get; private set; }
 
+        [JsonProperty]
         public int TeamRED1 { get; private set; }
+
+        [JsonProperty]
         public int TeamRED2 { get; private set; }
+
+        [JsonProperty]
         public int TeamRED3 { get; private set; }
+
+        [JsonProperty]
         public int[] REDAllience { get { return [TeamRED1, TeamRED2, TeamRED3]; } }
 
 
+        [JsonProperty]
         public int TeamBLUE1 { get; private set; }
+
+        [JsonProperty]
         public int TeamBLUE2 { get; private set; }
+
+        [JsonProperty]
         public int TeamBLUE3 { get; private set; }
+
         public int[] BLUEAllience { get { return [TeamBLUE1, TeamBLUE2, TeamBLUE3]; } }
 
+        [JsonProperty]
         public List<int> DisqualifiedTeams = new();
 
 
-
+        [JsonProperty]
         private Dictionary<TeamColor, PointCollection> _points = new Dictionary<TeamColor, PointCollection>()
         {
             { TeamColor.RED, new PointCollection() },
             { TeamColor.BLUE, new PointCollection() }
         };
+
+        [JsonProperty]
         public IReadOnlyDictionary<TeamColor, PointCollection> Points => _points.AsReadOnly();
+
         public Match(byte matchID, MatchType type, bool isPractice, bool isRematch, UInt16 matchDuration, int teamRED1, int teamRED2, int teamRED3, int teamBLUE1, int teamBLUE2, int teamBLUE3)
         {
             MatchID = matchID;
@@ -74,16 +100,21 @@ namespace MiniFRC_FMS.Modules.Game.Models
         public event EventHandler? OnEnd;
         public event EventHandler? OnPointUpdate;
 
+        [JsonProperty]
         private bool IsAborted { get; set; } = false;
 
+        [JsonProperty]
         public byte RemainingCountdown { get; private set; }
-    
+
+        [JsonProperty]
         public UInt16 RemainingTime { get; private set; }
 
         private async Task MatchTask()
         {
             try
             {
+
+                _points[TeamColor.RED].AddPoint(PointSource.Speaker, 5);
                 RemainingCountdown = 3 + 1;
                 RemainingTime = (ushort)(MatchDuration + 1);
 

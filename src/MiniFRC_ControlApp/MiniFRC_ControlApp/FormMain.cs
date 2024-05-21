@@ -61,6 +61,10 @@ namespace MiniFRC_ControlApp
             ServerCommunication.AttachPacketCB<FMSControllerAuDisPageUpdatedPacket>(HandleAuDisUpdated);
         }
 
+        private void buttonFieldDeviceControl_Click(object sender, EventArgs e)
+        {
+
+        }
 
         #region Device Last Seen
         void DisplayDeviceLastSeen(FMSControllerDeviceLastseenUpdatedPacket packet)
@@ -334,7 +338,7 @@ namespace MiniFRC_ControlApp
         }
         #endregion
 
-        #region Field Control
+        #region Field Device Control
         private void buttonEnableAll_Click(object sender, EventArgs e)
         {
             this.Enabled = false;
@@ -629,7 +633,7 @@ namespace MiniFRC_ControlApp
 
         #endregion
 
-
+        #region Field Control
         private void buttonEnableField_Click(object sender, EventArgs e)
         {
             this.Enabled = false;
@@ -670,6 +674,9 @@ namespace MiniFRC_ControlApp
                 }
             });
         }
+        #endregion
+
+
     }
 
 

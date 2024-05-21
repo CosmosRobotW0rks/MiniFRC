@@ -153,16 +153,16 @@ namespace MiniFRC_FMS.Modules.Game
 
             var fieldModule = GetModule<FieldModule>();
             var audismodule = GetModule<AuDisModule>();
-
+            
             audismodule.UpdateMatchState();
-            Task.Delay(4000).Wait();
-            audismodule.SwitchPage(AuDisPage.CalculatingPoints);
 
             Task.WaitAll(
             fieldModule.ToggleEnabledAllAsync(false),
             fieldModule.AnnounceMatchStartStopAsync(false),
             fmsControllerModule.AnnounceMatchStateAsync(match, State));
 
+            Task.Delay(1250);
+            audismodule.SwitchPage(AuDisPage.CalculatingPoints);
         }
 
         private void Match_OnStart(object? sender, EventArgs e)
