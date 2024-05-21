@@ -61,5 +61,10 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
             else await ds.NotifyReadyToAmplifyAsync();
         }
 
+        public override void MatchStop()
+        {
+            ReadyToBeAmplified = false;
+            AmplifiedUntil = DateTime.MinValue;
+        }
     }
 }
