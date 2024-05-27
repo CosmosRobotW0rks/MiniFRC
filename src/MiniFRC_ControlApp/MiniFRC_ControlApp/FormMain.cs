@@ -63,7 +63,9 @@ namespace MiniFRC_ControlApp
 
         private void buttonFieldDeviceControl_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            new FormFieldControl().ShowDialog();
+            this.Show();
         }
 
         #region Device Last Seen

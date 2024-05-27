@@ -9,8 +9,8 @@ namespace MiniFRC_FMS
     internal static class Config
     {
         public const string WebSVRootURL = "http://localhost:8080/";
-        public const string WebSocketRootURL = "ws://192.168.1.34:8082";
-        public const string TCPServerEndpoint = "192.168.1.34:8081";
+        public const string WebSocketRootURL = "ws://10.134.100.230:8082";
+        public const string TCPServerEndpoint = "10.134.100.230:8081";
         public const int PingExpireTimeMS = 5000;
 
         public const ulong SecurityKey = 16777216;
@@ -26,7 +26,7 @@ namespace MiniFRC_FMS
             public const int StageClimbPerRobot = 2;
             public const int Trap = 5;
 
-            public const int SourceCooldown = 10;
+            public const int SourceCooldown = 10000;
 
 
             public const int PenaltyPoints = 5;

@@ -39,6 +39,7 @@ namespace MiniFRC_FMS.Modules.Game.FieldDevices
 
         private void HandleSourceBtn(DriverStationSourcePressedPacket p)
         {
+            Logger.Log(LogLevel.DEBUG,"Source button pressed");
             Source? src = ModulesMain.Instance.GetModule<FieldModule>().GetFieldDevice<Source>(teamColor);
             if (src == null) { Logger.Log(LogLevel.WARNING, "Source is null, cannot trigger"); return; }
             if (src.NextNoteDropTime > DateTime.Now) return;

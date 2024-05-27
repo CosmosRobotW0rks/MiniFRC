@@ -9,7 +9,13 @@ bool FieldDevice_DriverStation::SourceCooldown = false;
 
 void FieldDevice_DriverStation::EnabledChanged(bool enabled)
 {
+    DebugInfoF("Enabled changed to: %d", enabled);
     is_enabled = enabled;
+    if(is_enabled)
+    {
+        ToggleAmpLED(false);
+        ToggleSourceLED(false);
+    }
 }
 
 bool FieldDevice_DriverStation::Initialize()
@@ -71,7 +77,6 @@ void FieldDevice_DriverStation::task(void* args)
             if(FieldDevice_DriverStation::AmplifyCooldown) { AmpButtonPressed = false; continue;}
             ds->OnAmpButtonPress();
             FieldDevice_DriverStation::AmpButtonPressed = false;
-
         }
         
         if(FieldDevice_DriverStation::SourceButtonPressed)

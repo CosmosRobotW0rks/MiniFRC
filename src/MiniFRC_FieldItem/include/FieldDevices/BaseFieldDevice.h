@@ -38,7 +38,7 @@ public:
     BaseFieldDevice(){}
     ~BaseFieldDevice(){}
     
-    virtual void EnabledChanged(bool enabled){};
+    virtual void EnabledChanged(bool enabled);
 
     bool Init()
     {

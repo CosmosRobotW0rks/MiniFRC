@@ -23,6 +23,14 @@ namespace MiniFRC_FMS
                 try
                 {
                     string str = Console.ReadLine();
+
+                    if(str.StartsWith("disq "))
+                    {
+                        int[] teamIDs = str.Substring(5).Split(' ').Select(x => int.Parse(x)).ToArray();
+                        ModulesMain.Instance.GetModule<MatchModule>().match.DisqualifiedTeams.AddRange(teamIDs);
+
+                        Logger.Log($"Disqualified: {string.Join(", ", teamIDs)}");
+                    }
                     switch (str)
                     {
                         case "amplify":
@@ -33,14 +41,10 @@ namespace MiniFRC_FMS
                             ModulesMain.Instance.GetModule<AuDisModule>().UpdateLeaderboard();
                             break;
                         case "dropsource":
-
+                            await ModulesMain.Instance.GetModule<FieldModule>().BLUESource.DropAsync();
                             break;
 
                         default:
-                            int input = int.Parse(str);
-
-
-                            ModulesMain.Instance.GetModule<AuDisModule>().SwitchPage((AuDisPage)input);
                             break;
                     }
                 }

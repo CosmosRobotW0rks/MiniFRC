@@ -15,7 +15,7 @@ class FieldDevice_DriverStation  : public BaseFieldDevice
 {
     protected:
     bool Initialize();
-    void EnabledChanged(bool enabled);
+    void EnabledChanged(bool enabled) override;
 
     private:
     

@@ -52,11 +52,27 @@ namespace MiniFRC_FMS.Modules.Game
             GetModule<FMSControllerAppModule>().AnnounceAuDisPageChangeAsync(this.Page).Wait();
         }
 
-        
+        private double GetAvgMatchScoreOfTeam(int teamID)
+        {
+            Match[] matches = dsModule.Matches.GetWhere(x => (x.BLUEAllience.Contains(teamID) || x.REDAllience.Contains(teamID)) && !x.DisqualifiedTeams.Contains(teamID)).ToArray();
+
+            int totalPoints = matches.Length;
+
+            foreach(Match m in matches)
+            {
+                totalPoints += m.REDAllience.Contains(teamID) ? m.Points[TeamColor.RED].PointsSum : m.Points[TeamColor.BLUE].PointsSum;
+            }
+
+
+            double avg = (double)totalPoints / (double)matches.Length;
+
+            Logger.Log($"{teamID} avg: {avg}");
+            return avg;
+        }
 
         public void UpdateLeaderboard()
         {
-            Team[] teams = dsModule.Teams.GetAll().OrderByDescending(x => x.RP).ToArray();
+            Team[] teams = dsModule.Teams.GetAll().OrderByDescending(x => GetAvgMatchScoreOfTeam(x.ID)).OrderByDescending(x => x.RP).ToArray();
 
             AuDisCommand cmd = new AuDisCommand(AuDisCommand.Command.updateLeaderboard, new
             {

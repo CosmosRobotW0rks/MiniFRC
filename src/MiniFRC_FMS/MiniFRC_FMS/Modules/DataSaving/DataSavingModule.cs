@@ -21,6 +21,12 @@ namespace MiniFRC_FMS.Modules.DataSaving
             Teams = new DataSavingItem<Team>(Paths.TeamsFilePath);
             Matches = new DataSavingItem<Match>(Paths.MatchesFilePath);
 
+
+            foreach(Match m in Matches.GetAll())
+            {
+                Console.WriteLine($"MatchID: {m.MatchID} / RED: {m.TeamRED1} {m.TeamRED2} {m.TeamRED3} / BLUE: {m.TeamBLUE1} / {m.TeamBLUE2} / {m.TeamBLUE3} / RP: {m.Points[TeamColor.RED].PointsSum} / BP: {m.Points[TeamColor.BLUE].PointsSum}");
+            }
+
             return true;
         }
 

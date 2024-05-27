@@ -113,8 +113,6 @@ namespace MiniFRC_FMS.Modules.Game.Models
         {
             try
             {
-
-                _points[TeamColor.RED].AddPoint(PointSource.Speaker, 5);
                 RemainingCountdown = 3 + 1;
                 RemainingTime = (ushort)(MatchDuration + 1);
 
@@ -190,7 +188,7 @@ namespace MiniFRC_FMS.Modules.Game.Models
 
         public void Abort()
         {
-            if (State != MatchState.Countdown && State != MatchState.Running) return;
+            if (State != MatchState.Countdown && State != MatchState.Running && State != MatchState.PointsCalculating) return;
 
             IsAborted = true;
             State = MatchState.Standby;
